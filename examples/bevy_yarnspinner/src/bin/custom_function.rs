@@ -5,11 +5,18 @@ use bevy_yarnspinner_example_dialogue_view::prelude::*;
 // For comments about the setup, see hello_world.rs
 fn main() {
     let mut app = App::new();
-    app.add_plugins((DefaultPlugins, YarnSpinnerPlugin::new(), ExampleYarnSpinnerDialogueViewPlugin::new()))
-        .insert_resource(Counter(42))
-        .add_systems(Startup, setup_camera)
-        .add_systems(Update, spawn_dialogue_runner.run_if(resource_added::<YarnProject>))
-        .run();
+    app.add_plugins((
+        DefaultPlugins,
+        YarnSpinnerPlugin::new(),
+        ExampleYarnSpinnerDialogueViewPlugin::new(),
+    ))
+    .insert_resource(Counter(42))
+    .add_systems(Startup, setup_camera)
+    .add_systems(
+        Update,
+        spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
+    )
+    .run();
 }
 
 #[derive(Resource)]

@@ -5,16 +5,20 @@ use bevy_yarnspinner_example_dialogue_view::prelude::*;
 // For comments about the setup, see hello_world.rs
 fn main() {
     let mut app = App::new();
-    app.add_plugins((DefaultPlugins, YarnSpinnerPlugin::new(), ExampleYarnSpinnerDialogueViewPlugin::new()))
-        .add_systems(Startup, setup_camera)
-        .add_systems(
-            Update,
-            (
-                spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
-                print_yarn_variable.run_if(any_with_component::<DialogueRunner>),
-            ),
-        )
-        .run();
+    app.add_plugins((
+        DefaultPlugins,
+        YarnSpinnerPlugin::new(),
+        ExampleYarnSpinnerDialogueViewPlugin::new(),
+    ))
+    .add_systems(Startup, setup_camera)
+    .add_systems(
+        Update,
+        (
+            spawn_dialogue_runner.run_if(resource_added::<YarnProject>),
+            print_yarn_variable.run_if(any_with_component::<DialogueRunner>),
+        ),
+    )
+    .run();
 }
 
 fn setup_camera(mut commands: Commands) {
