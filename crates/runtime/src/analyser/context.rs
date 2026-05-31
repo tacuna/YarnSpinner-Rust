@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Analyser.cs>,
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Analyser.cs>,
 //! which was split into multiple files.
 
 use crate::prelude::*;
@@ -53,10 +53,7 @@ impl Context {
     /// Collects the diagnoses from all analysers in the [`Context`] that were previously used with [`Dialogue::analyse`].
     #[must_use]
     pub fn finish_analysis(&self) -> Vec<Diagnosis> {
-        self.0
-            .iter()
-            .flat_map(|analyser| analyser.collect_diagnoses())
-            .collect()
+        self.0.iter().flat_map(|analyser| analyser.collect_diagnoses()).collect()
     }
 
     /// ## Implementation notes

@@ -14,10 +14,7 @@ pub(crate) fn log_error(In(result): In<SystemResult>) {
     }
 }
 
-pub(crate) fn in_development(
-    project: Option<Res<YarnProject>>,
-    project_to_load: Option<Res<YarnProjectConfigToLoad>>,
-) -> bool {
+pub(crate) fn in_development(project: Option<Res<YarnProject>>, project_to_load: Option<Res<YarnProjectConfigToLoad>>) -> bool {
     if let Some(project) = project {
         return project.development_file_generation == DevelopmentFileGeneration::Full;
     }
@@ -27,10 +24,7 @@ pub(crate) fn in_development(
     false
 }
 
-pub(crate) fn has_localizations(
-    project: Option<Res<YarnProject>>,
-    project_to_load: Option<Res<YarnProjectConfigToLoad>>,
-) -> bool {
+pub(crate) fn has_localizations(project: Option<Res<YarnProject>>, project_to_load: Option<Res<YarnProjectConfigToLoad>>) -> bool {
     if let Some(project) = project {
         return project.localizations.is_some();
     }

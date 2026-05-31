@@ -11,10 +11,8 @@ mod utils;
 fn loads_yarn_assets() {
     let mut app = App::new();
 
-    app.setup_default_plugins().add_plugins(
-        YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("lines.yarn"))
-            .with_localizations(None),
-    );
+    app.setup_default_plugins()
+        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("lines.yarn")).with_localizations(None));
 
     let yarn_files: Vec<_> = app.load_project().yarn_files().cloned().collect();
     assert_eq!(1, yarn_files.len());
@@ -81,15 +79,8 @@ fn generates_line_ids() -> anyhow::Result<()> {
         .string_table;
 
     println!("{string_table_with_line_ids:#?}");
-    assert!(
-        string_table_with_line_ids
-            .values()
-            .all(|string_info| !string_info.is_implicit_tag)
-    );
-    assert_eq!(
-        string_table_without_line_ids.len(),
-        string_table_with_line_ids.len()
-    );
+    assert!(string_table_with_line_ids.values().all(|string_info| !string_info.is_implicit_tag));
+    assert_eq!(string_table_without_line_ids.len(), string_table_with_line_ids.len());
     Ok(())
 }
 
@@ -124,11 +115,7 @@ fn generates_strings_file() -> anyhow::Result<()> {
     let strings_file_path = dir.path().join("dialogue/de-CH.strings.csv");
     assert!(strings_file_path.exists());
     let strings_file_source = fs::read_to_string(&strings_file_path)?;
-    let strings_file_line_ids: Vec<_> = strings_file_source
-        .lines()
-        .skip(1)
-        .map(|line| line.split(',').nth(1).unwrap())
-        .collect();
+    let strings_file_line_ids: Vec<_> = strings_file_source.lines().skip(1).map(|line| line.split(',').nth(1).unwrap()).collect();
 
     assert_eq!(string_table.len(), strings_file_line_ids.len());
 
@@ -171,10 +158,7 @@ fn appends_to_pre_existing_strings_file() -> anyhow::Result<()> {
     );
 
     app.load_project();
-    let handle = app
-        .world()
-        .resource::<AssetServer>()
-        .load_untyped("dialogue/de-CH.strings.csv");
+    let handle = app.world().resource::<AssetServer>().load_untyped("dialogue/de-CH.strings.csv");
     while app
         .world()
         .resource::<AssetServer>()
@@ -192,22 +176,11 @@ fn appends_to_pre_existing_strings_file() -> anyhow::Result<()> {
 
     assert!(!dir.path().join("dialogue/en-US.strings.csv").exists());
     let strings_file_source = fs::read_to_string(&strings_file_path)?;
-    let strings_file_line_ids: Vec<_> = strings_file_source
-        .lines()
-        .skip(1)
-        .map(|line| line.split(',').nth(1).unwrap())
-        .collect();
+    let strings_file_line_ids: Vec<_> = strings_file_source.lines().skip(1).map(|line| line.split(',').nth(1).unwrap()).collect();
 
-    assert_eq!(
-        string_table.len() + original_strings_file_line_ids.len(),
-        strings_file_line_ids.len()
-    );
+    assert_eq!(string_table.len() + original_strings_file_line_ids.len(), strings_file_line_ids.len());
 
-    assert!(
-        string_table
-            .keys()
-            .all(|line_id| strings_file_line_ids.contains(&line_id.0.as_str()))
-    );
+    assert!(string_table.keys().all(|line_id| strings_file_line_ids.contains(&line_id.0.as_str())));
 
     Ok(())
 }
@@ -237,14 +210,10 @@ fn replaces_entries_in_strings_file() -> anyhow::Result<()> {
         let project = app.world().resource::<YarnProject>();
         let handle = project.yarn_files().next().unwrap().clone();
 
-        let mut yarn_file_assets = app
-            .world_mut()
-            .get_resource_mut::<Assets<YarnFile>>()
-            .unwrap();
+        let mut yarn_file_assets = app.world_mut().get_resource_mut::<Assets<YarnFile>>().unwrap();
         let yarn_file = yarn_file_assets.get_mut(&handle).unwrap();
 
-        let strings_file_source =
-            fs::read_to_string(&strings_file_path)?.replace("*third*", "*dritter*");
+        let strings_file_source = fs::read_to_string(&strings_file_path)?.replace("*third*", "*dritter*");
         fs::write(&strings_file_path, strings_file_source)?;
 
         let mut lines: Vec<_> = yarn_file.content().lines().collect();
@@ -255,11 +224,7 @@ fn replaces_entries_in_strings_file() -> anyhow::Result<()> {
         yarn_file.set_content(lines.join("\n"))?;
     }
 
-    while !app
-        .world()
-        .resource::<Messages<AssetEvent<YarnFile>>>()
-        .is_empty()
-    {
+    while !app.world().resource::<Messages<AssetEvent<YarnFile>>>().is_empty() {
         app.update();
     }
 
@@ -274,10 +239,7 @@ fn replaces_entries_in_strings_file() -> anyhow::Result<()> {
     assert_eq!(strings_file_lines[0][1], "line:1");
     assert_eq!(strings_file_lines[0][2], "Changed line without translation");
     assert_eq!(strings_file_lines[1][1], "line:2");
-    assert_eq!(
-        strings_file_lines[1][2],
-        "(NEEDS UPDATE) Hag: Now your *dritter* wish. What will it be?"
-    );
+    assert_eq!(strings_file_lines[1][2], "(NEEDS UPDATE) Hag: Now your *dritter* wish. What will it be?");
     assert_eq!(strings_file_lines[2][1], "line:13");
     assert_eq!(strings_file_lines[2][2], "Inserted line");
     assert_eq!(strings_file_lines[4][1], "line:5");

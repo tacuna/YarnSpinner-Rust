@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/StringInfo.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/StringInfo.cs>
 
 #[cfg(any(feature = "bevy", feature = "serde"))]
 use crate::prelude::*;
@@ -12,12 +12,18 @@ use crate::prelude::*;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct StringInfo {
     /// The original text of the string.
+    ///
+    /// For shadow lines (see [`shadow_line_id`](StringInfo::shadow_line_id)), this field
+    /// retains the validated-identical copy of the source text rather than being `None`.
+    /// Callers that need to detect shadows should check `shadow_line_id.is_some()`.
+    ///
+    /// # Divergence from C#
+    /// The C# implementation sets `text = null` on valid shadow entries after validation.
+    /// We keep `text: String` (non-optional) to avoid a breaking change across the runtime
+    /// and bevy_plugin — both of which consume this field as a plain `String`.
     pub text: String,
 
     /// The name of the node that this string was found in.
@@ -43,4 +49,13 @@ pub struct StringInfo {
     /// This array will contain any hashtags associated with this
     /// string besides the `#line:` hashtag.
     pub metadata: Vec<String>,
+
+    /// The ID of the line that this line is shadowing, or `None` if
+    /// this line is not shadowing another line.
+    ///
+    /// When set, the shadow line's `text` is guaranteed (by [`validate_shadow_lines`]) to be
+    /// identical to the source line's `text`. Clients may use this field to resolve
+    /// translations: a shadow entry with no translation should fall back to
+    /// the source line's translation rather than its own.
+    pub shadow_line_id: Option<String>,
 }

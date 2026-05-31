@@ -1,4 +1,5 @@
-use self::{unused_variable_checker::*, variable_lister::*};
+use self::unused_variable_checker::*;
+use self::variable_lister::*;
 use crate::prelude::*;
 
 mod unused_variable_checker;

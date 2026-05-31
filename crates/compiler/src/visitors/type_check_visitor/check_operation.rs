@@ -1,14 +1,12 @@
 use crate::parser_rule_context_ext::ParserRuleContextExt;
 use crate::prelude::generated::yarnspinnerparser::*;
 use crate::prelude::*;
-use crate::visitors::type_check_visitor::{
-    DefaultValue, format_cannot_determine_variable_type_error, get_filename,
-};
+use crate::visitors::type_check_visitor::{DefaultValue, format_cannot_determine_variable_type_error, get_filename};
 use crate::visitors::*;
-use antlr_rust::rule_context::CustomRuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::token_factory::TokenFactory;
-use antlr_rust::tree::{ParseTree, ParseTreeVisitorCompat};
+use antlr4rust::rule_context::CustomRuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::token_factory::TokenFactory;
+use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat};
 use better_any::TidExt;
 use std::cmp::Ordering;
 use std::ops::Deref;
@@ -34,7 +32,8 @@ impl<'input> TypeCheckVisitor<'input> {
     ) -> Option<Type>
     where
         T: ParserRuleContextExt<'input>,
-    <<<<T as CustomRuleContext<'input>>::TF as TokenFactory<'input>>::Inner as Token>::Data as ToOwned>::Owned: Into<String>{
+        <<<<T as CustomRuleContext<'input>>::TF as TokenFactory<'input>>::Inner as Token>::Data as ToOwned>::Owned: Into<String>,
+    {
         let operation_type = operation_type.into();
         let mut term_types = Vec::new();
         let mut expression_type = None;
@@ -84,18 +83,15 @@ impl<'input> TypeCheckVisitor<'input> {
                     }
                     Ordering::Greater => {
                         // Multiple types implement this operation.
-                        let type_names = types_implementing_method
-                            .iter()
-                            .map(|t| t.format())
-                            .collect::<Vec<_>>()
-                            .join(", or ");
+                        let type_names = types_implementing_method.iter().map(|t| t.format()).collect::<Vec<_>>().join(", or ");
                         let message = format!(
                             "Type of expression \"{}\" can't be determined without more context (the compiler thinks it could be {type_names}). Use a type cast on at least one of the terms (e.g. the string(), number(), bool() functions)",
                             context.get_text_with_whitespace(self.file.tokens()),
                         );
                         let diagnostic = Diagnostic::from_message(message)
                             .with_file_name(&self.file.name)
-                            .with_parser_context(context, self.file.tokens());
+                            .with_parser_context(context, self.file.tokens())
+                            .with_code("YS0029");
                         self.diagnostics.push(diagnostic);
                         return None;
                     }
@@ -107,7 +103,8 @@ impl<'input> TypeCheckVisitor<'input> {
                         );
                         let diagnostic = Diagnostic::from_message(message)
                             .with_file_name(&self.file.name)
-                            .with_parser_context(context, self.file.tokens());
+                            .with_parser_context(context, self.file.tokens())
+                            .with_code("YS0029");
                         self.diagnostics.push(diagnostic);
                         return None;
                     }
@@ -135,24 +132,15 @@ impl<'input> TypeCheckVisitor<'input> {
                 continue;
             };
 
-            let id = func_context
-                .function_call()
-                .unwrap()
-                .FUNC_ID()
-                .unwrap()
-                .get_text();
+            let id = func_context.function_call().unwrap().FUNC_ID().unwrap().get_text();
 
-            let function_type = self
-                .new_declarations
-                .iter_mut()
-                .filter(|decl| decl.name == id)
-                .find_map(|decl| {
-                    if let Type::Function(ref mut func) = decl.r#type {
-                        Some(func)
-                    } else {
-                        None
-                    }
-                });
+            let function_type = self.new_declarations.iter_mut().filter(|decl| decl.name == id).find_map(|decl| {
+                if let Type::Function(ref mut func) = decl.r#type {
+                    Some(func)
+                } else {
+                    None
+                }
+            });
             if let Some(func) = function_type {
                 if func.return_type.is_some() {
                     continue;
@@ -178,24 +166,19 @@ impl<'input> TypeCheckVisitor<'input> {
         let variable_contexts = terms
             .iter()
             .filter_map(|term| {
-                term.child_of_type_unsized::<ValueContextAll>(0)
-                    .and_then(|value_context| {
-                        if let ValueContextAll::ValueVarContext(context) = value_context.as_ref() {
-                            context.variable()
-                        } else {
-                            None
-                        }
-                    })
+                term.child_of_type_unsized::<ValueContextAll>(0).and_then(|value_context| {
+                    if let ValueContextAll::ValueVarContext(context) = value_context.as_ref() {
+                        context.variable()
+                    } else {
+                        None
+                    }
+                })
             })
+            .chain(terms.iter().find_map(|term| term.child_of_type_unsized::<VariableContext>(0)))
             .chain(
                 terms
                     .iter()
-                    .find_map(|term| term.child_of_type_unsized::<VariableContext>(0)),
-            )
-            .chain(
-                terms.iter().filter_map(|term| {
-                    term.generic_context().downcast_rc::<VariableContext>().ok()
-                }),
+                    .filter_map(|term| term.generic_context().downcast_rc::<VariableContext>().ok()),
             )
             .chain(
                 terms
@@ -213,11 +196,7 @@ impl<'input> TypeCheckVisitor<'input> {
         // Build the list of variable contexts that we don't have a
         // declaration for. We'll check for explicit declarations first.
         let mut undefined_variable_contexts: Vec<_> = variable_contexts
-            .filter(|v| {
-                !self
-                    .declarations()
-                    .any(|d| d.name == v.VAR_ID().unwrap().get_text())
-            })
+            .filter(|v| !self.has_declaration(&v.VAR_ID().unwrap().get_text()))
             .collect();
         // Implementation note: The original compares by reference here. The interval should be unique for each context, so let's use that instead.
         undefined_variable_contexts.sort_by_key(|v| v.get_hashable_interval());
@@ -236,11 +215,7 @@ impl<'input> TypeCheckVisitor<'input> {
             // variable given the context.
             if let Some(default_value) = expression_type.default_value() {
                 let file_name = get_filename(&self.file.name);
-                let node = self
-                    .current_node_name
-                    .as_ref()
-                    .map(|name| format!(", node {name}"))
-                    .unwrap_or_default();
+                let node = self.current_node_name.as_ref().map(|name| format!(", node {name}")).unwrap_or_default();
                 let r#type = expression_type.clone().unwrap(); // Guaranteed to be Some
                 let decl = Declaration::new(var_name.clone(), r#type)
                     .with_description(format!("Implicitly declared in {file_name}{node}"))
@@ -253,11 +228,10 @@ impl<'input> TypeCheckVisitor<'input> {
             } else {
                 // If we can't produce this, then we can't generate the
                 // declaration.
-                let diagnostic = Diagnostic::from_message(
-                    format_cannot_determine_variable_type_error(&var_name),
-                )
-                .with_file_name(&self.file.name)
-                .with_parser_context(undefined_variable_context.as_ref(), self.file.tokens());
+                let diagnostic = Diagnostic::from_message(format_cannot_determine_variable_type_error(&var_name))
+                    .with_file_name(&self.file.name)
+                    .with_parser_context(undefined_variable_context.as_ref(), self.file.tokens())
+                    .with_code("YS0003");
                 self.diagnostics.push(diagnostic);
                 continue;
             }
@@ -266,22 +240,15 @@ impl<'input> TypeCheckVisitor<'input> {
         // All types must be same as the expression type (which is the
         // first defined type we encountered when going through the
         // terms)
-        if !term_types
-            .iter()
-            .all(|t| Some(t) == expression_type.as_ref())
-        {
+        if !term_types.iter().all(|t| Some(t) == expression_type.as_ref()) {
             // Not all the term types we found were the expression
             // type.
-            let type_list = term_types
-                .iter()
-                .map(|t| t.format())
-                .collect::<Vec<_>>()
-                .join(", ");
-            let message =
-                format!("All terms of {operation_description} must be the same, not {type_list}");
+            let type_list = term_types.iter().map(|t| t.format()).collect::<Vec<_>>().join(", ");
+            let message = format!("All terms of {operation_description} must be the same, not {type_list}");
             let diagnostic = Diagnostic::from_message(message)
                 .with_file_name(&self.file.name)
-                .with_parser_context(context, self.file.tokens());
+                .with_parser_context(context, self.file.tokens())
+                .with_code("YS0002");
             self.diagnostics.push(diagnostic);
             return None;
         }
@@ -292,8 +259,7 @@ impl<'input> TypeCheckVisitor<'input> {
         for term in terms {
             if let Term::Expression(expression) = term {
                 if self.known_types.get(expression.as_ref()).is_none() {
-                    self.known_types
-                        .insert(expression.as_ref(), expression_type.clone());
+                    self.known_types.insert(expression.as_ref(), expression_type.clone());
                 }
                 // Guaranteed to be Some
                 let expression = self.known_types.get_mut(expression.as_ref()).unwrap();
@@ -310,13 +276,11 @@ impl<'input> TypeCheckVisitor<'input> {
             let expression_type = expression_type.as_ref().unwrap();
             let implements_method = expression_type.has_method(&operation_type.to_string());
             if !implements_method {
-                let message = format!(
-                    "{} has no implementation defined for {operation_description}",
-                    expression_type.format(),
-                );
+                let message = format!("{} has no implementation defined for {operation_description}", expression_type.format(),);
                 let diagnostic = Diagnostic::from_message(message)
                     .with_file_name(&self.file.name)
-                    .with_parser_context(context, self.file.tokens());
+                    .with_parser_context(context, self.file.tokens())
+                    .with_code("YS0002");
                 self.diagnostics.push(diagnostic);
                 return None;
             }
@@ -326,31 +290,19 @@ impl<'input> TypeCheckVisitor<'input> {
         if !permitted_types.is_empty() {
             // Is the type that we've arrived at compatible with one of
             // the permitted types?
-            if permitted_types
-                .iter()
-                .any(|t| expression_type.is_sub_type_of(t))
-            {
+            if permitted_types.iter().any(|t| expression_type.is_sub_type_of(t)) {
                 // It's compatible! Great, return the type we've
                 // determined.
                 return expression_type;
             }
             // The expression type wasn't valid!
-            let permitted_types_list = permitted_types
-                .iter()
-                .map(|t| t.format())
-                .collect::<Vec<_>>()
-                .join(" or ");
-            let type_list = term_types
-                .iter()
-                .map(|t| t.format())
-                .collect::<Vec<_>>()
-                .join(", ");
-            let message = format!(
-                "Terms of '{operation_description}' must be {permitted_types_list}, not {type_list}",
-            );
+            let permitted_types_list = permitted_types.iter().map(|t| t.format()).collect::<Vec<_>>().join(" or ");
+            let type_list = term_types.iter().map(|t| t.format()).collect::<Vec<_>>().join(", ");
+            let message = format!("Terms of '{operation_description}' must be {permitted_types_list}, not {type_list}",);
             let diagnostic = Diagnostic::from_message(message)
                 .with_file_name(&self.file.name)
-                .with_parser_context(context, self.file.tokens());
+                .with_parser_context(context, self.file.tokens())
+                .with_code("YS0002");
             self.diagnostics.push(diagnostic);
             return None;
         }
@@ -369,14 +321,12 @@ impl<'input> TypeCheckVisitor<'input> {
             // The type doesn't have a method for handling this
             // operator, and neither do any of its supertypes. This
             // expression is therefore invalid.
-            let message = format!(
-                "Operator {operation_description} cannot be used with {} values",
-                expression_type.format()
-            );
+            let message = format!("Operator {operation_description} cannot be used with {} values", expression_type.format());
             self.diagnostics.push(
                 Diagnostic::from_message(message)
                     .with_file_name(&self.file.name)
-                    .with_parser_context(context, self.file.tokens()),
+                    .with_parser_context(context, self.file.tokens())
+                    .with_code("YS0002"),
             );
             return None;
         }

@@ -5,7 +5,8 @@ use bevy::color::palettes::css;
 use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
 use bevy::window::{CursorIcon, PrimaryWindow, SystemCursorIcon};
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 
 pub(crate) fn option_selection_plugin(app: &mut App) {
     app.add_systems(
@@ -13,9 +14,7 @@ pub(crate) fn option_selection_plugin(app: &mut App) {
         (
             create_options.run_if(resource_added::<OptionSelection>),
             show_options,
-            select_option.run_if(
-                resource_exists::<OptionSelection>.and(any_with_component::<PrimaryWindow>),
-            ),
+            select_option.run_if(resource_exists::<OptionSelection>.and(any_with_component::<PrimaryWindow>)),
         )
             .chain()
             .after(YarnSpinnerSystemSet)
@@ -36,11 +35,7 @@ pub(crate) struct OptionSelection {
 
 impl OptionSelection {
     pub fn from_option_set<'a>(options: impl IntoIterator<Item = &'a DialogueOption>) -> Self {
-        let options = options
-            .into_iter()
-            .filter(|o| o.is_available)
-            .cloned()
-            .collect();
+        let options = options.into_iter().filter(|o| o.is_available).cloned().collect();
         Self { options }
     }
 }
@@ -65,10 +60,7 @@ fn create_options(
     }
 }
 
-fn show_options(
-    mut typewriter_finished_event: MessageReader<TypewriterFinishedEvent>,
-    mut options_node: Single<&mut Visibility, With<OptionsNode>>,
-) {
+fn show_options(mut typewriter_finished_event: MessageReader<TypewriterFinishedEvent>, mut options_node: Single<&mut Visibility, With<OptionsNode>>) {
     for _event in typewriter_finished_event.read() {
         **options_node = Visibility::Inherited;
     }

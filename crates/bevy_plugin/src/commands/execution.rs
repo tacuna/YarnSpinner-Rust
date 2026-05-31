@@ -25,10 +25,7 @@ fn execute_commands(event: On<ExecuteCommand>, mut commands: Commands) {
 fn clone_command(world: &mut World, event: &ExecuteCommand) -> Option<Box<dyn UntypedYarnCommand>> {
     let dialogue_runner = get_dialogue_runner(world, event.entity);
     let command_name = event.command.name.as_str();
-    dialogue_runner
-        .commands
-        .get(command_name)
-        .map(|command| command.clone_box())
+    dialogue_runner.commands.get(command_name).map(|command| command.clone_box())
 }
 
 fn get_dialogue_runner(world: &mut World, entity: Entity) -> &DialogueRunner {

@@ -3,7 +3,7 @@ use crate::listeners::{CompilerListener, DiagnosticVec};
 use crate::prelude::generated::yarnspinnerparser::YarnSpinnerParserTreeWalker;
 use crate::prelude::*;
 use crate::visitors::KnownTypes;
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 pub(crate) fn generate_code(mut state: CompilationIntermediate) -> CompilationIntermediate {
     let has_errors = state.diagnostics.has_errors();
@@ -23,6 +23,8 @@ pub(crate) fn generate_code(mut state: CompilationIntermediate) -> CompilationIn
             .iter()
             .map(|(file, known_types)| {
                 let skip_nodes = state.skip_nodes.clone();
+                let file_overrides = state.node_group_name_overrides.get(&file.name).cloned().unwrap_or_default();
+                let implicit_node_names = state.node_groups.keys().cloned().collect::<HashSet<_>>();
 
                 generate_code_for_file(
                     &mut state.tracking_nodes,
@@ -30,6 +32,8 @@ pub(crate) fn generate_code(mut state: CompilationIntermediate) -> CompilationIn
                     known_types.clone(),
                     template.clone(),
                     file,
+                    file_overrides,
+                    implicit_node_names,
                 )
             })
             .collect()
@@ -46,10 +50,7 @@ pub(crate) fn generate_code(mut state: CompilationIntermediate) -> CompilationIn
         Err(CompilerError(total_diagnostics))
     } else {
         let compilations = results.into_iter().map(|r| r.unwrap());
-        Ok(Compilation::combine(
-            compilations,
-            state.string_table.clone(),
-        ))
+        Ok(Compilation::combine(compilations, state.string_table.clone()))
     };
 
     state.result = Some(result);
@@ -62,19 +63,23 @@ fn generate_code_for_file<'a, 'b: 'a, 'input: 'a + 'b>(
     known_types: KnownTypes,
     result_template: Compilation,
     file: &'a FileParseResult<'input>,
+    node_name_overrides: HashMap<String, VecDeque<String>>,
+    implicit_node_names: HashSet<String>,
 ) -> Result<Compilation> {
     let compiler_listener = Box::new(CompilerListener::new(
         tracking_nodes.clone(),
         skip_nodes.clone(),
         known_types,
         file.clone(),
+        node_name_overrides,
+        implicit_node_names,
     ));
     let compiler_tracking_nodes = compiler_listener.tracking_nodes.clone();
     let compiler_diagnostics = compiler_listener.diagnostics.clone();
     let compiler_program = compiler_listener.program.clone();
     let compiler_debug_infos = compiler_listener.debug_infos.clone();
 
-    YarnSpinnerParserTreeWalker::walk(compiler_listener, file.tree.as_ref());
+    YarnSpinnerParserTreeWalker::walk(compiler_listener, file.tree.as_ref()).expect("Tree walk failed");
 
     tracking_nodes.extend(compiler_tracking_nodes.borrow().iter().cloned());
 
@@ -82,11 +87,9 @@ fn generate_code_for_file<'a, 'b: 'a, 'input: 'a + 'b>(
     if compiler_diagnostics.borrow().has_errors() {
         Err(CompilerError(compiler_diagnostics.borrow().clone()))
     } else {
-        let debug_infos: HashMap<_, _> = compiler_debug_infos
-            .borrow()
-            .iter()
-            .map(|debug_info| (debug_info.node_name.clone(), debug_info.clone()))
-            .collect();
+        let debug_infos = ProjectDebugInfo {
+            nodes: compiler_debug_infos.borrow().iter().cloned().collect(),
+        };
 
         Ok(Compilation {
             program: Some(compiler_program.borrow().clone()),

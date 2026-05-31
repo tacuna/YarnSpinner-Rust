@@ -1,7 +1,8 @@
 use anyhow::Result;
 use bevy::platform::time::Instant;
 use bevy::prelude::*;
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 use std::thread::sleep;
 use utils::prelude::*;
 
@@ -56,11 +57,7 @@ fn executes_commands_and_fns() -> Result<()> {
         PresentLine with |event| event.line.text == "Calling command",
         ExecuteCommand (n = 0),
     ]);
-    let data = app
-        .dialogue_runner()
-        .variable_storage()
-        .get("$data")
-        .unwrap();
+    let data = app.dialogue_runner().variable_storage().get("$data").unwrap();
     let string_data: String = data.into();
     assert_eq!("foo", string_data.as_str());
 
@@ -115,34 +112,24 @@ trait CommandAppExt {
 
 impl CommandAppExt for App {
     fn setup_dialogue_runner(&mut self) -> Mut<'_, DialogueRunner> {
-        let set_data =
-            self.world_mut()
-                .register_system(|In(param): In<String>, mut commands: Commands| {
-                    commands.insert_resource(Data(param));
-                });
+        let set_data = self.world_mut().register_system(|In(param): In<String>, mut commands: Commands| {
+            commands.insert_resource(Data(param));
+        });
         let mut dialogue_runner = self
             .setup_default_plugins()
-            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-                "commands.yarn",
-            )))
+            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("commands.yarn")))
             .add_plugins(AssertionPlugin)
             .dialogue_runner_mut();
-        dialogue_runner
-            .commands_mut()
-            .add_command("set_data", set_data);
+        dialogue_runner.commands_mut().add_command("set_data", set_data);
         dialogue_runner
             .library_mut()
-            .add_function("triplicate_data", |data: &str| {
-                format!("{data}{data}{data}")
-            });
+            .add_function("triplicate_data", |data: &str| format!("{data}{data}{data}"));
         dialogue_runner
     }
 
     fn setup_dialogue_runner_for_wait(&mut self) -> Mut<'_, DialogueRunner> {
         self.setup_default_plugins()
-            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-                "wait.yarn",
-            )))
+            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("wait.yarn")))
             .add_plugins(AssertionPlugin)
             .dialogue_runner_mut()
     }

@@ -1,6 +1,7 @@
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 use utils::prelude::*;
 
 mod utils;
@@ -154,9 +155,7 @@ fn serves_assets_after_loading() -> Result<()> {
     });
     app.insert_resource(EventAsserter::<PresentLine> {
         expected_calls: 1,
-        predicate: Some(Box::new(|event| {
-            event.line.text == english_lines()[0] && event.line.assets.is_empty()
-        })),
+        predicate: Some(Box::new(|event| event.line.text == english_lines()[0] && event.line.assets.is_empty())),
         ..default()
     });
     app.load_lines();
@@ -187,46 +186,37 @@ fn serves_translations() -> Result<()> {
     for _ in 1..=6 {
         app.continue_dialogue_and_update();
     }
-    app.dialogue_runner_mut()
-        .set_asset_language("de-CH")
-        .continue_in_next_update();
+    app.dialogue_runner_mut().set_asset_language("de-CH").continue_in_next_update();
 
     app.insert_resource(EventAsserter::<PresentLine> {
         expected_calls: 1,
         predicate: Some(Box::new(|event| {
-            event.line.text == english_lines()[7]
-                && event.line.assets.get_handle::<AudioSource>().is_some()
+            event.line.text == english_lines()[7] && event.line.assets.get_handle::<AudioSource>().is_some()
         })),
         ..default()
     });
     app.load_lines();
     app.clear_and_assert_event::<PresentLine>();
 
-    app.dialogue_runner_mut()
-        .set_text_language("de-CH")
-        .continue_in_next_update();
+    app.dialogue_runner_mut().set_text_language("de-CH").continue_in_next_update();
 
     app.insert_resource(EventAsserter::<PresentLine> {
         expected_calls: 1,
         predicate: Some(Box::new(|event| {
             println!("Expected: {}", german_lines()[8]);
             println!("Actual: {}", event.line.text);
-            event.line.text == german_lines()[8]
-                && event.line.assets.get_handle::<AudioSource>().is_none()
+            event.line.text == german_lines()[8] && event.line.assets.get_handle::<AudioSource>().is_none()
         })),
         ..default()
     });
     app.load_lines();
     app.clear_and_assert_event::<PresentLine>();
 
-    app.dialogue_runner_mut()
-        .set_language("en-US")
-        .continue_in_next_update();
+    app.dialogue_runner_mut().set_language("en-US").continue_in_next_update();
     app.insert_resource(EventAsserter::<PresentLine> {
         expected_calls: 1,
         predicate: Some(Box::new(|event| {
-            event.line.text == english_lines()[9]
-                && event.line.assets.get_handle::<AudioSource>().is_none()
+            event.line.text == english_lines()[9] && event.line.assets.get_handle::<AudioSource>().is_none()
         })),
         ..default()
     });
@@ -263,16 +253,10 @@ fn panics_on_setting_language_without_localizations() {
 fn default_language_is_base_language() {
     let mut app = App::new();
     let dialogue_runner = setup_dialogue_runner_with_localizations(&mut app);
-    assert_eq!(
-        Some(Language::from("en-US")),
-        dialogue_runner.text_language()
-    );
+    assert_eq!(Some(Language::from("en-US")), dialogue_runner.text_language());
     #[cfg(feature = "audio_assets")]
     {
-        assert_eq!(
-            Some(Language::from("en-US")),
-            dialogue_runner.asset_language()
-        );
+        assert_eq!(Some(Language::from("en-US")), dialogue_runner.asset_language());
     }
 
     #[cfg(not(feature = "audio_assets"))]
@@ -283,9 +267,7 @@ fn default_language_is_base_language() {
 
 fn setup_dialogue_runner_without_localizations(app: &mut App) -> Mut<'_, DialogueRunner> {
     app.setup_default_plugins()
-        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-            "lines.yarn",
-        )))
+        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("lines.yarn")))
         .add_plugins(AssertionPlugin)
         .dialogue_runner_mut()
 }
@@ -307,15 +289,11 @@ fn setup_dialogue_runner_with_localizations(app: &mut App) -> Mut<'_, DialogueRu
 
     #[cfg(feature = "audio_assets")]
     {
-        dialogue_runner_builder =
-            dialogue_runner_builder.add_asset_provider(AudioAssetProvider::new());
+        dialogue_runner_builder = dialogue_runner_builder.add_asset_provider(AudioAssetProvider::new());
     }
     let dialogue_runner = dialogue_runner_builder.build();
     app.world_mut().spawn(dialogue_runner);
-    app.world_mut()
-        .query::<&mut DialogueRunner>()
-        .single_mut(app.world_mut())
-        .unwrap()
+    app.world_mut().query::<&mut DialogueRunner>().single_mut(app.world_mut()).unwrap()
 }
 
 fn english_lines() -> Vec<String> {
@@ -333,8 +311,5 @@ fn english_lines() -> Vec<String> {
 fn german_lines() -> Vec<String> {
     let file = include_str!("../assets/dialogue/de-CH.strings.csv");
     let mut reader = csv::Reader::from_reader(file.as_bytes());
-    reader
-        .records()
-        .map(|r| r.unwrap().get(2).unwrap().to_string())
-        .collect()
+    reader.records().map(|r| r.unwrap().get(2).unwrap().to_string()).collect()
 }

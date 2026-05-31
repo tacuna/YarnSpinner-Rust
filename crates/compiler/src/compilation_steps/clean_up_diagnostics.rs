@@ -4,12 +4,7 @@ use std::collections::HashSet;
 
 pub(crate) fn clean_up_diagnostics(mut state: CompilationIntermediate) -> CompilationIntermediate {
     let total_diagnostics = if let Some(Ok(compilation)) = state.result.as_ref() {
-        compilation
-            .warnings
-            .iter()
-            .cloned()
-            .chain(state.diagnostics.iter().cloned())
-            .collect()
+        compilation.warnings.iter().cloned().chain(state.diagnostics.iter().cloned()).collect()
     } else {
         state.diagnostics.clone()
     };

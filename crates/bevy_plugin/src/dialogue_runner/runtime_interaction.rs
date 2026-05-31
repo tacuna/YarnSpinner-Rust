@@ -6,15 +6,14 @@ use crate::prelude::*;
 use anyhow::{Ok, bail};
 use bevy::asset::LoadedUntypedAsset;
 use bevy::ecs::system::SystemState;
-use bevy::platform::{collections::HashMap, hash::FixedHasher};
+use bevy::platform::collections::HashMap;
+use bevy::platform::hash::FixedHasher;
 use bevy::prelude::*;
 
 pub(crate) fn runtime_interaction_plugin(app: &mut App) {
     app.add_systems(
         Update,
-        (continue_runtime
-            .pipe(panic_on_err)
-            .run_if(resource_exists::<YarnProject>),)
+        (continue_runtime.pipe(panic_on_err).run_if(resource_exists::<YarnProject>),)
             .chain()
             .after(LineProviderSystemSet)
             .after(update_wait)
@@ -28,15 +27,8 @@ pub(crate) fn runtime_interaction_plugin(app: &mut App) {
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, SystemSet)]
 pub(crate) struct DialogueExecutionSystemSet;
 
-fn continue_runtime(
-    world: &mut World,
-    mut last_options: Local<HashMap<Entity, Vec<DialogueOption>>>,
-) -> SystemResult {
-    let mut system_state: SystemState<(
-        Query<(Entity, &mut DialogueRunner)>,
-        Res<Assets<LoadedUntypedAsset>>,
-        Commands,
-    )> = SystemState::new(world);
+fn continue_runtime(world: &mut World, mut last_options: Local<HashMap<Entity, Vec<DialogueOption>>>) -> SystemResult {
+    let mut system_state: SystemState<(Query<(Entity, &mut DialogueRunner)>, Res<Assets<LoadedUntypedAsset>>, Commands)> = SystemState::new(world);
 
     let (mut dialogue_runners, loaded_untyped_assets, mut commands) = system_state.get_mut(world);
 
@@ -55,10 +47,7 @@ fn continue_runtime(
             }
 
             if let Some(line_ids) = std::mem::take(&mut dialogue_runner.popped_line_hints) {
-                commands.trigger(LineHints {
-                    line_ids,
-                    entity: source,
-                });
+                commands.trigger(LineHints { line_ids, entity: source });
             }
 
             if !(dialogue_runner.will_continue_in_next_update
@@ -73,17 +62,15 @@ fn continue_runtime(
                 && let Some(option) = dialogue_runner.last_selected_option.take()
             {
                 let options = last_options
-                        .remove(&source)
-                        .expect_or_bug("Failed to get last presented options when trying to run selected option as line.");
+                    .remove(&source)
+                    .expect_or_bug("Failed to get last presented options when trying to run selected option as line.");
                 let Some(option) = options.into_iter().find(|o| o.id == option) else {
                     let expected_options = last_options
                         .values()
                         .flat_map(|options| options.iter().map(|option| option.id.to_string()))
                         .collect::<Vec<_>>()
                         .join(", ");
-                    bail!(
-                        "Dialogue options does not contain selected option. Expected one of [{expected_options}], but found {option}"
-                    );
+                    bail!("Dialogue options does not contain selected option. Expected one of [{expected_options}], but found {option}");
                 };
                 commands.trigger(PresentLine {
                     line: option.line,
@@ -119,18 +106,12 @@ fn continue_runtime(
     }
     system_state.apply(world);
 
-    let mut system_state: SystemState<(
-        Query<(Entity, &mut DialogueRunner)>,
-        Res<YarnProject>,
-        Commands,
-    )> = SystemState::new(world);
+    let mut system_state: SystemState<(Query<(Entity, &mut DialogueRunner)>, Res<YarnProject>, Commands)> = SystemState::new(world);
 
     let (mut dialogue_runners, project, mut commands) = system_state.get_mut(world);
 
     for (source, mut dialogue_runner) in dialogue_runners.iter_mut() {
-        if let Some((dialogue, is_sending_missed_events, _, Some(events))) =
-            dialogues.remove(&source)
-        {
+        if let Some((dialogue, is_sending_missed_events, _, Some(events))) = dialogues.remove(&source) {
             dialogue_runner.dialogue.replace(dialogue);
             for event in events {
                 match event {
@@ -147,43 +128,25 @@ fn continue_runtime(
                             .into_iter()
                             .map(|option| {
                                 let assets = dialogue_runner.get_assets(&option.line);
-                                let metadata = project
-                                    .line_metadata(&option.line.id)
-                                    .unwrap_or_default()
-                                    .to_vec();
+                                let metadata = project.line_metadata(&option.line.id).unwrap_or_default().to_vec();
                                 DialogueOption::from_yarn_dialogue_option(option, assets, metadata)
                             })
                             .collect();
                         last_options.insert(source, options.clone());
-                        commands.trigger(PresentOptions {
-                            options,
-                            entity: source,
-                        });
+                        commands.trigger(PresentOptions { options, entity: source });
                     }
                     DialogueEvent::Command(command) => {
-                        commands.trigger(ExecuteCommand {
-                            command,
-                            entity: source,
-                        });
+                        commands.trigger(ExecuteCommand { command, entity: source });
                         dialogue_runner.continue_in_next_update();
                     }
                     DialogueEvent::NodeComplete(node_name) => {
-                        commands.trigger(NodeCompleted {
-                            node_name,
-                            entity: source,
-                        });
+                        commands.trigger(NodeCompleted { node_name, entity: source });
                     }
                     DialogueEvent::NodeStart(node_name) => {
-                        commands.trigger(NodeStarted {
-                            node_name,
-                            entity: source,
-                        });
+                        commands.trigger(NodeStarted { node_name, entity: source });
                     }
                     DialogueEvent::LineHints(line_ids) => {
-                        commands.trigger(LineHints {
-                            line_ids,
-                            entity: source,
-                        });
+                        commands.trigger(LineHints { line_ids, entity: source });
                     }
                     DialogueEvent::DialogueComplete => {
                         if !is_sending_missed_events {

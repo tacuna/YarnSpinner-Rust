@@ -4,8 +4,7 @@
 
 use super::optionality::{AllowedOptionalityChain, Optional, Optionality, Required};
 use crate::prelude::*;
-use core::any::Any;
-use core::any::TypeId;
+use core::any::{Any, TypeId};
 use core::borrow::Borrow;
 use core::fmt::{Debug, Display};
 use core::iter::Peekable;
@@ -79,11 +78,7 @@ impl<T: YarnFnParam + 'static> YarnFnParam for Option<T> {
     type Optionality = Optional;
 
     fn retrieve<'a>(iter: &mut YarnValueWrapperIter<'a>) -> Self::Item<'a> {
-        if iter.peek().is_some() {
-            Some(T::retrieve(iter))
-        } else {
-            None
-        }
+        if iter.peek().is_some() { Some(T::retrieve(iter)) } else { None }
     }
 
     fn parameter_types() -> Vec<TypeId> {

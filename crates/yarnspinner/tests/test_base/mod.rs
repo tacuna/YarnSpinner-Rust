@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/TestBase.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/TestBase.cs>
 //!
 //! ## Implementations notes
 //! Methods used for upgrade testing were not ported since we don't offer any upgrade functionality.
@@ -63,17 +63,16 @@ impl Default for TestBase {
         let variable_storage = MemoryVariableStorage::new();
         let string_table = SharedTextProvider::new(StringTableTextProvider::new());
 
-        let mut dialogue = Dialogue::new(
-            Box::new(variable_storage.clone()),
-            Box::new(string_table.clone()),
-        );
-        dialogue
-            .library_mut()
-            .add_function("assert", |value: YarnValue| {
-                let is_truthy: bool = value.try_into().unwrap();
-                assert!(is_truthy);
-                true
-            });
+        let mut dialogue = Dialogue::new(Box::new(variable_storage.clone()), Box::new(string_table.clone()));
+        // Use BestLeastRecentlyViewed for deterministic test ordering.
+        // The VM default matches C# (RandomBestLeastRecentlyViewed), but
+        // the test plans expect stable document-order tie-breaking.
+        dialogue.set_content_saliency_strategy(Box::new(BestLeastRecentlyViewedSaliencyStrategy));
+        dialogue.library_mut().add_function("assert", |value: YarnValue| {
+            let is_truthy: bool = value.try_into().unwrap();
+            assert!(is_truthy);
+            true
+        });
 
         Self {
             dialogue,
@@ -105,16 +104,14 @@ impl TestBase {
 
     #[must_use]
     pub fn with_runtime_errors_do_not_cause_failure(self) -> Self {
-        self.runtime_errors_cause_failure
-            .store(false, Ordering::Relaxed);
+        self.runtime_errors_cause_failure.store(false, Ordering::Relaxed);
         self
     }
 
     #[must_use]
     pub fn with_compilation(self, compilation: Compilation) -> Self {
         let string_table = compilation.string_table;
-        self.with_program(compilation.program.unwrap())
-            .with_string_table(string_table)
+        self.with_program(compilation.program.unwrap()).with_string_table(string_table)
     }
 
     #[must_use]
@@ -132,10 +129,7 @@ impl TestBase {
 
     #[must_use]
     pub fn with_string_table(mut self, string_table: HashMap<LineId, StringInfo>) -> Self {
-        let string_table: HashMap<_, _> = string_table
-            .into_iter()
-            .map(|(id, info)| (id, info.text))
-            .collect();
+        let string_table: HashMap<_, _> = string_table.into_iter().map(|(id, info)| (id, info.text)).collect();
         let mut string_table_provider = StringTableTextProvider::new();
         string_table_provider.extend_base_language(string_table.clone());
         string_table_provider.extend_translation("en-US", string_table);
@@ -153,128 +147,154 @@ impl TestBase {
         let mut world = World::default();
 
         if let Some(test_plan) = self.test_plan.as_mut() {
-            while test_plan
-                .current_step()
-                .is_some_and(|step| !step.expected_step_type.is_blocking())
-            {
-                test_plan.next(&mut self.dialogue);
-            }
+            test_plan.process_non_blocking(&mut self.dialogue);
         }
 
-        while self.dialogue.can_continue() {
-            #[cfg(feature = "bevy")]
-            let events = self
-                .dialogue
-                .continue_with_world(&mut world)
-                .unwrap_or_else(|e| panic!("Encountered error while running dialogue: {e}"));
-            #[cfg(not(feature = "bevy"))]
-            let events = self
-                .dialogue
-                .continue_()
-                .unwrap_or_else(|e| panic!("Encountered error while running dialogue: {e}"));
+        loop {
+            let mut run_exhausted = false;
+            while self.dialogue.can_continue() && !run_exhausted {
+                #[cfg(feature = "bevy")]
+                let events = self
+                    .dialogue
+                    .continue_with_world(&mut world)
+                    .unwrap_or_else(|e| panic!("Encountered error while running dialogue: {e}"));
+                #[cfg(not(feature = "bevy"))]
+                let events = self
+                    .dialogue
+                    .continue_()
+                    .unwrap_or_else(|e| panic!("Encountered error while running dialogue: {e}"));
 
-            for event in events {
-                match event {
-                    DialogueEvent::Line(line) => {
-                        println!("Line: {}", line.text);
-                        let Some(test_plan) = self.test_plan.as_mut() else {
-                            continue;
-                        };
-                        test_plan.next(&mut self.dialogue);
+                for event in events {
+                    match event {
+                        DialogueEvent::Line(line) => {
+                            println!("Line: {}", line.text);
+                            let Some(test_plan) = self.test_plan.as_mut() else {
+                                continue;
+                            };
+                            test_plan.next(&mut self.dialogue);
 
-                        assert_eq!(
-                            ExpectedStepType::Line,
-                            test_plan.next_expected_step,
-                            "Received line {}, but was expecting a {:?}",
-                            line.text,
-                            test_plan.next_expected_step
-                        );
-                        assert_eq!(
-                            test_plan.next_step_value,
-                            Some(StepValue::String(line.text))
-                        );
-                    }
-                    DialogueEvent::Options(options) => {
-                        println!("Options:");
+                            assert_eq!(
+                                ExpectedStepType::Line,
+                                test_plan.next_expected_step,
+                                "Received line {}, but was expecting a {:?}",
+                                line.text,
+                                test_plan.next_expected_step
+                            );
+                            assert_eq!(test_plan.next_step_value, Some(StepValue::String(line.text)));
 
-                        let options: Vec<_> = options
-                            .into_iter()
-                            .map(|option| ProcessedOption {
-                                line: option.line.text,
-                                enabled: option.is_available,
-                            })
-                            .collect();
-                        for option in &options {
-                            println!(" - {} (available: {})", option.line, option.enabled);
+                            // Mimic C#'s pull-based runner: if no more blocking
+                            // steps remain in this run, stop driving the dialogue.
+                            if !test_plan.has_more_blocking_steps_in_current_run() {
+                                run_exhausted = true;
+                            }
                         }
-                        let Some(test_plan) = self.test_plan.as_mut() else {
-                            continue;
-                        };
+                        DialogueEvent::Options(options) => {
+                            println!("Options:");
 
-                        test_plan.next(&mut self.dialogue);
-                        assert_eq!(
-                            ExpectedStepType::Select,
-                            test_plan.next_expected_step,
-                            "Received {} options, but wasn't expecting them (was expecting {:?})",
-                            options.len(),
-                            test_plan.next_expected_step
-                        );
+                            let options: Vec<_> = options
+                                .into_iter()
+                                .map(|option| ProcessedOption {
+                                    line: option.line.text,
+                                    enabled: option.is_available,
+                                })
+                                .collect();
+                            for option in &options {
+                                println!(" - {} (available: {})", option.line, option.enabled);
+                            }
+                            let Some(test_plan) = self.test_plan.as_mut() else {
+                                continue;
+                            };
 
-                        assert_eq!(test_plan.next_expected_options, options);
+                            test_plan.next(&mut self.dialogue);
+                            assert_eq!(
+                                ExpectedStepType::Select,
+                                test_plan.next_expected_step,
+                                "Received {} options, but wasn't expecting them (was expecting {:?})",
+                                options.len(),
+                                test_plan.next_expected_step
+                            );
 
-                        if let Some(StepValue::Number(selection)) = test_plan.next_step_value {
-                            let selection = selection - 1; // 1-indexed for test plan, 0-indexed in the code
-                            println!("[Selecting option {selection}]");
-                            self.dialogue
-                                .set_selected_option(OptionId(selection))
-                                .unwrap();
-                        } else {
-                            println!("[Selecting option 0 implicitly]");
-                            self.dialogue.set_selected_option(OptionId(0)).unwrap();
+                            assert_eq!(test_plan.next_expected_options, options);
+
+                            if let Some(StepValue::Number(selection)) = test_plan.next_step_value {
+                                if selection == 0 {
+                                    // select: 0 means "no option selected" — fallthrough
+                                    println!("[No option selected — falling through]");
+                                    self.dialogue.set_no_option_selected().unwrap();
+                                } else {
+                                    let selection = selection - 1; // 1-indexed for test plan, 0-indexed in the code
+                                    println!("[Selecting option {selection}]");
+                                    self.dialogue.set_selected_option(OptionId(selection)).unwrap();
+                                }
+                            } else {
+                                println!("[Selecting option 0 implicitly]");
+                                self.dialogue.set_selected_option(OptionId(0)).unwrap();
+                            }
+
+                            if !test_plan.has_more_blocking_steps_in_current_run() {
+                                run_exhausted = true;
+                            }
                         }
-                    }
-                    DialogueEvent::Command(command) => {
-                        println!("Command: {}", command.raw);
-                        let Some(test_plan) = self.test_plan.as_mut() else {
-                            continue;
-                        };
+                        DialogueEvent::Command(command) => {
+                            println!("Command: {}", command.raw);
+                            let Some(test_plan) = self.test_plan.as_mut() else {
+                                continue;
+                            };
 
-                        test_plan.next(&mut self.dialogue);
-                        assert_eq!(
-                            ExpectedStepType::Command,
-                            test_plan.next_expected_step,
-                            "Received command {}, but wasn't expecting to select one (was expecting {:?})",
-                            command.raw,
-                            test_plan.next_expected_step
-                        );
+                            test_plan.next(&mut self.dialogue);
+                            assert_eq!(
+                                ExpectedStepType::Command,
+                                test_plan.next_expected_step,
+                                "Received command {}, but wasn't expecting to select one (was expecting {:?})",
+                                command.raw,
+                                test_plan.next_expected_step
+                            );
 
-                        // We don't need to get the composed string for a
-                        // command because it's been done for us in the
-                        // virtual machine. The VM can do this because
-                        // commands are not localised, so we don't need to
-                        // refer to the string table to get the text.
-                        assert_eq!(
-                            test_plan.next_step_value,
-                            Some(StepValue::String(command.raw))
-                        );
-                    }
-                    DialogueEvent::NodeComplete(_) => {}
-                    DialogueEvent::NodeStart(_) => {}
-                    DialogueEvent::LineHints(_) => {}
-                    DialogueEvent::DialogueComplete => {
-                        let Some(test_plan) = self.test_plan.as_mut() else {
-                            continue;
-                        };
+                            // We don't need to get the composed string for a
+                            // command because it's been done for us in the
+                            // virtual machine. The VM can do this because
+                            // commands are not localised, so we don't need to
+                            // refer to the string table to get the text.
+                            assert_eq!(test_plan.next_step_value, Some(StepValue::String(command.raw)));
 
-                        test_plan.next(&mut self.dialogue);
-                        assert_eq!(
-                            ExpectedStepType::Stop,
-                            test_plan.next_expected_step,
-                            "Stopped dialogue, but wasn't expecting to select it (was expecting {:?})",
-                            test_plan.next_expected_step
-                        );
+                            if !test_plan.has_more_blocking_steps_in_current_run() {
+                                run_exhausted = true;
+                            }
+                        }
+                        DialogueEvent::NodeComplete(_) => {}
+                        DialogueEvent::NodeStart(_) => {}
+                        DialogueEvent::LineHints(_) => {}
+                        DialogueEvent::DialogueComplete => {
+                            let Some(test_plan) = self.test_plan.as_mut() else {
+                                continue;
+                            };
+
+                            // If the run was already exhausted (no stop in testplan),
+                            // DialogueComplete is expected but not explicitly tested.
+                            if run_exhausted {
+                                continue;
+                            }
+
+                            test_plan.next(&mut self.dialogue);
+                            assert_eq!(
+                                ExpectedStepType::Stop,
+                                test_plan.next_expected_step,
+                                "Stopped dialogue, but wasn't expecting to select it (was expecting {:?})",
+                                test_plan.next_expected_step
+                            );
+                        }
                     }
                 }
+            }
+            // After dialogue ends, check for non-blocking steps (Restart, Set, etc.)
+            // that should restart the dialogue or set variables for the next run.
+            let mut restarted = false;
+            if let Some(test_plan) = self.test_plan.as_mut() {
+                restarted = test_plan.has_pending_restart();
+                test_plan.process_non_blocking(&mut self.dialogue);
+            }
+            if !restarted {
+                break;
             }
         }
         self
@@ -295,13 +315,7 @@ impl TestBase {
                     })
                     .ok()
             })
-            .filter(move |entry| {
-                entry
-                    .path()
-                    .extension()
-                    .map(|ext| allowed_extensions.contains(&ext))
-                    .unwrap_or_default()
-            })
+            .filter(move |entry| entry.path().extension().map(|ext| allowed_extensions.contains(&ext)).unwrap_or_default())
             // don't include ".upgraded.yarn" (used in upgrader tests)
             .filter(|entry| !entry.path().ends_with(".upgraded.yarn"))
             .map(move |entry| subdir.join(entry.file_name()))

@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/ProjectTests.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/ProjectTests.cs>
 //!
 //! The following tests test behavior that is currently out of scope for this project and were thus omitted:
 //! - TestDeclarationFilesAreGenerated: Tests functionality that, quote "Is intended to be called by tools that let the user manage variable declarations."
@@ -110,9 +110,7 @@ before 🧑🏾‍❤️‍💋‍🧑🏻after #line:abc130 // with a comment
 
     // Act
 
-    let (output, _) = Compiler::tag_lines(original_text, Vec::new())
-        .unwrap()
-        .unwrap();
+    let (output, _) = Compiler::tag_lines(original_text, Vec::new()).unwrap().unwrap();
 
     let file = File {
         file_name: "input".to_string(),
@@ -145,41 +143,17 @@ before 🧑🏾‍❤️‍💋‍🧑🏻after #line:abc130 // with a comment
     }
 
     let expected_results = [
-        (
-            Some("line:expected_abc123"),
-            "A single line, with a line tag.",
-        ),
+        (Some("line:expected_abc123"), "A single line, with a line tag."),
         ("line:expected_def456".into(), "An option, with a line tag."),
-        (
-            "line:expected_ghi789".into(),
-            "A line with a tag, and a comment.",
-        ),
+        ("line:expected_ghi789".into(), "A line with a tag, and a comment."),
         (None, "A line with a conditional and no line tag."),
-        (
-            None,
-            "A line with a conditional, a comment, and no line tag.",
-        ),
-        (
-            "line:expected_jkl123".into(),
-            "A line with a conditional and a line tag.",
-        ),
-        (
-            "line:expected_mno456".into(),
-            "A line with a conditional, a comment and a line tag.",
-        ),
+        (None, "A line with a conditional, a comment, and no line tag."),
+        ("line:expected_jkl123".into(), "A line with a conditional and a line tag."),
+        ("line:expected_mno456".into(), "A line with a conditional, a comment and a line tag."),
         (None, "An option with a conditional and no line tag."),
-        (
-            None,
-            "An option with a conditional, a comment, and no line tag.",
-        ),
-        (
-            "line:expected_pqr789".into(),
-            "An option with a conditional and a line tag.",
-        ),
-        (
-            "line:expected_stu123".into(),
-            "An option with a conditional, a comment and a line tag.",
-        ),
+        (None, "An option with a conditional, a comment, and no line tag."),
+        ("line:expected_pqr789".into(), "An option with a conditional and a line tag."),
+        ("line:expected_stu123".into(), "An option with a conditional, a comment and a line tag."),
         (None, "A single line, with no line tag."),
         (None, "An option, with no line tag."),
         (None, "A line with no tag, but a comment at the end."),
@@ -226,14 +200,7 @@ before 🧑🏾‍❤️‍💋‍🧑🏻after #line:abc130 // with a comment
             // flagging this ID as having been visited
             let prev = visited_ids.insert(tag.clone());
             if !prev {
-                println!(
-                    "{:#?}",
-                    compilation
-                        .string_table
-                        .iter()
-                        .filter(|(k, _)| **k == tag)
-                        .collect::<Vec<_>>()
-                );
+                println!("{:#?}", compilation.string_table.iter().filter(|(k, _)| **k == tag).collect::<Vec<_>>());
                 panic!("Duplicate line tag: {tag}");
             }
         } else {
@@ -281,16 +248,70 @@ fn test_debug_output_is_produced() {
     let result = Compiler::new().add_file(file).compile().unwrap();
 
     // We should have a single DebugInfo object, because we compiled a single node
-    assert_eq!(1, result.debug_info.len());
+    assert_eq!(1, result.debug_info.nodes.len());
 
     // The first instruction of the only node should begin on the third line
     println!("{:?}", result.debug_info);
-    let first_line_info = result.debug_info.values().next().unwrap().get_line_info(0);
+    let first_line_info = result.debug_info.nodes.first().unwrap().get_line_info(0);
 
     assert_eq!("input", first_line_info.file_name);
     assert_eq!("DebugTesting", first_line_info.node_name);
-    assert_eq!(2, first_line_info.position.unwrap().line);
-    assert_eq!(0, first_line_info.position.unwrap().character);
+    assert_eq!(2, first_line_info.range.as_ref().unwrap().start.line);
+    assert_eq!(0, first_line_info.range.as_ref().unwrap().start.character);
+}
+
+#[test]
+fn test_node_debug_info_contains_info() {
+    // --- Part 1: regular (non-implicit) node ---
+    let file = File {
+        file_name: "input".to_owned(),
+        source: create_test_node_with_name("This is a test node.", "TestNode"),
+    };
+    let result = Compiler::new().add_file(file).compile().unwrap();
+
+    let debug = result
+        .debug_info
+        .get_node_debug_info("TestNode")
+        .expect("DebugInfo for TestNode should exist");
+    assert!(!debug.is_implicit, "User-authored node should not be implicit");
+    assert!(debug.range.is_some(), "User-authored node should have a source range");
+
+    // --- Part 2: node group — hub node is implicit, candidates are not ---
+    // Two nodes with the same title and `when:` headers form a node group.
+    let group_source = "\
+title: Group\n\
+when: always\n\
+---\n\
+Line one.\n\
+===\n\
+title: Group\n\
+when: always\n\
+---\n\
+Line two.\n\
+===\n";
+    let group_file = File {
+        file_name: "group_input".to_owned(),
+        source: group_source.to_owned(),
+    };
+    let result2 = Compiler::new().add_file(group_file).compile().unwrap();
+
+    // The hub node ("Group") is compiler-generated and therefore implicit.
+    let hub_debug = result2
+        .debug_info
+        .get_node_debug_info("Group")
+        .expect("DebugInfo for hub node 'Group' should exist");
+    assert!(hub_debug.is_implicit, "Hub node should be implicit");
+    assert!(hub_debug.range.is_none(), "Implicit hub node has no source range");
+
+    // The candidate nodes ("Group.XXXXXXXX") are user-authored (just renamed) and NOT implicit.
+    let candidate_debug = result2
+        .debug_info
+        .nodes
+        .iter()
+        .find(|d| d.node_name.starts_with("Group."))
+        .expect("At least one candidate node should exist in debug_info");
+    assert!(!candidate_debug.is_implicit, "Candidate node should not be implicit");
+    assert!(candidate_debug.range.is_some(), "Candidate node should have a source range");
 }
 
 /// Quite a slow text (few seconds), it tagged over 30_000 lines.
@@ -311,11 +332,7 @@ fn test_line_collision_tagging() {
         .unwrap();
 
     let total_lines = result.string_table.len();
-    let total_untagged_lines = result
-        .string_table
-        .iter()
-        .filter(|(_, s)| s.is_implicit_tag)
-        .count();
+    let total_untagged_lines = result.string_table.iter().filter(|(_, s)| s.is_implicit_tag).count();
 
     // at this stage these should be the same
     assert_eq!(total_untagged_lines, total_lines);
@@ -342,9 +359,7 @@ fn test_line_collision_tagging() {
             content = content.strip_prefix('\u{FEFF}').unwrap().to_owned();
         }
 
-        let (tagged_version, new_existing_tags) = Compiler::tag_lines(content, existing_tags)
-            .unwrap()
-            .unwrap();
+        let (tagged_version, new_existing_tags) = Compiler::tag_lines(content, existing_tags).unwrap().unwrap();
 
         tagged_line_content.push(tagged_version);
         existing_tags = new_existing_tags
@@ -359,11 +374,51 @@ fn test_line_collision_tagging() {
     let tagged_lines_count = result.string_table.len();
     assert_eq!(tagged_lines_count, total_lines);
 
-    let total_untagged_lines = result
-        .string_table
-        .iter()
-        .filter(|(_, s)| s.is_implicit_tag)
-        .count();
+    let total_untagged_lines = result.string_table.iter().filter(|(_, s)| s.is_implicit_tag).count();
 
     assert_eq!(total_untagged_lines, 0);
+}
+
+// ---------------------------------------------------------------------------
+// TestDeclarationFilesAreGenerated
+// ---------------------------------------------------------------------------
+
+#[test]
+fn test_declaration_files_are_generated() {
+    // Parsing a file that contains variable declarations should produce output
+    // that can be turned back into a string containing the same information.
+
+    let original_text = concat!(
+        "title: Program\n",
+        "tags: one two\n",
+        "custom: yes\n",
+        "---\n",
+        "/// str desc\n",
+        "<<declare $str = \"str\">>\n",
+        "\n",
+        "/// num desc\n",
+        "<<declare $num = 2>>\n",
+        "\n",
+        "/// bool desc\n",
+        "<<declare $bool = true>>\n",
+        "===\n",
+    );
+
+    let result = Compiler::new()
+        .add_file(yarnspinner::compiler::File {
+            file_name: "input".to_owned(),
+            source: original_text.to_owned(),
+        })
+        .compile()
+        .expect("compilation should succeed");
+
+    assert!(
+        result.warnings.iter().all(|d| d.severity != DiagnosticSeverity::Error),
+        "unexpected errors: {:?}",
+        result.warnings,
+    );
+
+    let generated = generate_yarn_file_with_declarations(&result.declarations, "Program", &["one", "two"], &[("custom", "yes")]);
+
+    assert_eq!(generated, original_text);
 }

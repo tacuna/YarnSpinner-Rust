@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Dialogue.cs>, which we split off into multiple files
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Dialogue.cs>, which we split off into multiple files
 use crate::prelude::*;
 use bevy_platform::collections::HashMap;
 use bevy_platform::sync::{Arc, RwLock};
@@ -49,8 +49,7 @@ pub trait VariableStorage: Debug + Send + Sync {
 impl Extend<(String, YarnValue)> for Box<dyn VariableStorage> {
     fn extend<T: IntoIterator<Item = (String, YarnValue)>>(&mut self, iter: T) {
         let hash_map = iter.into_iter().collect();
-        VariableStorage::extend(self.as_mut(), hash_map)
-            .unwrap_or_else(|e| panic!("Failed to extend variable storage with values: {e}",));
+        VariableStorage::extend(self.as_mut(), hash_map).unwrap_or_else(|e| panic!("Failed to extend variable storage with values: {e}",));
     }
 }
 
@@ -108,11 +107,12 @@ impl VariableStorage for MemoryVariableStorage {
 
     fn get(&self, name: &str) -> Result<YarnValue> {
         Self::validate_name(name)?;
-        self.0.read().unwrap().get(name).cloned().ok_or_else(|| {
-            VariableStorageError::VariableNotFound {
-                name: name.to_string(),
-            }
-        })
+        self.0
+            .read()
+            .unwrap()
+            .get(name)
+            .cloned()
+            .ok_or_else(|| VariableStorageError::VariableNotFound { name: name.to_string() })
     }
 
     fn extend(&mut self, values: HashMap<String, YarnValue>) -> Result<()> {
@@ -146,9 +146,7 @@ impl MemoryVariableStorage {
         if name.starts_with('$') {
             Ok(())
         } else {
-            Err(VariableStorageError::InvalidVariableName {
-                name: name.to_string(),
-            })
+            Err(VariableStorageError::InvalidVariableName { name: name.to_string() })
         }
     }
 }

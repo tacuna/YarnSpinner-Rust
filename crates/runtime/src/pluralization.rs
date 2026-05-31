@@ -1,8 +1,7 @@
 use crate::prelude::Language;
 use fixed_decimal::{Decimal, DoublePrecision};
 use icu_locale_core::Locale;
-use icu_plurals::{PluralCategory, PluralRuleType, PluralRulesPreferences};
-use icu_plurals::{PluralOperands, PluralRules};
+use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRules, PluralRulesPreferences};
 
 #[derive(Debug)]
 pub(crate) struct Pluralization {
@@ -46,7 +45,7 @@ fn get_into_plural_operand(value: f32) -> PluralOperands {
 
 #[cfg(test)]
 mod tests {
-    //! Adapted from `TestNumberPlurals` in <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/LanguageTests.cs>
+    //! Adapted from `TestNumberPlurals` in <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/LanguageTests.cs>
 
     use super::*;
 
@@ -114,18 +113,12 @@ mod tests {
 
         for (locale, value, expected_category) in cardinal_tests.into_iter() {
             let result = Pluralization::new(locale).get_cardinal_plural_case(value);
-            assert_eq!(
-                expected_category, result,
-                "locale: {locale}, value: {value}, type: Cardinal"
-            );
+            assert_eq!(expected_category, result, "locale: {locale}, value: {value}, type: Cardinal");
         }
 
         for (locale, value, expected_category) in ordinal_tests.into_iter() {
             let result = Pluralization::new(locale).get_ordinal_plural_case(value);
-            assert_eq!(
-                expected_category, result,
-                "locale: {locale}, value: {value}, type: Ordinal"
-            );
+            assert_eq!(expected_category, result, "locale: {locale}, value: {value}, type: Ordinal");
         }
     }
 }

@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/YarnSpinner/Dialogue.cs>, which was split into multiple files.
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/YarnSpinner/Dialogue.cs>, which was split into multiple files.
 
 use crate::markup::AttributeMarkerProcessor;
 use crate::prelude::*;
@@ -6,12 +6,15 @@ use bevy_platform::collections::HashSet;
 use icu_plurals::PluralCategory;
 
 #[derive(Default, Debug, Clone)]
-pub(crate) struct DialogueTextProcessor {
-    pub(crate) language_code: Option<Language>,
+/// Handles format functions (`[select]`, `[plural]`, `[ordinal]`) in dialogue text.
+pub struct DialogueTextProcessor {
+    /// The language code used for pluralisation rules, or `None` to use the default.
+    pub language_code: Option<Language>,
 }
 
 impl DialogueTextProcessor {
-    pub(crate) fn new() -> Self {
+    /// Creates a new `DialogueTextProcessor` with no language code set.
+    pub fn new() -> Self {
         Self::default()
     }
 }
@@ -28,10 +31,7 @@ impl AttributeMarkerProcessor for DialogueTextProcessor {
     /// ## Panics
     /// Panics when the string contains a `plural` or `ordinal` marker, but the specified value cannot be parsed as a number.
     fn replacement_text_for_marker(&self, marker: &crate::markup::MarkupAttributeMarker) -> String {
-        let value_prop = marker
-            .properties
-            .get("value")
-            .expect("Expected a property \"value\"");
+        let value_prop = marker.properties.get("value").expect("Expected a property \"value\"");
         let value = value_prop.to_string();
 
         // Apply the "select" marker
@@ -47,32 +47,32 @@ impl AttributeMarkerProcessor for DialogueTextProcessor {
 
         // If it's not "select", then it's "plural" or "ordinal"
 
-        let language_code = self.language_code.as_ref()
+        let language_code = self
+            .language_code
+            .as_ref()
             .expect("Dialogue locale code is not set. 'plural' and 'ordinal' markers cannot be called unless one is set.");
 
         // Attempt to parse the value as a float, so we can determine its plural class
-        let value_as_float = value.parse::<f32>().unwrap_or_else(|_| {
-            panic!("Error while pluralising {LINE_ID_PREFIX} '{value}' is not a number")
-        });
+        let value_as_float = value
+            .parse::<f32>()
+            .unwrap_or_else(|_| panic!("Error while pluralising {LINE_ID_PREFIX} '{value}' is not a number"));
 
         // Implementation note: no need to fiddle with locales here because ICU already does fallbacks for us.
 
         // I would love to cache this, but `icu_plural::PluralRules` is not `Send` because it contains an `Rc`, so even a mutex can't help here :(
-        let plural_case =
-            match marker.name.as_ref().unwrap().as_str() {
-                "plural" => Pluralization::new(language_code.clone())
-                    .get_cardinal_plural_case(value_as_float),
-                "ordinal" => Pluralization::new(language_code.clone())
-                    .get_ordinal_plural_case(value_as_float),
-                _ => panic!("Invalid marker name {:?}", marker.name),
-            };
+        let plural_case = match marker.name.as_ref().unwrap().as_str() {
+            "plural" => Pluralization::new(language_code.clone()).get_cardinal_plural_case(value_as_float),
+            "ordinal" => Pluralization::new(language_code.clone()).get_ordinal_plural_case(value_as_float),
+            _ => panic!("Invalid marker name {:?}", marker.name),
+        };
         let plural_case_name = plural_case_name(plural_case);
 
         // Now that we know the plural case, we can select the
         // appropriate replacement text for it
-        let replacement_value = marker.properties.get(plural_case_name).unwrap_or_else(|| {
-            panic!("error: no replacement for {value}'s plural case of {plural_case_name}")
-        });
+        let replacement_value = marker
+            .properties
+            .get(plural_case_name)
+            .unwrap_or_else(|| panic!("error: no replacement for {value}'s plural case of {plural_case_name}"));
         let input = replacement_value.to_string();
 
         replace_value_placeholders(&input, &value)
@@ -88,25 +88,13 @@ impl AttributeMarkerProcessor for DialogueTextProcessor {
 }
 
 fn replace_value_placeholders(text: &str, value: &str) -> String {
-    let candidates: HashSet<_> = text
-        .match_indices(CANDIDATE_VALUE_PLACEHOLDER)
-        .map(|(i, _)| i)
-        .collect();
-    let invalids: HashSet<_> = text
-        .match_indices(INVALID_VALUE_PLACEHOLDER)
-        .map(|(i, _)| i + 1)
-        .collect();
+    let candidates: HashSet<_> = text.match_indices(CANDIDATE_VALUE_PLACEHOLDER).map(|(i, _)| i).collect();
+    let invalids: HashSet<_> = text.match_indices(INVALID_VALUE_PLACEHOLDER).map(|(i, _)| i + 1).collect();
     let indices: HashSet<_> = candidates.difference(&invalids).collect();
 
     text.chars()
         .enumerate()
-        .map(|(i, c)| {
-            if indices.contains(&i) {
-                value.to_string()
-            } else {
-                c.to_string()
-            }
-        })
+        .map(|(i, c)| if indices.contains(&i) { value.to_string() } else { c.to_string() })
         .collect()
 }
 

@@ -10,10 +10,7 @@ use core::fmt::Display;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct LineId(pub String);
 
 impl<T> From<T> for LineId

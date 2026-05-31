@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Analyser.cs>,
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Analyser.cs>,
 //! which was split into multiple files.
 
 use crate::prelude::*;
@@ -22,9 +22,7 @@ impl CompiledProgramAnalyser for VariableLister {
             node.instructions
                 .iter()
                 .filter_map(|instruction| match instruction.opcode() {
-                    OpCode::PushVariable | OpCode::StoreVariable => {
-                        Some(instruction.operands[0].clone())
-                    }
+                    OpCode::PushVariable | OpCode::StoreVariable => Some(instruction.operands[0].clone()),
                     _ => None,
                 })
                 .map(|operand| operand.try_into().unwrap())
@@ -35,12 +33,7 @@ impl CompiledProgramAnalyser for VariableLister {
     fn collect_diagnoses(&self) -> Vec<Diagnosis> {
         self.variables
             .iter()
-            .map(|variable| {
-                Diagnosis::new(
-                    DiagnosisSeverity::Note,
-                    format!("Script uses variable {variable}"),
-                )
-            })
+            .map(|variable| Diagnosis::new(DiagnosisSeverity::Note, format!("Script uses variable {variable}")))
             .collect()
     }
 }

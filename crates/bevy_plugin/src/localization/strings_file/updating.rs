@@ -1,31 +1,28 @@
+use crate::localization::line_id_generation::LineIdUpdateSystemSet;
 use crate::plugin::AssetRoot;
-use crate::{localization::line_id_generation::LineIdUpdateSystemSet, prelude::*};
+use crate::prelude::*;
 use bevy::platform::collections::{HashMap, HashSet};
 use bevy::prelude::*;
 
 pub(crate) fn strings_file_updating_plugin(app: &mut App) {
-    app.add_message::<UpdateAllStringsFilesForStringTableEvent>()
-        .add_systems(
-            Update,
-            (update_all_strings_files_for_string_table
-                .pipe(panic_on_err)
-                .after(LineIdUpdateSystemSet)
-                .in_set(YarnSpinnerSystemSet)
-                .run_if(
-                    in_development
-                        .and(has_localizations)
-                        .and(resource_exists::<YarnProject>)
-                        .and(events_in_queue::<UpdateAllStringsFilesForStringTableEvent>()),
-                ),)
-                .chain(),
-        );
+    app.add_message::<UpdateAllStringsFilesForStringTableEvent>().add_systems(
+        Update,
+        (update_all_strings_files_for_string_table
+            .pipe(panic_on_err)
+            .after(LineIdUpdateSystemSet)
+            .in_set(YarnSpinnerSystemSet)
+            .run_if(
+                in_development
+                    .and(has_localizations)
+                    .and(resource_exists::<YarnProject>)
+                    .and(events_in_queue::<UpdateAllStringsFilesForStringTableEvent>()),
+            ),)
+            .chain(),
+    );
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default, Reflect, Message)]
-#[reflect(Debug, Default, PartialEq)]
-pub(crate) struct UpdateAllStringsFilesForStringTableEvent(
-    pub(crate) std::collections::HashMap<LineId, StringInfo>,
-);
+pub(crate) struct UpdateAllStringsFilesForStringTableEvent(pub(crate) std::collections::HashMap<LineId, StringInfo>);
 
 fn update_all_strings_files_for_string_table(
     mut events: ResMut<Messages<UpdateAllStringsFilesForStringTableEvent>>,
@@ -53,44 +50,24 @@ fn update_all_strings_files_for_string_table(
         events.clear();
         return Ok(());
     }
-    if languages_to_handles
-        .values()
-        .any(|h| !strings_files.contains(h))
-    {
+    if languages_to_handles.values().any(|h| !strings_files.contains(h)) {
         return Ok(());
     }
     if expected_file_names.is_empty() {
-        expected_file_names.extend(
-            project
-                .compilation
-                .string_table
-                .values()
-                .map(|string_info| string_info.file_name.clone()),
-        );
+        expected_file_names.extend(project.compilation.string_table.values().map(|string_info| string_info.file_name.clone()));
     }
 
     let mut dirty_paths: HashSet<(Handle<StringsFile>, &std::path::Path)> = HashSet::default();
     for string_table in events.drain().map(|e| e.0) {
-        let file_names: HashSet<_> = string_table
-            .values()
-            .map(|s| s.file_name.as_str())
-            .collect();
+        let file_names: HashSet<_> = string_table.values().map(|s| s.file_name.as_str()).collect();
         let file_names = file_names.into_iter().collect::<Vec<_>>().join(", ");
         for (language, strings_file_handle) in languages_to_handles.clone() {
             let strings_file = strings_files.get_mut(&strings_file_handle).unwrap();
-            lint_strings_file(
-                strings_file,
-                &expected_file_names,
-                &asset_server,
-                &strings_file_handle,
-            );
+            lint_strings_file(strings_file, &expected_file_names, &asset_server, &strings_file_handle);
 
             let strings_file_path = localizations.strings_file_path(language.clone()).unwrap();
 
-            let new_strings_file = match StringsFile::from_string_table(
-                language.clone(),
-                string_table.clone(),
-            ) {
+            let new_strings_file = match StringsFile::from_string_table(language.clone(), string_table.clone()) {
                 Ok(new_strings_file) => new_strings_file,
                 Err(e) => {
                     if project.development_file_generation == DevelopmentFileGeneration::Full {
@@ -126,14 +103,8 @@ fn update_all_strings_files_for_string_table(
     Ok(())
 }
 
-fn lint_strings_file(
-    strings_file: &StringsFile,
-    expected_file_names: &HashSet<String>,
-    asset_server: &AssetServer,
-    handle: &Handle<StringsFile>,
-) {
-    let actual_file_names: HashSet<_> =
-        strings_file.records().map(|rec| rec.file.clone()).collect();
+fn lint_strings_file(strings_file: &StringsFile, expected_file_names: &HashSet<String>, asset_server: &AssetServer, handle: &Handle<StringsFile>) {
+    let actual_file_names: HashSet<_> = strings_file.records().map(|rec| rec.file.clone()).collect();
     let superfluous_file_names = actual_file_names
         .difference(expected_file_names)
         .map(|name| name.to_owned())

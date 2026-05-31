@@ -31,10 +31,7 @@ impl<T: Event + Debug + Clone> Default for EventAsserter<T> {
         }
     }
 }
-pub fn event_assertion<T: Event + Debug + Clone>(
-    event: On<T>,
-    mut event_asserter: If<ResMut<EventAsserter<T>>>,
-) {
+pub fn event_assertion<T: Event + Debug + Clone>(event: On<T>, mut event_asserter: If<ResMut<EventAsserter<T>>>) {
     event_asserter.actual_calls += 1;
     if let Some(predicate) = &event_asserter.predicate {
         assert!(

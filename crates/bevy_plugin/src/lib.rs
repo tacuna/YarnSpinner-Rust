@@ -113,43 +113,54 @@ pub mod default_impl {
     //! Default implementations for Yarn Spinner traits.
     #[cfg(feature = "audio_assets")]
     pub use crate::line_provider::AudioAssetProvider;
-    pub use crate::line_provider::{
-        FileExtensionAssetProvider, StringsFileTextProvider, file_extensions,
-    };
+    pub use crate::line_provider::{EmbeddedTextProvider, FileExtensionAssetProvider, StringsFileTextProvider, file_extensions};
     pub use yarnspinner::runtime::{MemoryVariableStorage, StringTableTextProvider};
 }
 
 pub mod events {
     //! Events that are sent by the [`DialogueRunner`](crate::prelude::DialogueRunner). A dialogue view is expected to at least handle [`PresentLine`] event and [`PresentOptions`] event.
     pub use crate::dialogue_runner::{
-        DialogueCompleted, DialogueStarted, ExecuteCommand, LineHints, NodeCompleted, NodeStarted,
-        PresentLine, PresentOptions,
+        DialogueCompleted,
+        DialogueStarted,
+        ExecuteCommand,
+        LineHints,
+        NodeCompleted,
+        NodeStarted,
+        PresentLine,
+        PresentOptions,
     };
 }
 
 pub mod prelude {
     //! Everything you need to get starting using Yarn Spinner.
 
+    pub use crate::commands::{YarnCommand, YarnCommands};
     #[cfg(feature = "audio_assets")]
     pub use crate::default_impl::AudioAssetProvider;
-    pub use crate::{
-        commands::{YarnCommand, YarnCommands},
-        default_impl::FileExtensionAssetProvider,
-        development_file_generation::DevelopmentFileGeneration,
-        dialogue_runner::{DialogueOption, DialogueRunner, DialogueRunnerBuilder, LocalizedLine},
-        line_provider::{AssetProvider, LineAssets, TextProvider},
-        localization::{Localization, Localizations},
-        plugin::{YarnFileSource, YarnSpinnerPlugin, YarnSpinnerSystemSet},
-        project::YarnProject,
-        yarn_file_asset::YarnFile,
-    };
-    pub(crate) use crate::{localization::StringsFile, utils::*};
+    pub use crate::default_impl::FileExtensionAssetProvider;
+    pub use crate::development_file_generation::DevelopmentFileGeneration;
+    pub use crate::dialogue_runner::{DialogueOption, DialogueRunner, DialogueRunnerBuilder, LocalizedLine};
+    pub use crate::line_provider::{AssetProvider, LineAssets, TextProvider};
+    pub(crate) use crate::localization::StringsFile;
+    pub use crate::localization::{Localization, Localizations};
+    pub use crate::plugin::{YarnFileSource, YarnSpinnerPlugin, YarnSpinnerSystemSet};
+    pub use crate::project::YarnProject;
+    pub(crate) use crate::utils::*;
+    pub use crate::yarn_file_asset::YarnFile;
     pub(crate) use anyhow::{Context, Error};
     pub(crate) use serde::{Deserialize, Serialize};
     pub(crate) use yarnspinner::prelude::*;
     pub use yarnspinner::prelude::{
-        IntoYarnValueFromNonYarnValue, Language, LineId, MarkupAttribute, MarkupValue, OptionId,
-        VariableStorage, YarnFn, YarnLibrary, YarnValue,
+        IntoYarnValueFromNonYarnValue,
+        Language,
+        LineId,
+        MarkupAttribute,
+        MarkupValue,
+        OptionId,
+        VariableStorage,
+        YarnFn,
+        YarnLibrary,
+        YarnValue,
     };
     pub(crate) type SystemResult = anyhow::Result<()>;
     pub(crate) use yarnspinner_internal_shared::prelude::*;
@@ -157,10 +168,16 @@ pub mod prelude {
 
 pub use crate::commands::{TaskFinishedIndicator, UntypedYarnCommand};
 pub use crate::dialogue_runner::{InnerDialogue, InnerDialogueMut};
+pub use yarnspinner::compiler::{DebugInfo, ProjectDebugInfo};
 pub use yarnspinner::core::{UntypedYarnFn, yarn_fn_type};
 pub use yarnspinner::prelude::{
-    Compilation, StringInfo, TextProvider as UnderlyingTextProvider, YarnAnalysisContext,
-    YarnCommand as UnderlyingYarnCommand, YarnLine as UnderlyingYarnLine,
+    Compilation,
+    LineInfo,
+    StringInfo,
+    TextProvider as UnderlyingTextProvider,
+    YarnAnalysisContext,
+    YarnCommand as UnderlyingYarnCommand,
+    YarnLine as UnderlyingYarnLine,
 };
 
 pub mod deferred_loading {

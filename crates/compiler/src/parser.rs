@@ -1,6 +1,7 @@
 //! The parser for the compiler.
 
 mod actual_types;
+pub(crate) mod enum_registry;
 pub(crate) mod generated;
 mod indent_aware_lexer;
 

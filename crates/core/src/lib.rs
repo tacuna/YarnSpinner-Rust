@@ -30,27 +30,21 @@ pub mod prelude {
     pub use crate::feature_gates::*;
 
     // Re-export alloc types for internal use only
-    pub(crate) use crate::{
-        alloc::borrow::ToOwned,
-        alloc::boxed::Box,
-        alloc::format,
-        alloc::string::{String, ToString},
-        alloc::vec,
-        alloc::vec::Vec,
-    };
+    pub(crate) use crate::alloc::borrow::ToOwned;
+    pub(crate) use crate::alloc::boxed::Box;
+    pub(crate) use crate::alloc::string::{String, ToString};
+    pub(crate) use crate::alloc::vec::Vec;
+    pub(crate) use crate::alloc::{format, vec};
 
-    pub use crate::{
-        generated::{
-            Header, Instruction, InvalidOpCodeError, Node, Operand, Program, instruction::OpCode,
-            operand::Value as OperandValue,
-        },
-        internal_value::*,
-        library::*,
-        line_id::*,
-        operator::*,
-        position::*,
-        types::Type,
-        yarn_fn::*,
-        yarn_value::*,
-    };
+    pub use crate::generated::instruction::OpCode;
+    pub use crate::generated::operand::Value as OperandValue;
+    pub use crate::generated::{Header, Instruction, InvalidOpCodeError, Node, Operand, Program};
+    pub use crate::internal_value::*;
+    pub use crate::library::*;
+    pub use crate::line_id::*;
+    pub use crate::operator::*;
+    pub use crate::position::*;
+    pub use crate::types::Type;
+    pub use crate::yarn_fn::*;
+    pub use crate::yarn_value::*;
 }

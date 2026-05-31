@@ -6,6 +6,9 @@ mod function_registry;
 mod function_wrapping;
 pub mod optionality;
 mod parameter_wrapping;
+mod variadic_fn;
 
 pub(crate) use function_registry::*;
-pub use {function_wrapping::*, parameter_wrapping::*};
+pub use function_wrapping::*;
+pub use parameter_wrapping::*;
+pub use variadic_fn::VariadicYarnFn;

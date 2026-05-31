@@ -1,8 +1,8 @@
 use crate::listeners::CompilerListener;
 use crate::prelude::*;
-use antlr_rust::token::Token;
-use yarnspinner_core::prelude::OpCode;
-use yarnspinner_core::prelude::*;
+use antlr4rust::token::Token;
+use std::ops::Range;
+use yarnspinner_core::prelude::{OpCode, *};
 
 impl CompilerListener<'_> {
     /// Creates a new instruction, and appends it to a node in the [`Program`].
@@ -13,16 +13,14 @@ impl CompilerListener<'_> {
         };
 
         let current_node = self.current_node.as_mut().unwrap();
-        self.current_debug_info
-            .line_positions
-            .insert(current_node.instructions.len(), emit.source);
+        self.current_debug_info.line_ranges.insert(current_node.instructions.len(), emit.source);
         current_node.instructions.push(instruction);
     }
 }
 
 #[derive(Debug, Clone)]
 pub(crate) struct Emit {
-    source: Option<Position>,
+    source: Option<Range<Position>>,
     op_code: OpCode,
     operands: Vec<Operand>,
 }
@@ -36,7 +34,7 @@ impl Emit {
         }
     }
 
-    pub(crate) fn with_source(mut self, source: Position) -> Self {
+    pub(crate) fn with_source(mut self, source: Range<Position>) -> Self {
         self.source = Some(source);
         self
     }
@@ -46,11 +44,13 @@ impl Emit {
         self
     }
 
+    /// Sets the source range from a single token (degenerate range: start == end).
     pub(crate) fn with_token(mut self, token: &(impl Token + ?Sized)) -> Self {
-        self.source = Some(Position {
+        let pos = Position {
             line: token.get_line_as_usize().saturating_sub(1),
             character: token.get_column_as_usize(),
-        });
+        };
+        self.source = Some(pos..pos);
         self
     }
 }

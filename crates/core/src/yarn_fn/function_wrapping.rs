@@ -93,6 +93,12 @@ pub trait UntypedYarnFn: Debug + Display + Send + Sync {
     fn parameter_types(&self) -> Vec<TypeId>;
     /// The [`TypeId`] of the return type of this function.
     fn return_type(&self) -> TypeId;
+    /// Returns the [`TypeId`] of the variadic parameter type, if this function is variadic.
+    /// A variadic function accepts any number of extra arguments of this type after the fixed parameters.
+    /// Non-variadic functions return `None` (the default).
+    fn variadic_parameter_type_id(&self) -> Option<TypeId> {
+        None
+    }
 }
 
 impl Clone for Box<dyn UntypedYarnFn> {
@@ -113,9 +119,7 @@ where
 
     #[cfg(feature = "bevy")]
     fn call_with_world(&self, input: Vec<YarnValue>, world: &mut World) -> YarnValue {
-        self.function
-            .call_with_world(input, world)
-            .into_yarn_value()
+        self.function.call_with_world(input, world).into_yarn_value()
     }
 
     fn clone_box(&self) -> Box<dyn UntypedYarnFn> {
@@ -521,8 +525,7 @@ mod tests {
             a + b
         }
         let id = world.register_system(f);
-        let out: u32 =
-            id.call_with_world(vec![YarnValue::from(40), YarnValue::from(2)], &mut world);
+        let out: u32 = id.call_with_world(vec![YarnValue::from(40), YarnValue::from(2)], &mut world);
         assert_eq!(out, 42);
     }
 
@@ -534,29 +537,16 @@ mod tests {
             a + b + maybe_c.unwrap_or(0)
         }
         let id = world.register_system(f);
-        let out: u32 =
-            id.call_with_world(vec![YarnValue::from(40), YarnValue::from(1)], &mut world);
+        let out: u32 = id.call_with_world(vec![YarnValue::from(40), YarnValue::from(1)], &mut world);
         assert_eq!(out, 41);
-        let out: u32 = id.call_with_world(
-            vec![YarnValue::from(40), YarnValue::from(1), YarnValue::from(1)],
-            &mut world,
-        );
+        let out: u32 = id.call_with_world(vec![YarnValue::from(40), YarnValue::from(1), YarnValue::from(1)], &mut world);
         assert_eq!(out, 42);
     }
 
     #[test]
     fn accepts_lots_of_different_types() {
         #[allow(clippy::too_many_arguments)]
-        fn f(
-            _: String,
-            _: usize,
-            _: &str,
-            _: &YarnValue,
-            _: &bool,
-            _: isize,
-            _: String,
-            _: &u32,
-        ) -> bool {
+        fn f(_: String, _: usize, _: &str, _: &YarnValue, _: &bool, _: isize, _: String, _: &u32) -> bool {
             true
         }
         accept_yarn_fn(f);

@@ -1,9 +1,9 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/LastLineBeforeOptionsVisitor.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/Visitors/LastLineBeforeOptionsVisitor.cs>
 
 use crate::prelude::generated::yarnspinnerparser::*;
 use crate::prelude::generated::yarnspinnerparservisitor::YarnSpinnerParserVisitorCompat;
 use crate::prelude::*;
-use antlr_rust::tree::ParseTreeVisitorCompat;
+use antlr4rust::tree::ParseTreeVisitorCompat;
 use std::rc::Rc;
 
 #[derive(Debug, Clone, Default)]
@@ -53,10 +53,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for LastLineBeforeOptionsVis
 
     // visiting an option
     // basically just run through the statement (if any exist)
-    fn visit_shortcut_option_statement(
-        &mut self,
-        ctx: &Shortcut_option_statementContext<'input>,
-    ) -> Self::Return {
+    fn visit_shortcut_option_statement(&mut self, ctx: &Shortcut_option_statementContext<'input>) -> Self::Return {
         for shortcut in ctx.shortcut_option_all() {
             let statements = shortcut.statement_all();
             self.run_through_statement(&statements);

@@ -13,9 +13,7 @@ fn does_not_load_asset_without_localizations() -> Result<()> {
     let mut world = World::default();
 
     app.setup_default_plugins()
-        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-            "lines_with_ids.yarn",
-        )));
+        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("lines_with_ids.yarn")));
 
     let project = app.load_project();
     let mut dialogue_runner = project
@@ -60,9 +58,7 @@ fn does_not_load_invalid_asset_id() -> Result<()> {
         .build_dialogue_runner(&mut world.commands())
         .add_asset_provider(AudioAssetProvider::new())
         .build();
-    dialogue_runner
-        .set_asset_language("en-US")
-        .start_node("Start");
+    dialogue_runner.set_asset_language("en-US").start_node("Start");
     app.world_mut().spawn(dialogue_runner);
 
     app.load_lines();
@@ -126,9 +122,7 @@ fn loads_asset_from_translated_localization() -> Result<()> {
         .build_dialogue_runner(&mut world.commands())
         .add_asset_provider(AudioAssetProvider::new())
         .build();
-    dialogue_runner
-        .set_asset_language("de-CH")
-        .start_node("Start");
+    dialogue_runner.set_asset_language("de-CH").start_node("Start");
     app.world_mut().spawn(dialogue_runner);
     app.load_lines();
 
@@ -163,9 +157,7 @@ fn panics_on_invalid_language() {
         .build_dialogue_runner(&mut world.commands())
         .add_asset_provider(AudioAssetProvider::new())
         .build();
-    dialogue_runner
-        .set_asset_language("fr-FR")
-        .start_node("Start");
+    dialogue_runner.set_asset_language("fr-FR").start_node("Start");
     app.world_mut().spawn(dialogue_runner);
     app.load_lines();
 }
@@ -190,9 +182,7 @@ fn does_not_load_asset_with_invalid_type() -> Result<()> {
         .add_asset_provider(AudioAssetProvider::new())
         .build();
 
-    dialogue_runner
-        .set_asset_language("en-US")
-        .start_node("Start");
+    dialogue_runner.set_asset_language("en-US").start_node("Start");
     app.world_mut().spawn(dialogue_runner);
 
     app.load_lines();

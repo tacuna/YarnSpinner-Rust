@@ -138,9 +138,7 @@ impl<T: Debug + Send + Sync + 'static> TaskFinishedIndicator for Task<T> {
 
 #[cfg(not(target_arch = "wasm32"))]
 mod task_finished_name_change {
-    pub(super) fn is_finished_<T: std::fmt::Debug + Send + Sync + 'static>(
-        task: &bevy::tasks::Task<T>,
-    ) -> bool {
+    pub(super) fn is_finished_<T: std::fmt::Debug + Send + Sync + 'static>(task: &bevy::tasks::Task<T>) -> bool {
         bevy::tasks::Task::is_finished(task)
     }
 }

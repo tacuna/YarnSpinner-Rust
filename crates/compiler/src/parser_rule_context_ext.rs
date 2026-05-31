@@ -1,9 +1,9 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/YarnSpinnerRuleContextExt.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/Utility.cs>
 
 use crate::prelude::*;
-use antlr_rust::parser_rule_context::ParserRuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::token_stream::TokenStream;
+use antlr4rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::token_stream::TokenStream;
 use std::iter;
 
 pub(crate) trait ParserRuleContextExt<'input>: ParserRuleContext<'input> {
@@ -37,25 +37,22 @@ pub(crate) trait ParserRuleContextExt<'input>: ParserRuleContext<'input> {
         }
     }
 
-    fn get_lines_around(
-        &self,
-        token_stream: &ActualTokenStream<'input>,
-        surrounding_lines: usize,
-    ) -> LinesAroundResult {
+    fn get_lines_around(&self, token_stream: &ActualTokenStream<'input>, surrounding_lines: usize) -> LinesAroundResult {
         // This seems expensive, but it's only used for error reporting.
         let whole_file = token_stream.get_all_text();
-        let char_start = self.start().get_start() as usize;
-        let char_stop = self.stop().get_stop() as usize + 1;
+        let char_count = whole_file.chars().count();
+        let char_start = (self.start().get_start() as usize).min(char_count.saturating_sub(1));
+        let char_stop = (self.stop().get_stop() as usize + 1).min(char_count);
         let byte_start = whole_file
             .char_indices()
             .map(|(byte_start, _)| byte_start)
             .nth(char_start)
-            .unwrap();
+            .unwrap_or(whole_file.len());
         let byte_stop = whole_file
             .char_indices()
             .map(|(byte_start, _)| byte_start)
             .nth(char_stop)
-            .unwrap();
+            .unwrap_or(whole_file.len());
         let first_line = self.start().get_line_as_usize().saturating_sub(1);
 
         let head = &whole_file[..byte_start];
@@ -82,11 +79,7 @@ pub(crate) trait ParserRuleContextExt<'input>: ParserRuleContext<'input> {
         } else {
             surrounding_lines + 1
         };
-        let tail = tail
-            .lines()
-            .take(tail_lines_to_take)
-            .collect::<Vec<_>>()
-            .join("\n");
+        let tail = tail.lines().take(tail_lines_to_take).collect::<Vec<_>>().join("\n");
         let lines = head + body + &tail;
         LinesAroundResult { lines, first_line }
     }

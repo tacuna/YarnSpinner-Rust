@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Dialogue.cs>, which we split off into multiple files
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Dialogue.cs>, which we split off into multiple files
 //!
 //! ## Implementation notes
 //!
@@ -11,10 +11,7 @@ use crate::prelude::*;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 /// An event encountered while running [`Dialogue::continue_`]. A caller is expected to handle these events and act accordingly.
 ///
 /// ## Implementation note

@@ -4,7 +4,8 @@ use crate::setup::{DialogueContinueNode, DialogueNode, UiRootNode, create_dialog
 use crate::updating::SpeakerChangeEvent;
 use bevy::platform::time::Instant;
 use bevy::prelude::*;
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 use unicode_segmentation::UnicodeSegmentation;
 
 pub(crate) fn typewriter_plugin(app: &mut App) {
@@ -59,11 +60,7 @@ impl Typewriter {
         *self = Self {
             character_name: line.character_name().map(|s| s.to_string()),
             current_text: String::new(),
-            graphemes_left: line
-                .text_without_character_name()
-                .graphemes(true)
-                .map(|s| s.to_string())
-                .collect(),
+            graphemes_left: line.text_without_character_name().graphemes(true).map(|s| s.to_string()).collect(),
             last_before_options: line.is_last_line_before_options(),
             ..default()
         };
@@ -129,12 +126,10 @@ fn write_text(
     let current_text = &typewriter.current_text;
     let rest = typewriter.graphemes_left.join("");
     let spans = create_dialog_text(current_text, rest);
-    text_entity
-        .despawn_related::<Children>()
-        .with_children(|parent| {
-            parent.spawn(spans[0].clone());
-            parent.spawn(spans[1].clone());
-        });
+    text_entity.despawn_related::<Children>().with_children(|parent| {
+        parent.spawn(spans[0].clone());
+        parent.spawn(spans[1].clone());
+    });
 }
 
 fn show_continue(
@@ -169,11 +164,7 @@ fn bob_continue(
     style.bottom = Val::Px(pixels);
 }
 
-fn send_finished_event(
-    mut events: MessageWriter<TypewriterFinishedEvent>,
-    typewriter: Res<Typewriter>,
-    mut last_finished: Local<bool>,
-) {
+fn send_finished_event(mut events: MessageWriter<TypewriterFinishedEvent>, typewriter: Res<Typewriter>, mut last_finished: Local<bool>) {
     if !typewriter.is_finished() {
         *last_finished = false;
     } else if !*last_finished {

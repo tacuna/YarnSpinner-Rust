@@ -30,3 +30,19 @@ doc = false
 [[bin]]
 name = "hello_world"
 doc = false
+
+[[bin]]
+name = "line_tag_generator"
+doc = false
+
+[[bin]]
+name = "markup_processor"
+doc = false
+
+[[bin]]
+name = "node_groups"
+doc = false
+
+[[bin]]
+name = "no_option_selected"
+doc = false

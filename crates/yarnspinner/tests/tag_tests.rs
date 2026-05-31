@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/TagTests.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/TagTests.cs>
 
 use test_base::prelude::*;
 use yarnspinner::compiler::*;
@@ -7,10 +7,9 @@ mod test_base;
 
 #[test]
 fn test_no_options_line_not_tagged() {
-    let result =
-        Compiler::from_test_source("title:Start\n---\nline without options #line:1\n===\n")
-            .compile()
-            .unwrap();
+    let result = Compiler::from_test_source("title:Start\n---\nline without options #line:1\n===\n")
+        .compile()
+        .unwrap();
 
     let info = &result.string_table[&"line:1".into()];
     assert!(!contains_last_line_tag(info));
@@ -18,11 +17,9 @@ fn test_no_options_line_not_tagged() {
 
 #[test]
 fn test_line_before_options_tagged_last_line() {
-    let result = Compiler::from_test_source(
-        "title:Start\n---\nline before options #line:1\n-> option 1\n-> option 2\n===\n",
-    )
-    .compile()
-    .unwrap();
+    let result = Compiler::from_test_source("title:Start\n---\nline before options #line:1\n-> option 1\n-> option 2\n===\n")
+        .compile()
+        .unwrap();
 
     let info = &result.string_table[&"line:1".into()];
     assert!(contains_last_line_tag(info));
@@ -30,9 +27,10 @@ fn test_line_before_options_tagged_last_line() {
 
 #[test]
 fn test_line_not_before_options_not_tagged_last_line() {
-    let result = Compiler::from_test_source(
-        "title:Start\n---\nline not before options #line:0\nline before options #line:1\n-> option 1\n-> option 2\n===\n",
-    ).compile().unwrap();
+    let result =
+        Compiler::from_test_source("title:Start\n---\nline not before options #line:0\nline before options #line:1\n-> option 1\n-> option 2\n===\n")
+            .compile()
+            .unwrap();
 
     let info = &result.string_table[&"line:0".into()];
     assert!(!contains_last_line_tag(info));
@@ -40,9 +38,10 @@ fn test_line_not_before_options_not_tagged_last_line() {
 
 #[test]
 fn test_line_after_options_not_tagged_last_line() {
-    let result = Compiler::from_test_source(
-        "title:Start\n---\nline before options #line:1\n-> option 1\n-> option 2\nline after options #line:2\n===\n",
-    ).compile().unwrap();
+    let result =
+        Compiler::from_test_source("title:Start\n---\nline before options #line:1\n-> option 1\n-> option 2\nline after options #line:2\n===\n")
+            .compile()
+            .unwrap();
 
     let info = &result.string_table[&"line:2".into()];
     assert!(!contains_last_line_tag(info));
@@ -161,11 +160,9 @@ line before call #line:4
 
 #[test]
 fn test_line_is_last_before_another_node_not_tagged() {
-    let result = Compiler::from_test_source(
-        "title: Start\n---\nlast line #line:0\n===\ntitle: Second\n---\n-> option 1\n===\n",
-    )
-    .compile()
-    .unwrap();
+    let result = Compiler::from_test_source("title: Start\n---\nlast line #line:0\n===\ntitle: Second\n---\n-> option 1\n===\n")
+        .compile()
+        .unwrap();
 
     let info = &result.string_table[&"line:0".into()];
     assert!(!contains_last_line_tag(info));
@@ -195,4 +192,48 @@ fn test_comments_arent_tagged() {
         .compile();
 
     assert!(result.is_ok());
+}
+
+// ---------------------------------------------------------------------------
+// TestShadowLinesReflectSourceLines
+// Divergence from C#: Rust keeps `text: String` (non-empty) on shadow lines
+// rather than setting it to null, to avoid breaking the non-optional field type.
+// Callers should use `shadow_line_id.is_some()` to detect shadow lines.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn test_shadow_lines_reflect_source_lines() {
+    let source = "title: Start\n---\nThis is a line. #line:source #apple\nThis is a line. #shadow:source #banana\n===\n";
+    let file = File {
+        file_name: "input".to_owned(),
+        source: source.to_owned(),
+    };
+    let result = Compiler::new().add_file(file).compile().unwrap();
+
+    assert_eq!(result.string_table.len(), 2, "there are two lines in the string table");
+
+    let source_line = result.string_table.get(&"line:source".into()).expect("source line not found");
+    let shadow_line = result
+        .string_table
+        .iter()
+        .find(|(k, _)| k.0 != "line:source")
+        .map(|(_, v)| v)
+        .expect("shadow line not found");
+
+    assert_eq!(source_line.text, "This is a line.");
+    assert!(source_line.shadow_line_id.is_none(), "source lines should not have shadow_line_id");
+    assert!(source_line.metadata.contains(&"apple".to_owned()));
+    assert!(!source_line.metadata.contains(&"banana".to_owned()));
+
+    // Divergence: text is not null/empty in Rust (kept as the source text for runtime use)
+    assert!(shadow_line.shadow_line_id.is_some(), "shadow lines should have shadow_line_id set");
+    assert_eq!(shadow_line.shadow_line_id.as_deref(), Some("line:source"));
+    assert!(
+        !shadow_line.metadata.contains(&"apple".to_owned()),
+        "shadow lines have their own metadata"
+    );
+    assert!(
+        shadow_line.metadata.contains(&"banana".to_owned()),
+        "shadow lines have their own metadata"
+    );
 }

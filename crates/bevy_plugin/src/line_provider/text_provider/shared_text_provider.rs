@@ -30,10 +30,7 @@ impl TextProvider for SharedTextProvider {
     }
 
     fn extend_base_string_table(&mut self, string_table: HashMap<LineId, StringInfo>) {
-        self.0
-            .write()
-            .unwrap()
-            .extend_base_string_table(string_table)
+        self.0.write().unwrap().extend_base_string_table(string_table)
     }
 
     fn take_fetched_assets(&mut self, asset: Box<dyn Any>) {

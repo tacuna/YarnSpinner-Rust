@@ -1,13 +1,17 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/Compiler.cs>
-//! and <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/CompilationJob.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/Compiler.cs>
+//! and <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/CompilationJob.cs>
 
 use crate::prelude::*;
+use std::collections::HashMap;
 use std::path::Path;
 use yarnspinner_core::prelude::*;
 
 mod add_tags_to_lines;
 pub(crate) mod antlr_rust_ext;
+pub mod descriptive_line_tag_generator;
+pub mod line_tag_generator;
 pub(crate) mod run_compilation;
+pub mod structured_command_parser;
 pub(crate) mod utils;
 
 #[allow(missing_docs)]
@@ -25,10 +29,7 @@ pub type Result<T> = std::result::Result<T, CompilerError>;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct Compiler {
     /// The [`File`] structs that represent the content to parse..
     pub files: Vec<File>,
@@ -43,6 +44,35 @@ pub struct Compiler {
 
     /// The declarations for variables.
     pub variable_declarations: Vec<Declaration>,
+
+    /// Optional severity overrides for specific diagnostic codes.
+    ///
+    /// Keys are diagnostic codes (e.g. `"YS0010"`), values are the desired
+    /// [`DiagnosticSeverity`]. Diagnostics whose code matches a key will have
+    /// their severity replaced.
+    #[cfg_attr(feature = "bevy", reflect(ignore))]
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub diagnostic_severities: HashMap<String, DiagnosticSeverity>,
+
+    /// User-supplied enum type declarations that are available to all files
+    /// in this compilation.
+    ///
+    /// These are pre-populated into the enum registry before parsing, so the
+    /// lexer can resolve `EnumName.Member` and `.Member` shorthand expressions.
+    #[cfg_attr(feature = "bevy", reflect(ignore))]
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub type_declarations: Vec<EnumType>,
+
+    /// The minimum Yarn Spinner language version that the source files are
+    /// expected to target.
+    ///
+    /// When set to a value below [`YARNSPINNER_PROJECT_VERSION_3`], features
+    /// introduced in v3 (enums, line groups, `<<once>>`, smart variables)
+    /// will produce `YS0036` errors.  When `None` (the default), no
+    /// version-gating is applied.
+    #[cfg_attr(feature = "bevy", reflect(ignore))]
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub language_version: Option<u32>,
 }
 
 impl Compiler {
@@ -97,6 +127,29 @@ impl Compiler {
         self
     }
 
+    /// Sets diagnostic severity overrides. Each entry maps a diagnostic code
+    /// (e.g. `"YS0010"`) to the desired [`DiagnosticSeverity`].
+    pub fn with_diagnostic_severities(&mut self, map: HashMap<String, DiagnosticSeverity>) -> &mut Self {
+        self.diagnostic_severities = map;
+        self
+    }
+
+    /// Adds user-supplied enum type declarations that are available to all
+    /// files in this compilation.
+    pub fn with_type_declarations(&mut self, type_declarations: Vec<EnumType>) -> &mut Self {
+        self.type_declarations = type_declarations;
+        self
+    }
+
+    /// Sets the minimum Yarn Spinner language version for source files.
+    ///
+    /// When set below 3, v3 features (enums, line groups, `<<once>>`, smart
+    /// variables) will produce `YS0036` errors.
+    pub fn with_language_version(&mut self, version: u32) -> &mut Self {
+        self.language_version = Some(version);
+        self
+    }
+
     /// Compiles the Yarn files previously added into a [`Compilation`].
     pub fn compile(&self) -> Result<Compilation> {
         run_compilation::compile(self)
@@ -108,10 +161,7 @@ impl Compiler {
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct File {
     /// The name of the file.
     ///
@@ -129,10 +179,7 @@ pub struct File {
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash, Default))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub enum CompilationType {
     /// The compiler will do a full compilation, and generate a [`Program`],
     /// function declaration set, and string table.
@@ -141,7 +188,9 @@ pub enum CompilationType {
 
     /// The compiler will derive only the variable and function declarations,
     /// and file tags, found in the script.
-    DeclarationsOnly,
+    ///
+    /// Counterpart of C#'s `CompilationJob.Type.TypeCheck` (previously `DeclarationsOnly`).
+    TypeCheck,
 
     /// The compiler will generate a string table only.
     StringsOnly,

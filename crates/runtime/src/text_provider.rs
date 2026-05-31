@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Dialogue.cs>, which we split off into multiple files
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Dialogue.cs>, which we split off into multiple files
 use crate::prelude::*;
 use bevy_platform::collections::HashMap;
 use core::any::Any;
@@ -68,11 +68,8 @@ impl StringTableTextProvider {
     }
 
     /// Adds strings for the a specific language. If this is not the language used selected by [`TextProvider::set_language`], the strings will be ignored.
-    pub fn extend_translation<T>(
-        &mut self,
-        language: impl Into<Language>,
-        string_table: impl IntoIterator<Item = T>,
-    ) where
+    pub fn extend_translation<T>(&mut self, language: impl Into<Language>, string_table: impl IntoIterator<Item = T>)
+    where
         StringTable: Extend<T>,
     {
         let language = language.into();
@@ -83,10 +80,7 @@ impl StringTableTextProvider {
             return;
         }
 
-        let (language, mut table) = self
-            .translation_table
-            .take()
-            .unwrap_or_else(|| (language, StringTable::new()));
+        let (language, mut table) = self.translation_table.take().unwrap_or_else(|| (language, StringTable::new()));
 
         table.clear();
         table.extend(string_table);
@@ -109,15 +103,11 @@ impl TextProvider for StringTableTextProvider {
             && let Some((registered_language, translation_table)) = self.translation_table.as_ref()
         {
             if registered_language != language {
-                error!(
-                    "Didn't find language {language} in translations, falling back to base language."
-                );
+                error!("Didn't find language {language} in translations, falling back to base language.");
             } else if let Some(line) = translation_table.get(id) {
                 return Some(line.clone());
             } else {
-                error!(
-                    "No translation found for line {id} in language {language}, falling back to base language."
-                );
+                error!("No translation found for line {id} in language {language}, falling back to base language.");
             }
         }
         self.base_language_table.get(id).cloned()
@@ -135,10 +125,7 @@ impl TextProvider for StringTableTextProvider {
         let Some(language) = self.translation_language.as_ref() else {
             return !self.base_language_table.is_empty();
         };
-        let translation_language = self
-            .translation_table
-            .as_ref()
-            .map(|(language, _)| language);
+        let translation_language = self.translation_table.as_ref().map(|(language, _)| language);
         translation_language == Some(language)
     }
 

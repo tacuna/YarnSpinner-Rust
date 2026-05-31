@@ -1,6 +1,7 @@
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 use utils::prelude::*;
 
 mod utils;
@@ -38,12 +39,11 @@ impl FunctionAppExt for App {
     fn setup_dialogue_runner(&mut self) -> Mut<'_, DialogueRunner> {
         self.insert_resource(Data("Initial".to_string()));
 
-        let swap_data =
-            self.register_system(|In(param): In<String>, mut data: ResMut<Data>| -> String {
-                let old = data.0.clone();
-                data.0 = param;
-                old
-            });
+        let swap_data = self.register_system(|In(param): In<String>, mut data: ResMut<Data>| -> String {
+            let old = data.0.clone();
+            data.0 = param;
+            old
+        });
 
         self.add_systems(Startup, |mut commands: Commands| {
             commands.spawn(Name::new("Tweedledee"));
@@ -54,16 +54,10 @@ impl FunctionAppExt for App {
 
         let mut dialogue_runner = self
             .setup_default_plugins()
-            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-                "functions.yarn",
-            )))
+            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("functions.yarn")))
             .dialogue_runner_mut();
-        dialogue_runner
-            .library_mut()
-            .add_function("swap_data", swap_data);
-        dialogue_runner
-            .library_mut()
-            .add_function("picky_function", picky_function);
+        dialogue_runner.library_mut().add_function("swap_data", swap_data);
+        dialogue_runner.library_mut().add_function("picky_function", picky_function);
         dialogue_runner
     }
 }

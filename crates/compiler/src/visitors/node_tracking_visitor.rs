@@ -1,8 +1,8 @@
 use crate::parser::generated::yarnspinnerparser::{self, *};
 use crate::prelude::generated::yarnspinnerparservisitor::YarnSpinnerParserVisitorCompat;
-use antlr_rust::parser_rule_context::ParserRuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::tree::{ParseTree, ParseTreeVisitorCompat};
+use antlr4rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat};
 use std::collections::HashSet;
 
 #[derive(Clone, Default)]
@@ -29,22 +29,14 @@ impl ParseTreeVisitorCompat<'_> for NodeTrackingVisitor {
 
 impl<'input> YarnSpinnerParserVisitorCompat<'input> for NodeTrackingVisitor {
     fn visit_node(&mut self, ctx: &NodeContext<'input>) -> Self::Return {
-        let mut title = None;
+        // title comes from title_header (separate rule in new grammar)
+        let title = ctx.title_header(0).and_then(|h| h.ID().map(|t| t.get_text()));
         let mut tracking = None;
         for header in ctx.header_all() {
             let key = header.header_key.as_ref().unwrap().get_text();
-            let value = header
-                .header_value
-                .as_ref()
-                .map(|val| val.get_text().to_owned());
-            match key {
-                "title" => {
-                    title = value;
-                }
-                "tracking" => {
-                    tracking = value;
-                }
-                _ => {}
+            let value = header.header_value.as_ref().map(|val| val.get_text().to_owned());
+            if key == "tracking" {
+                tracking = value;
             }
         }
         if let Some(title) = title
@@ -76,10 +68,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for NodeTrackingVisitor {
     }
 
     fn visit_function_call(&mut self, ctx: &Function_callContext<'input>) -> Self::Return {
-        let function_name = ctx
-            .get_token(yarnspinnerparser::FUNC_ID, 0)
-            .unwrap()
-            .get_text();
+        let function_name = ctx.get_token(yarnspinnerparser::FUNC_ID, 0).unwrap().get_text();
 
         if !["visited", "visited_count"].contains(&function_name.as_str()) {
             return None;
@@ -87,7 +76,8 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for NodeTrackingVisitor {
         // we aren't bothering to test anything about the value itself
         // if it isn't a static string we'll get back null so can ignore it
         // if the func has more than one parameter later on it will cause an error so again can ignore
-        let expression = ctx.expression(0).unwrap();
+        // Guard: visited() with no arguments should not crash
+        let expression = ctx.expression(0)?;
         let result = self.visit(expression.as_ref());
         if let Some(result) = result {
             self.tracking_nodes.insert(result);
@@ -101,8 +91,8 @@ mod tests {
     use super::*;
     use crate::prelude::generated::yarnspinnerparser::YarnSpinnerParser;
     use crate::prelude::*;
-    use antlr_rust::InputStream;
-    use antlr_rust::common_token_stream::CommonTokenStream;
+    use antlr4rust::InputStream;
+    use antlr4rust::common_token_stream::CommonTokenStream;
 
     #[test]
     fn finds_title_and_tracking_headers() {
@@ -127,11 +117,7 @@ tracking: always
         assert_eq!(result.tracking_nodes.len(), 2);
         assert_eq!(result.ignoring_nodes.len(), 1);
         assert!(result.tracking_nodes.contains("this one is tracking"));
-        assert!(
-            result
-                .tracking_nodes
-                .contains("This one is tracking, but indecisive")
-        );
+        assert!(result.tracking_nodes.contains("This one is tracking, but indecisive"));
         assert!(result.ignoring_nodes.contains("This one is not tracking"));
     }
 

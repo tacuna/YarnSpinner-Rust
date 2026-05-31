@@ -22,6 +22,7 @@ mod language;
 mod line;
 pub mod markup;
 mod pluralization;
+pub mod saliency;
 mod text_provider;
 mod variable_storage;
 mod virtual_machine;
@@ -31,28 +32,25 @@ pub use dialogue::Result;
 /// Everything you need to get starting using the Yarn Spinner runtime.
 pub mod prelude {
     // Re-export alloc types for internal use only
-    pub(crate) use alloc::{
-        borrow::ToOwned,
-        boxed::Box,
-        format,
-        string::{String, ToString},
-        vec,
-        vec::Vec,
-    };
+    pub(crate) use alloc::borrow::ToOwned;
+    pub(crate) use alloc::boxed::Box;
+    pub(crate) use alloc::string::{String, ToString};
+    pub(crate) use alloc::vec::Vec;
+    pub(crate) use alloc::{format, vec};
 
-    pub use crate::{
-        analyser::*,
-        command::*,
-        dialogue::{Dialogue, DialogueError},
-        dialogue_option::*,
-        events::*,
-        language::*,
-        line::*,
-        markup::MarkupParseError,
-        text_provider::*,
-        variable_storage::*,
-    };
-    pub(crate) use crate::{pluralization::*, virtual_machine::*};
+    pub use crate::analyser::*;
+    pub use crate::command::*;
+    pub use crate::dialogue::{Dialogue, DialogueError};
+    pub use crate::dialogue_option::*;
+    pub use crate::events::*;
+    pub use crate::language::*;
+    pub use crate::line::*;
+    pub use crate::markup::MarkupParseError;
+    pub(crate) use crate::pluralization::*;
+    pub use crate::saliency::*;
+    pub use crate::text_provider::*;
+    pub use crate::variable_storage::*;
+    pub(crate) use crate::virtual_machine::*;
     pub(crate) use yarnspinner_core::prelude::*;
     pub(crate) use yarnspinner_internal_shared::prelude::*;
 }

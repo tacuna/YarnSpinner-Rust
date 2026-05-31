@@ -32,10 +32,7 @@ mod yarn_file_source;
 ///
 /// For more information on how this plugin interacts with the rest of the crate, see the crate-level documentation.
 #[derive(Debug)]
-#[cfg_attr(
-    not(any(target_arch = "wasm32", target_os = "android")),
-    derive(Default)
-)]
+#[cfg_attr(not(any(target_arch = "wasm32", target_os = "android")), derive(Default))]
 pub struct YarnSpinnerPlugin {
     project: LoadYarnProjectEvent,
 }
@@ -124,10 +121,7 @@ impl YarnSpinnerPlugin {
 
     /// Adds multiple Yarn file source to the files that will be loaded and compiled.
     #[must_use]
-    pub fn add_yarn_sources(
-        mut self,
-        yarn_files: impl IntoIterator<Item = impl Into<YarnFileSource>>,
-    ) -> Self {
+    pub fn add_yarn_sources(mut self, yarn_files: impl IntoIterator<Item = impl Into<YarnFileSource>>) -> Self {
         self.project = self.project.add_yarn_sources(yarn_files);
         self
     }
@@ -144,13 +138,8 @@ impl YarnSpinnerPlugin {
     /// Defaults to [`DevelopmentFileGeneration::TRY_FULL`] in debug builds, [`DevelopmentFileGeneration::None`] otherwise.
     #[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
     #[must_use]
-    pub fn with_development_file_generation(
-        mut self,
-        development_file_generation: DevelopmentFileGeneration,
-    ) -> Self {
-        self.project = self
-            .project
-            .with_development_file_generation(development_file_generation);
+    pub fn with_development_file_generation(mut self, development_file_generation: DevelopmentFileGeneration) -> Self {
+        self.project = self.project.with_development_file_generation(development_file_generation);
         self
     }
 }
@@ -164,9 +153,7 @@ impl Plugin for YarnSpinnerPlugin {
         If you really want to load no Yarn files right now and do that later, use `YarnSpinnerPlugin::deferred()` instead.\
         If you wanted to load from the default directory instead, use `YarnSpinnerPlugin::default()`."
         );
-        app.add_plugins(Self::deferred())
-            .world_mut()
-            .write_message(self.project.clone());
+        app.add_plugins(Self::deferred()).world_mut().write_message(self.project.clone());
     }
 }
 
@@ -237,10 +224,7 @@ impl YarnApp for App {
     }
 
     fn register_watching_for_changes(&mut self) -> &mut Self {
-        let asset_server = self
-            .world()
-            .get_resource::<AssetServer>()
-            .expect(ASSET_ERROR);
+        let asset_server = self.world().get_resource::<AssetServer>().expect(ASSET_ERROR);
 
         let watching_for_changes = asset_server.watching_for_changes();
         self.insert_resource(WatchingForChanges(watching_for_changes))

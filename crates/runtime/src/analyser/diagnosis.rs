@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Analyser.cs>,
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Analyser.cs>,
 //! which was split into multiple files.
 
 use crate::prelude::*;
@@ -11,10 +11,7 @@ use core::iter;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct Diagnosis {
     /// The severity of the diagnosis. See [`DiagnosisSeverity`] for more information.
     pub severity: DiagnosisSeverity,
@@ -34,10 +31,7 @@ pub struct Diagnosis {
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub enum DiagnosisSeverity {
     /// An error.
     ///

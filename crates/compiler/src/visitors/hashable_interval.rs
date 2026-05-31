@@ -1,6 +1,7 @@
 use crate::parser::generated::yarnspinnerparser::YarnSpinnerParserContext;
-use antlr_rust::interval_set::Interval;
-use antlr_rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::interval_set::Interval;
+use antlr4rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::token::Token;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
@@ -19,19 +20,12 @@ impl KnownTypes {
         self.0.get(&hashable_interval)
     }
 
-    pub(crate) fn get_mut<'input>(
-        &mut self,
-        ctx: &impl YarnSpinnerParserContext<'input>,
-    ) -> Option<&mut Type> {
+    pub(crate) fn get_mut<'input>(&mut self, ctx: &impl YarnSpinnerParserContext<'input>) -> Option<&mut Type> {
         let hashable_interval = ctx.get_hashable_interval();
         self.0.get_mut(&hashable_interval)
     }
 
-    pub(crate) fn insert<'input>(
-        &mut self,
-        ctx: &impl YarnSpinnerParserContext<'input>,
-        r#type: impl Into<Option<Type>>,
-    ) -> Option<Type> {
+    pub(crate) fn insert<'input>(&mut self, ctx: &impl YarnSpinnerParserContext<'input>, r#type: impl Into<Option<Type>>) -> Option<Type> {
         let r#type = r#type.into()?;
         let hashable_interval = ctx.get_hashable_interval();
         self.0.insert(hashable_interval, r#type)
@@ -97,8 +91,18 @@ impl DerefMut for KnownTypes {
 
 pub(crate) trait GetHashableInterval<'input>: ParserRuleContext<'input> {
     fn get_hashable_interval(&self) -> HashableInterval {
-        let interval = self.get_source_interval();
-        HashableInterval(interval)
+        // get_source_interval() always returns INVALID in antlr4rust 0.5.2.
+        // Use the character positions of the start/stop tokens instead,
+        // which are always set correctly by the parser.
+        let start = self.start().get_start();
+        let stop = self.stop().get_stop();
+        if start == -1 && stop == -2 {
+            // Tokens have invalid positions - fall back to text-based key
+        }
+        HashableInterval(Interval {
+            a: start as i32,
+            b: stop as i32,
+        })
     }
 }
 

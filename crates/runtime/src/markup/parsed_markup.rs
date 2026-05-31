@@ -1,7 +1,9 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/YarnSpinner.Markup/MarkupParseResult.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/YarnSpinner.Markup/MarkupParseResult.cs>
 
-pub use self::{markup_attribute::*, markup_value::*};
-pub(crate) use self::{markup_attribute_marker::*, tag_type::*};
+pub use self::markup_attribute::*;
+pub use self::markup_attribute_marker::*;
+pub use self::markup_value::*;
+pub use self::tag_type::*;
 use crate::prelude::*;
 use core::fmt::Debug;
 
@@ -21,7 +23,7 @@ mod tag_type;
 
 #[derive(Debug, Default, Clone)]
 #[non_exhaustive]
-pub(crate) struct ParsedMarkup {
+pub struct ParsedMarkup {
     /// The original text, with all parsed markers removed.
     pub text: String,
     /// The list of [`MarkupAttribute`] in this parse result.
@@ -29,7 +31,8 @@ pub(crate) struct ParsedMarkup {
 }
 
 impl ParsedMarkup {
-    pub(crate) fn new() -> Self {
+    /// Creates an empty [`ParsedMarkup`] with no text and no attributes.
+    pub fn new() -> Self {
         Self::default()
     }
 }

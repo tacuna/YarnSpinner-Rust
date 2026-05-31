@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/TypeCheckVisitor.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/TypeCheckerListener.cs>
 
 use crate::parser_rule_context_ext::ParserRuleContextExt;
 use crate::prelude::generated::yarnspinnerlexer;
@@ -6,10 +6,11 @@ use crate::prelude::generated::yarnspinnerparser::*;
 use crate::prelude::generated::yarnspinnerparservisitor::YarnSpinnerParserVisitorCompat;
 use crate::prelude::*;
 use crate::visitors::{CodeGenerationVisitor, KnownTypes};
-use antlr_rust::parser_rule_context::ParserRuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::tree::{ParseTree, ParseTreeVisitorCompat};
+use antlr4rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat};
 use check_operation::*;
+use std::collections::HashMap;
 use std::path::Path;
 use yarnspinner_core::prelude::*;
 use yarnspinner_core::types::*;
@@ -37,8 +38,8 @@ pub(crate) struct TypeCheckVisitor<'input> {
     pub(crate) deferred_types: Vec<DeferredTypeDiagnostic>,
 
     // The collection of variable declarations we know about before
-    // starting our work
-    existing_declarations: Vec<Declaration>,
+    // starting our work. Uses a HashMap for O(1) lookup by name.
+    existing_declarations: HashMap<String, Declaration>,
 
     // The name of the node that we're currently visiting.
     current_node_name: Option<String>,
@@ -73,10 +74,8 @@ pub(crate) struct TypeCheckVisitor<'input> {
 }
 
 impl<'input> TypeCheckVisitor<'input> {
-    pub(crate) fn new(
-        existing_declarations: Vec<Declaration>,
-        file: FileParseResult<'input>,
-    ) -> Self {
+    pub(crate) fn new(existing_declarations: Vec<Declaration>, file: FileParseResult<'input>) -> Self {
+        let existing_declarations: HashMap<String, Declaration> = existing_declarations.into_iter().map(|d| (d.name.clone(), d)).collect();
         Self {
             file,
             existing_declarations,
@@ -90,20 +89,25 @@ impl<'input> TypeCheckVisitor<'input> {
         }
     }
 
-    /// Gets the collection of all declarations - both the ones we received
-    /// at the start, and the new ones we've derived ourselves.
-    pub(crate) fn declarations(&self) -> impl Iterator<Item = &Declaration> + '_ {
+    /// Fast O(1) lookup for a declaration by name.
+    fn get_declaration(&self, name: &str) -> Option<&Declaration> {
         self.existing_declarations
-            .iter()
-            .chain(self.new_declarations.iter())
+            .get(name)
+            .or_else(|| self.new_declarations.iter().find(|d| d.name == name))
     }
 
-    /// Gets the collection of all declarations mutably - both the ones we received
-    /// at the start, and the new ones we've derived ourselves.
-    pub(crate) fn declarations_mut(&mut self) -> impl Iterator<Item = &mut Declaration> + '_ {
-        self.existing_declarations
-            .iter_mut()
-            .chain(self.new_declarations.iter_mut())
+    /// Fast O(1) lookup for a declaration by name, with mutable access.
+    fn get_declaration_mut(&mut self, name: &str) -> Option<&mut Declaration> {
+        if self.existing_declarations.contains_key(name) {
+            self.existing_declarations.get_mut(name)
+        } else {
+            self.new_declarations.iter_mut().find(|d| d.name == name)
+        }
+    }
+
+    /// Fast O(1) check for whether a declaration exists by name.
+    pub(crate) fn has_declaration(&self, name: &str) -> bool {
+        self.existing_declarations.contains_key(name) || self.new_declarations.iter().any(|d| d.name == name)
     }
 }
 
@@ -119,12 +123,18 @@ impl<'input> ParseTreeVisitorCompat<'input> for TypeCheckVisitor<'input> {
 
 impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input> {
     fn visit_node(&mut self, ctx: &NodeContext<'input>) -> Self::Return {
+        // title comes from title_header (separate rule in new grammar)
+        if let Some(title_hdr) = ctx.title_header(0)
+            && let Some(t) = title_hdr.ID()
+        {
+            let text = t.get_text();
+            self.current_node_name = Some(strip_header_comment(&text).to_owned());
+        }
+        // check other headers for any future use
         for header in ctx.header_all() {
             let key = header.header_key.as_ref().unwrap_or_bug().get_text();
-            if key == "title" {
-                let value = header.header_value.as_ref().unwrap_or_bug().get_text();
-                self.current_node_name = Some(value.to_owned());
-            }
+            // title is now handled above via title_header; kept for completeness
+            let _ = key;
         }
         if let Some(body) = ctx.body() {
             self.visit(body.as_ref());
@@ -146,8 +156,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
         // *, /, % all support numbers only
         // ## Implementation notes
         // The original passes no permitted types, but judging by the comment above, this seems like a bug
-        let r#type =
-            self.check_operation(ctx, &expressions, operator, op.get_text(), &[Type::Number]);
+        let r#type = self.check_operation(ctx, &expressions, operator, op.get_text(), &[Type::Number]);
         self.known_types.insert(ctx, r#type.clone());
         r#type
     }
@@ -174,8 +183,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
     fn visit_expAndOrXor(&mut self, ctx: &ExpAndOrXorContext<'input>) -> Self::Return {
         let expressions: Vec<_> = ctx.expression_all().into_iter().map(Term::from).collect();
         let operator_context = ctx.op.as_ref().unwrap_or_bug();
-        let operator =
-            CodeGenerationVisitor::token_to_operator(operator_context.token_type).unwrap_or_bug();
+        let operator = CodeGenerationVisitor::token_to_operator(operator_context.token_type).unwrap_or_bug();
         let description = operator_context.get_text();
         let r#type = self.check_operation(ctx, &expressions, operator, description, &[]);
         self.known_types.insert(ctx, r#type.clone());
@@ -198,8 +206,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
         // ! supports only bool types
         // ## Implementation notes
         // The original passes no permitted types, but judging by the comment above, this seems like a bug
-        let r#type =
-            self.check_operation(ctx, expressions, operator, op.get_text(), &[Type::Boolean]);
+        let r#type = self.check_operation(ctx, expressions, operator, op.get_text(), &[Type::Boolean]);
         self.known_types.insert(ctx, r#type.clone());
         r#type
     }
@@ -248,15 +255,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
         Some(Type::String)
     }
 
-    fn visit_valueNull(&mut self, ctx: &ValueNullContext<'input>) -> Self::Return {
-        self.diagnostics.push(
-            Diagnostic::from_message("Null is not a permitted type in Yarn Spinner 2.0 and later")
-                .with_file_name(&self.file.name)
-                .with_parser_context(ctx, self.file.tokens()),
-        );
-
-        None
-    }
+    // visit_valueNull removed: `null` is no longer in the grammar (YarnSpinner v3.0+)
 
     fn visit_valueFunc(&mut self, ctx: &ValueFuncContext<'input>) -> Self::Return {
         let function_name = ctx
@@ -266,10 +265,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
             .unwrap_or_bug()
             .get_text();
 
-        let function_declaration = self
-            .declarations()
-            .find(|decl| decl.name == function_name)
-            .cloned(); // Cloning to avoid borrow checker issues
+        let function_declaration = self.get_declaration(&function_name).cloned();
         let hint = self.hints.get(ctx).cloned();
         let function_type = if let Some(function_declaration) = function_declaration {
             let Type::Function(mut function_type) = function_declaration.r#type.clone() else {
@@ -308,22 +304,42 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
 
             let line = ctx.start().get_line_as_usize();
             let column = ctx.start().get_column_as_usize();
-            let function_declaration =
-                Declaration::new(function_name.clone(), function_type.clone())
-                    .with_description(format!(
-                        "Implicit declaration of function at {}:{}:{}",
-                        self.file.name, line, column
-                    ))
-                    .with_range(ctx.range())
-                    .with_implicit();
+            let function_declaration = Declaration::new(function_name.clone(), function_type.clone())
+                .with_description(format!("Implicit declaration of function at {}:{}:{}", self.file.name, line, column))
+                .with_range(ctx.range())
+                .with_implicit();
             self.new_declarations.push(function_declaration);
             function_type
         };
         // Check each parameter of the function
         let supplied_parameters = ctx.function_call().unwrap_or_bug().expression_all();
+        let variadic_type: Option<Type> = function_type.variadic_parameter_type.as_deref().cloned();
+        let is_variadic = variadic_type.is_some();
         let expected_parameter_types = function_type.parameters;
 
-        if supplied_parameters.len() != expected_parameter_types.len() {
+        // Check parameter count
+        if is_variadic {
+            // Variadic function: supplied args must be >= number of fixed params
+            if supplied_parameters.len() < expected_parameter_types.len() {
+                let parameters = if expected_parameter_types.len() == 1 {
+                    "parameter"
+                } else {
+                    "parameters"
+                };
+                let diagnostic = Diagnostic::from_message(format!(
+                    "Function \"{}\" expects at least {} {}, but received {}",
+                    function_name,
+                    expected_parameter_types.len(),
+                    parameters,
+                    supplied_parameters.len()
+                ))
+                .with_file_name(&self.file.name)
+                .with_parser_context(ctx, self.file.tokens())
+                .with_code("YS0013");
+                self.diagnostics.push(diagnostic);
+                return *function_type.return_type;
+            }
+        } else if supplied_parameters.len() != expected_parameter_types.len() {
             // Wrong number of parameters supplied
             let parameters = if expected_parameter_types.len() == 1 {
                 "parameter"
@@ -338,26 +354,20 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
                 supplied_parameters.len()
             ))
             .with_file_name(&self.file.name)
-            .with_parser_context(ctx, self.file.tokens());
+            .with_parser_context(ctx, self.file.tokens())
+            .with_code("YS0013");
             self.diagnostics.push(diagnostic);
             return *function_type.return_type;
         }
 
-        for (i, (supplied_parameter, mut expected_type)) in supplied_parameters
-            .iter()
-            .cloned()
-            .zip(expected_parameter_types.iter())
-            .enumerate()
-        {
+        // Check fixed parameters
+        for (i, (supplied_parameter, mut expected_type)) in supplied_parameters.iter().cloned().zip(expected_parameter_types.iter()).enumerate() {
             let supplied_type = self.visit(supplied_parameter.as_ref());
             if expected_type.is_none() {
                 // The type of this parameter hasn't yet been bound.
                 // Bind this parameter type to what we've resolved the
                 // type to.
-                let declaration = self
-                    .declarations_mut()
-                    .find(|decl| decl.name == function_name)
-                    .unwrap_or_bug(); // Guaranteed to be Some
+                let declaration = self.get_declaration_mut(&function_name).unwrap_or_bug(); // Guaranteed to be Some
                 let Type::Function(function_type) = &mut declaration.r#type else {
                     unreachable!();
                 };
@@ -366,16 +376,36 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
             }
             if !supplied_type.is_sub_type_of(expected_type) {
                 let diagnostic = Diagnostic::from_message(format!(
-                    "{} parameter {} expects a {}, not a {}",
-                    function_name,
-                    i + 1,
+                    "{} ({}) is not convertible to {}",
+                    supplied_parameter.get_text(),
+                    supplied_type.format(),
                     expected_type.format(),
-                    supplied_type.format()
                 ))
                 .with_file_name(&self.file.name)
-                .with_parser_context(ctx, self.file.tokens());
+                .with_parser_context(ctx, self.file.tokens())
+                .with_code("YS0050");
                 self.diagnostics.push(diagnostic);
                 return *function_type.return_type;
+            }
+        }
+
+        // Check variadic parameters (arguments beyond the fixed prefix)
+        if let Some(ref var_type) = variadic_type {
+            for supplied_parameter in supplied_parameters.iter().skip(expected_parameter_types.len()) {
+                let supplied_type = self.visit(supplied_parameter.as_ref());
+                if !supplied_type.is_sub_type_of(var_type) {
+                    let diagnostic = Diagnostic::from_message(format!(
+                        "{} ({}) is not convertible to {}",
+                        supplied_parameter.get_text(),
+                        supplied_type.format(),
+                        var_type.format(),
+                    ))
+                    .with_file_name(&self.file.name)
+                    .with_parser_context(ctx, self.file.tokens())
+                    .with_code("YS0050");
+                    self.diagnostics.push(diagnostic);
+                    return *function_type.return_type;
+                }
             }
         }
         // Cool, all the parameters check out!
@@ -392,29 +422,24 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
         // this Variable context; here, we'll bail out.
         let var_id = ctx.get_token(yarnspinnerlexer::VAR_ID, 0)?;
         let name = var_id.get_text();
-        if let Some(declaration) = self.declarations().find(|decl| decl.name == name) {
+        if let Some(declaration) = self.get_declaration(&name) {
             return Some(declaration.r#type.clone());
         }
 
         // do we already have a potential warning about this?
         // no need to make more
-        if self
-            .deferred_types
-            .iter()
-            .any(|deferred_type| deferred_type.name == name)
-        {
+        if self.deferred_types.iter().any(|deferred_type| deferred_type.name == name) {
             return None;
         }
 
         // creating a new diagnostic for us having an undefined variable
         // this won't get added into the existing diags though because its possible a later pass will clear it up
         // so we save this as a potential diagnostic for the compiler itself to resolve
-        let diagnostic =
-            Diagnostic::from_message(format_cannot_determine_variable_type_error(&name))
-                .with_file_name(&self.file.name)
-                .with_parser_context(ctx, self.file.tokens());
-        self.deferred_types
-            .push(DeferredTypeDiagnostic { name, diagnostic });
+        let diagnostic = Diagnostic::from_message(format_cannot_determine_variable_type_error(&name))
+            .with_file_name(&self.file.name)
+            .with_parser_context(ctx, self.file.tokens())
+            .with_code("YS0003");
+        self.deferred_types.push(DeferredTypeDiagnostic { name, diagnostic });
 
         // We don't have a declaration for this variable. Return
         // Undefined. Hopefully, other context will allow us to infer a
@@ -436,22 +461,52 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
         self.check_operation(ctx, expressions, None, "elseif statement", &[Type::Boolean])
     }
 
+    fn visit_lineCondition(&mut self, ctx: &LineConditionContext<'input>) -> Self::Return {
+        ParseTreeVisitorCompat::visit_children(self, ctx);
+        // Line conditions (<<if expr>> on lines/options) are required to be boolean
+        if let Some(expression) = ctx.expression() {
+            let expressions = &[expression.into()];
+            self.check_operation(ctx, expressions, None, "line condition", &[Type::Boolean])
+        } else {
+            Default::default()
+        }
+    }
+
+    fn visit_lineOnceCondition(&mut self, ctx: &LineOnceConditionContext<'input>) -> Self::Return {
+        ParseTreeVisitorCompat::visit_children(self, ctx);
+        // Once-line conditions (<<once if expr>> on lines/options) are required to be boolean
+        if let Some(expression) = ctx.expression() {
+            let expressions = &[expression.into()];
+            self.check_operation(ctx, expressions, None, "line condition", &[Type::Boolean])
+        } else {
+            Default::default()
+        }
+    }
+
     fn visit_set_statement(&mut self, ctx: &Set_statementContext<'input>) -> Self::Return {
         let variable_context = ctx.variable()?;
         let expression_context = ctx.expression()?;
+        let variable_name = variable_context.get_text();
+
+        // YS0030: smart variables are read-only and cannot be assigned.
+        if self.existing_declarations.get(&variable_name).is_some_and(|d| d.is_inline_expansion) {
+            self.diagnostics.push(
+                Diagnostic::from_message(format!("smart variable '{variable_name}' cannot be modified"))
+                    .with_file_name(&self.file.name)
+                    .with_parser_context(ctx, self.file.tokens())
+                    .with_code("YS0030"),
+            );
+            return None;
+        }
+
         let variable_type = self.visit(variable_context.as_ref());
         if let Some(variable_type) = variable_type.as_ref() {
             // giving the expression a hint just in case it is needed to help resolve any ambiguity on the expression
             // currently this is only useful in situations where we have a function as the rvalue of a known lvalue
-            self.hints
-                .insert(expression_context.as_ref(), variable_type.clone());
+            self.hints.insert(expression_context.as_ref(), variable_type.clone());
         }
         let mut expression_type = self.visit(expression_context.as_ref());
-        let variable_name = variable_context.get_text();
-        let terms: &[Term] = &[
-            variable_context.clone().into(),
-            expression_context.clone().into(),
-        ];
+        let terms: &[Term] = &[variable_context.clone().into(), expression_context.clone().into()];
 
         let op = ctx.op.as_ref().unwrap_or_bug();
         match op.token_type {
@@ -468,7 +523,8 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
                             expression_type.format(),
                         ))
                         .with_file_name(&self.file.name)
-                        .with_parser_context(ctx, self.file.tokens());
+                        .with_parser_context(ctx, self.file.tokens())
+                        .with_code("YS0002");
                         self.diagnostics.push(diagnostic);
                     }
                     (None, Some(expression_type)) => {
@@ -480,7 +536,7 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
                         // we can't get one, we can't create the definition.
                         if let Some(default_value) = expression_type.default_value() {
                             // Generate a declaration for this variable here.
-                            let decl = Declaration::new(variable_name, expression_type.clone())
+                            let decl = Declaration::new(variable_name.clone(), expression_type.clone())
                                 .with_description(format!(
                                     "Implicitly declared in {}, node {}",
                                     get_filename(&self.file.name),
@@ -492,13 +548,24 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
                                 .with_range(variable_context.range())
                                 .with_implicit();
                             self.new_declarations.push(decl);
+                            // Warn the user that the variable should be declared explicitly.
+                            // Matches C# DiagnosticDescriptor.UndefinedVariable (YS0003, Warning).
+                            self.diagnostics.push(
+                                Diagnostic::from_message(format!(
+                                    "Variable '{}' is used but not declared. Declare it with: <<declare {} = value>>",
+                                    variable_name, variable_name
+                                ))
+                                .with_file_name(&self.file.name)
+                                .with_parser_context(ctx, self.file.tokens())
+                                .with_code("YS0003")
+                                .with_severity(DiagnosticSeverity::Warning),
+                            );
                         } else {
                             self.diagnostics.push(
-                                Diagnostic::from_message(
-                                    format_cannot_determine_variable_type_error(&variable_name),
-                                )
-                                .with_file_name(&self.file.name)
-                                .with_parser_context(ctx, self.file.tokens()),
+                                Diagnostic::from_message(format_cannot_determine_variable_type_error(&variable_name))
+                                    .with_file_name(&self.file.name)
+                                    .with_parser_context(ctx, self.file.tokens())
+                                    .with_code("YS0003"),
                             )
                         }
                     }
@@ -509,52 +576,38 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for TypeCheckVisitor<'input>
             }
             yarnspinnerlexer::OPERATOR_MATHS_ADDITION_EQUALS => {
                 // += supports strings and numbers
-                let operator = CodeGenerationVisitor::token_to_operator(
-                    yarnspinnerlexer::OPERATOR_MATHS_ADDITION,
-                )
-                .unwrap_or_bug();
+                let operator = CodeGenerationVisitor::token_to_operator(yarnspinnerlexer::OPERATOR_MATHS_ADDITION).unwrap_or_bug();
                 expression_type = self.check_operation(ctx, terms, operator, op.get_text(), &[]);
             }
             yarnspinnerlexer::OPERATOR_MATHS_SUBTRACTION_EQUALS => {
                 // -=, *=, /=, %= supports only numbers
-                let operator = CodeGenerationVisitor::token_to_operator(
-                    yarnspinnerlexer::OPERATOR_MATHS_SUBTRACTION,
-                )
-                .unwrap_or_bug();
+                let operator = CodeGenerationVisitor::token_to_operator(yarnspinnerlexer::OPERATOR_MATHS_SUBTRACTION).unwrap_or_bug();
                 expression_type = self.check_operation(ctx, terms, operator, op.get_text(), &[]);
             }
             yarnspinnerlexer::OPERATOR_MATHS_MULTIPLICATION_EQUALS => {
-                let operator = CodeGenerationVisitor::token_to_operator(
-                    yarnspinnerlexer::OPERATOR_MATHS_MULTIPLICATION,
-                )
-                .unwrap_or_bug();
+                let operator = CodeGenerationVisitor::token_to_operator(yarnspinnerlexer::OPERATOR_MATHS_MULTIPLICATION).unwrap_or_bug();
                 expression_type = self.check_operation(ctx, terms, operator, op.get_text(), &[]);
             }
             yarnspinnerlexer::OPERATOR_MATHS_DIVISION_EQUALS => {
-                let operator = CodeGenerationVisitor::token_to_operator(
-                    yarnspinnerlexer::OPERATOR_MATHS_DIVISION,
-                )
-                .unwrap_or_bug();
+                let operator = CodeGenerationVisitor::token_to_operator(yarnspinnerlexer::OPERATOR_MATHS_DIVISION).unwrap_or_bug();
                 expression_type = self.check_operation(ctx, terms, operator, op.get_text(), &[]);
             }
             yarnspinnerlexer::OPERATOR_MATHS_MODULUS_EQUALS => {
-                let operator = CodeGenerationVisitor::token_to_operator(
-                    yarnspinnerlexer::OPERATOR_MATHS_MODULUS,
-                )
-                .unwrap_or_bug();
+                let operator = CodeGenerationVisitor::token_to_operator(yarnspinnerlexer::OPERATOR_MATHS_MODULUS).unwrap_or_bug();
                 expression_type = self.check_operation(ctx, terms, operator, op.get_text(), &[]);
             }
-            _ => bug!(
-                "Internal error: `visit_set_statement` got unexpected operand {}.",
-                op.get_text()
-            ),
+            _ => bug!("Internal error: `visit_set_statement` got unexpected operand {}.", op.get_text()),
         }
         if variable_type.is_none() && expression_type.is_none() {
             self.diagnostics.push(
-                            Diagnostic::from_message(
-                                format!("Type of expression \"{}\" can't be determined without more context. Please declare one or more terms.", ctx.get_text_with_whitespace(self.file.tokens())))
-                                .with_file_name(&self.file.name)
-                                .with_parser_context(ctx, self.file.tokens()));
+                Diagnostic::from_message(format!(
+                    "Type of expression \"{}\" can't be determined without more context. Please declare one or more terms.",
+                    ctx.get_text_with_whitespace(self.file.tokens())
+                ))
+                .with_file_name(&self.file.name)
+                .with_parser_context(ctx, self.file.tokens())
+                .with_code("YS0029"),
+            );
         }
         // at this point we have either fully resolved the type of the expression or been unable to do so
         // we return the type of the expression regardless and rely on either elements to catch the issue
@@ -587,9 +640,7 @@ impl DeclarationVecExt for Vec<Declaration> {
 
 /// {0} = variable name
 fn format_cannot_determine_variable_type_error(name: &str) -> String {
-    format!(
-        "Can't figure out the type of variable {name} given its context. Specify its type with a <<declare>> statement."
-    )
+    format!("Can't figure out the type of variable {name} given its context. Specify its type with a <<declare>> statement.")
 }
 
 fn get_filename(path: &str) -> &str {
@@ -645,6 +696,9 @@ mod tests {
             library: Default::default(),
             compilation_type: CompilationType::FullCompilation,
             variable_declarations: vec![],
+            diagnostic_severities: Default::default(),
+            language_version: None,
+            type_declarations: vec![],
         }
         .compile()
         .unwrap();
@@ -670,6 +724,9 @@ mod tests {
             library: Default::default(),
             compilation_type: CompilationType::FullCompilation,
             variable_declarations: vec![],
+            diagnostic_severities: Default::default(),
+            language_version: None,
+            type_declarations: vec![],
         }
         .compile();
 
@@ -681,60 +738,32 @@ mod tests {
             &diagnostics,
             &Diagnostic::from_message("$foo (Number) cannot be assigned a String")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 3,
-                        character: 0,
-                    }..Position {
-                        line: 3,
-                        character: 25,
-                    },
-                ),
+                .with_range(Position { line: 3, character: 0 }..Position { line: 3, character: 25 }),
         );
 
         assert_contains(
             &diagnostics,
             &Diagnostic::from_message("$bar (Bool) cannot be assigned a Number")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 6,
-                        character: 0,
-                    }..Position {
-                        line: 6,
-                        character: 19,
-                    },
-                ),
+                .with_range(Position { line: 6, character: 0 }..Position { line: 6, character: 19 }),
         );
 
         assert_contains(
             &diagnostics,
             &Diagnostic::from_message("$baz (String) cannot be assigned a Bool")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 7,
-                        character: 0,
-                    }..Position {
-                        line: 7,
-                        character: 21,
-                    },
-                ),
+                .with_range(Position { line: 7, character: 0 }..Position { line: 7, character: 21 }),
         );
     }
 
     fn assert_contains(diagnostics: &[Diagnostic], expected: &Diagnostic) {
         assert!(
             // Does not factor in context or start line because these are subject to frequent change
-            diagnostics.iter().any(|d| d.file_name == expected.file_name
-                && d.message == expected.message
-                && d.range == expected.range),
-            "Expected diagnostics:\n{}\nto contain:\n- {:?}",
             diagnostics
                 .iter()
-                .map(|d| format!("- {d:?}"))
-                .collect::<Vec<_>>()
-                .join("\n"),
+                .any(|d| d.file_name == expected.file_name && d.message == expected.message && d.range == expected.range),
+            "Expected diagnostics:\n{}\nto contain:\n- {:?}",
+            diagnostics.iter().map(|d| format!("- {d:?}")).collect::<Vec<_>>().join("\n"),
             expected
         );
     }
@@ -757,6 +786,9 @@ mod tests {
             library: Default::default(),
             compilation_type: CompilationType::FullCompilation,
             variable_declarations: vec![],
+            diagnostic_severities: Default::default(),
+            language_version: None,
+            type_declarations: vec![],
         }
         .compile()
         .unwrap();
@@ -780,6 +812,9 @@ mod tests {
             library: Default::default(),
             compilation_type: CompilationType::FullCompilation,
             variable_declarations: vec![],
+            diagnostic_severities: Default::default(),
+            language_version: None,
+            type_declarations: vec![],
         }
         .compile();
 
@@ -791,60 +826,28 @@ mod tests {
             &diagnostics,
             &Diagnostic::from_message("$foo (Number) cannot be assigned a undefined")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 4,
-                        character: 0,
-                    }..Position {
-                        line: 4,
-                        character: 27,
-                    },
-                ),
+                .with_range(Position { line: 4, character: 0 }..Position { line: 4, character: 27 }),
         );
 
         assert_contains(
             &diagnostics,
             &Diagnostic::from_message("$foo (Number) cannot be assigned a undefined")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 5,
-                        character: 0,
-                    }..Position {
-                        line: 5,
-                        character: 32,
-                    },
-                ),
+                .with_range(Position { line: 5, character: 0 }..Position { line: 5, character: 32 }),
         );
 
         assert_contains(
             &diagnostics,
             &Diagnostic::from_message("All terms of + must be the same, not Number, String")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 4,
-                        character: 14,
-                    }..Position {
-                        line: 4,
-                        character: 25,
-                    },
-                ),
+                .with_range(Position { line: 4, character: 14 }..Position { line: 4, character: 25 }),
         );
 
         assert_contains(
             &diagnostics,
             &Diagnostic::from_message("All terms of * must be the same, not Number, String")
                 .with_file_name("test.yarn")
-                .with_range(
-                    Position {
-                        line: 5,
-                        character: 14,
-                    }..Position {
-                        line: 5,
-                        character: 30,
-                    },
-                ),
+                .with_range(Position { line: 5, character: 14 }..Position { line: 5, character: 30 }),
         );
     }
 }

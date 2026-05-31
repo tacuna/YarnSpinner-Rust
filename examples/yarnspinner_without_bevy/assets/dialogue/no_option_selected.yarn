@@ -1,0 +1,30 @@
+title: NoOptionStart
+---
+<<declare $has_key = false>>
+<<declare $has_sword = false>>
+<<declare $has_map = false>>
+
+You find yourself in a small room with three pedestals.
+<<jump ChooseItem>>
+===
+
+title: ChooseItem
+---
+Each pedestal holds an item. What do you take?
+-> Take the rusty key <<if not $has_key>>
+    You pick up the key. It's old but might open something.
+    <<set $has_key = true>>
+-> Take the wooden sword <<if not $has_sword>>
+    You grab the sword. It's not much, but it's something.
+    <<set $has_sword = true>>
+-> Take the torn map <<if not $has_map>>
+    You carefully fold the map and pocket it.
+    <<set $has_map = true>>
+
+You look around the room again.
+<<if $has_key && $has_sword && $has_map>>
+    With all items collected, you head for the door.
+<<else>>
+    <<jump ChooseItem>>
+<<endif>>
+===

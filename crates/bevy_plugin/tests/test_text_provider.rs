@@ -9,15 +9,9 @@ fn loads_line_without_localization() {
     let mut app = App::new();
 
     app.setup_default_plugins()
-        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-            "lines_with_ids.yarn",
-        )));
+        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("lines_with_ids.yarn")));
 
-    let line = app
-        .dialogue_runner()
-        .text_provider()
-        .get_text(&LineId("line:9".to_owned()))
-        .unwrap();
+    let line = app.dialogue_runner().text_provider().get_text(&LineId("line:9".to_owned())).unwrap();
     assert_eq!(
         "Man: All right. I don't believe this; but there's no harm in wishing. I wish to know who I am.",
         line
@@ -29,14 +23,9 @@ fn fails_to_get_invalid_line() {
     let mut app = App::new();
 
     app.setup_default_plugins()
-        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-            "lines_with_ids.yarn",
-        )));
+        .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("lines_with_ids.yarn")));
 
-    let result = app
-        .dialogue_runner()
-        .text_provider()
-        .get_text(&LineId("line:99".to_owned()));
+    let result = app.dialogue_runner().text_provider().get_text(&LineId("line:99".to_owned()));
     assert!(result.is_none());
 }
 
@@ -55,11 +44,7 @@ fn loads_line_from_base_language_without_explicit_language() {
 
     app.load_lines();
 
-    let line = app
-        .dialogue_runner()
-        .text_provider()
-        .get_text(&LineId("line:9".to_owned()))
-        .unwrap();
+    let line = app.dialogue_runner().text_provider().get_text(&LineId("line:9".to_owned())).unwrap();
     assert_eq!(
         "Man: All right. I don't believe this; but there's no harm in wishing. I wish to know who I am.",
         line
@@ -83,11 +68,7 @@ fn loads_line_from_base_language_with_explicit_language() {
 
     app.load_lines();
 
-    let line = app
-        .dialogue_runner()
-        .text_provider()
-        .get_text(&LineId("line:9".to_owned()))
-        .unwrap();
+    let line = app.dialogue_runner().text_provider().get_text(&LineId("line:9".to_owned())).unwrap();
     assert_eq!(
         "Man: All right. I don't believe this; but there's no harm in wishing. I wish to know who I am.",
         line
@@ -130,11 +111,7 @@ fn loads_line_from_fallback_on_missing_line() {
 
     app.load_lines();
 
-    let line = app
-        .dialogue_runner()
-        .text_provider()
-        .get_text(&LineId("line:10".to_owned()))
-        .unwrap();
+    let line = app.dialogue_runner().text_provider().get_text(&LineId("line:10".to_owned())).unwrap();
     assert_eq!("Hag: Funny,", line);
 }
 
@@ -155,11 +132,7 @@ fn loads_line_from_translated_language() {
 
     app.load_lines();
 
-    let line = app
-        .dialogue_runner()
-        .text_provider()
-        .get_text(&LineId("line:9".to_owned()))
-        .unwrap();
+    let line = app.dialogue_runner().text_provider().get_text(&LineId("line:9".to_owned())).unwrap();
     assert_eq!(
         "Mann: Also gut. Ich glaub das zwar nicht, aber es kann ja nicht schaden, wenn ich mir was wünsche. Ich möchte wissen, wer ich bin.",
         line

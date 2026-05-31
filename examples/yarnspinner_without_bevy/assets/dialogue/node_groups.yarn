@@ -1,0 +1,48 @@
+title: NodeGroupsStart
+---
+<<declare $has_met_guard = false>>
+<<declare $is_friend = false>>
+
+You approach the castle gate.
+<<jump SpeakToGuard>>
+===
+
+title: SpeakToGuard
+when: $has_met_guard == false
+---
+Guard: Halt! Who goes there?
+Player: Just a traveller.
+Guard: Hmm, very well. State your business.
+<<set $has_met_guard = true>>
+<<jump AfterGuard>>
+===
+
+title: SpeakToGuard
+when: $is_friend == true
+---
+Guard: Ah, my friend! Welcome back!
+Guard: The king speaks highly of you.
+Player: Good to see you too, old friend.
+<<jump AfterGuard>>
+===
+
+title: SpeakToGuard
+when: $has_met_guard == true
+---
+Guard: Back again, traveller?
+Player: Indeed. May I pass?
+Guard: Go ahead.
+<<set $is_friend = true>>
+<<jump AfterGuard>>
+===
+
+title: AfterGuard
+---
+You walk through the gate into the courtyard.
+<<if $is_friend == false>>
+    You feel you should visit again to build trust.
+    <<jump SpeakToGuard>>
+<<else>>
+    The guard now considers you a friend!
+<<endif>>
+===

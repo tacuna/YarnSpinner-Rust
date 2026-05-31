@@ -27,15 +27,96 @@ impl DialogueRunnerBuilder {
     pub(crate) fn from_yarn_project(yarn_project: &YarnProject, commands: &mut Commands) -> Self {
         Self {
             variable_storage: Box::new(MemoryVariableStorage::new()),
-            text_provider: SharedTextProvider::new(StringsFileTextProvider::from_yarn_project(
-                yarn_project,
-            )),
+            text_provider: SharedTextProvider::new(StringsFileTextProvider::from_yarn_project(yarn_project)),
             asset_providers: HashMap::default(),
             library: YarnLibrary::standard_library(),
             commands: YarnCommands::builtin_commands(commands),
             compilation: yarn_project.compilation().clone(),
             localizations: yarn_project.localizations().cloned(),
             asset_server: yarn_project.asset_server.clone(),
+        }
+    }
+
+    /// Creates a [`DialogueRunnerBuilder`] from a pre-built [`Compilation`], bypassing the Yarn
+    /// source compilation step at runtime.
+    ///
+    /// This is the entry point for **precompiled-binary workflows** where the [`Program`] and
+    /// string table were produced offline (e.g. in a build script) and stored as binary data.
+    ///
+    /// # Typical workflow
+    ///
+    /// ```rust,ignore
+    /// use prost::Message;
+    /// use yarnspinner::prelude::*;
+    /// use bevy_yarnspinner::prelude::*;
+    ///
+    /// // ── build step (e.g. build.rs or a separate tool) ──────────────────────
+    /// let compilation = Compiler::new().read_file("assets/dialogue.yarn").compile().unwrap();
+    /// let program_bytes = compilation.program.as_ref().unwrap().encode_to_vec();
+    /// let table_json   = serde_json::to_string(&compilation.string_table).unwrap();
+    /// std::fs::write("assets/dialogue.pb",    &program_bytes).unwrap();
+    /// std::fs::write("assets/dialogue.strings.json", &table_json).unwrap();
+    ///
+    /// // ── runtime (Bevy system) ───────────────────────────────────────────────
+    /// fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    ///     let program = Program::decode(
+    ///         include_bytes!("../assets/dialogue.pb").as_slice()
+    ///     ).unwrap();
+    ///     let string_table = serde_json::from_str(
+    ///         include_str!("../assets/dialogue.strings.json")
+    ///     ).unwrap();
+    ///
+    ///     let compilation = Compilation {
+    ///         program: Some(program),
+    ///         string_table,
+    ///         ..Default::default()
+    ///     };
+    ///
+    ///     let runner = DialogueRunnerBuilder::from_compilation(
+    ///         compilation,
+    ///         &mut commands,
+    ///         asset_server.clone(),
+    ///     ).build();
+    ///     commands.spawn(runner);
+    /// }
+    /// ```
+    ///
+    /// # Localization
+    ///
+    /// If you need runtime translation support (non-base languages), replace the default text
+    /// provider using [`DialogueRunnerBuilder::with_text_provider`]:
+    ///
+    /// ```rust,ignore
+    /// let runner = DialogueRunnerBuilder::from_compilation(compilation, &mut commands, asset_server.clone())
+    ///     .with_text_provider(StringsFileTextProvider::from_string_table(
+    ///         string_table,
+    ///         asset_server,
+    ///         Some(localizations),
+    ///     ))
+    ///     .build();
+    /// ```
+    ///
+    /// # Notes
+    ///
+    /// - Serialising `Program` requires the `prost` crate (`prost::Message`), which is already
+    ///   a transitive dependency of `yarnspinner`.
+    /// - Serialising the string table requires the `serde` feature on `yarnspinner_compiler`
+    ///   (enabled by default when using the `yarnspinner` crate with `serde`).
+    #[must_use]
+    pub fn from_compilation(compilation: Compilation, commands: &mut Commands, asset_server: AssetServer) -> Self {
+        Self {
+            variable_storage: Box::new(MemoryVariableStorage::new()),
+            text_provider: SharedTextProvider::new(StringsFileTextProvider::from_string_table(
+                compilation.string_table.clone(),
+                asset_server.clone(),
+                None,
+            )),
+            asset_providers: HashMap::default(),
+            library: YarnLibrary::standard_library(),
+            commands: YarnCommands::builtin_commands(commands),
+            compilation,
+            localizations: None,
+            asset_server: SkipDebug(asset_server),
         }
     }
 
@@ -56,8 +137,7 @@ impl DialogueRunnerBuilder {
     /// Adds an [`AssetProvider`] to the [`DialogueRunner`]. By default, none are registered.
     #[must_use]
     pub fn add_asset_provider(mut self, provider: impl AssetProvider + 'static) -> Self {
-        self.asset_providers
-            .insert(provider.type_id(), Box::new(provider));
+        self.asset_providers.insert(provider.type_id(), Box::new(provider));
         self
     }
 
@@ -73,10 +153,7 @@ impl DialogueRunnerBuilder {
         let text_provider = Box::new(self.text_provider);
 
         let mut dialogue = Dialogue::new(self.variable_storage, text_provider.clone());
-        dialogue
-            .set_line_hints_enabled(true)
-            .library_mut()
-            .extend(self.library);
+        dialogue.set_line_hints_enabled(true).library_mut().extend(self.library);
         dialogue.add_program(self.compilation.program.unwrap());
 
         for asset_provider in self.asset_providers.values_mut() {
@@ -89,11 +166,7 @@ impl DialogueRunnerBuilder {
 
         let popped_line_hints = dialogue.pop_line_hints();
 
-        let base_language = self
-            .localizations
-            .as_ref()
-            .map(|l| &l.base_localization.language)
-            .cloned();
+        let base_language = self.localizations.as_ref().map(|l| &l.base_localization.language).cloned();
 
         let mut dialogue_runner = DialogueRunner {
             dialogue: Some(dialogue),

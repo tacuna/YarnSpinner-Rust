@@ -1,7 +1,9 @@
 // Disable windows console in release builds
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use self::{setup::*, visual_effects::*, yarnspinner_integration::*};
+use self::setup::*;
+use self::visual_effects::*;
+use self::yarnspinner_integration::*;
 use bevy::asset::AssetMetaCheck;
 use bevy::color::palettes::css;
 use bevy::prelude::*;
@@ -77,15 +79,9 @@ fn sprites_have_loaded(sprites: Res<Sprites>, asset_server: Res<AssetServer>) ->
     asset_server
         .get_load_state(&sprites.ferris_neutral)
         .is_some_and(|state| state.is_loaded())
-        && asset_server
-            .get_load_state(&sprites.ferris_happy)
-            .is_some_and(|state| state.is_loaded())
-        && asset_server
-            .get_load_state(&sprites.clippy)
-            .is_some_and(|state| state.is_loaded())
-        && asset_server
-            .get_load_state(&sprites.bang)
-            .is_some_and(|state| state.is_loaded())
+        && asset_server.get_load_state(&sprites.ferris_happy).is_some_and(|state| state.is_loaded())
+        && asset_server.get_load_state(&sprites.clippy).is_some_and(|state| state.is_loaded())
+        && asset_server.get_load_state(&sprites.bang).is_some_and(|state| state.is_loaded())
 }
 
 const FERRIS_TRANSLATION: Vec3 = Vec3::new(-1.3, 0.9, 0.35);

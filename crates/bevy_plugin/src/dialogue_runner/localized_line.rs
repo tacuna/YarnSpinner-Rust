@@ -129,11 +129,13 @@ impl LocalizedLine {
     pub fn text_for_attribute(&self, attribute: &MarkupAttribute) -> &str {
         self.text
             .get(attribute.position..attribute.position + attribute.length)
-            .unwrap_or_else(|| panic!(
-                "Attribute \"{attribute}\" represents a range not representable by this text: \"{}\". \
+            .unwrap_or_else(|| {
+                panic!(
+                    "Attribute \"{attribute}\" represents a range not representable by this text: \"{}\". \
                 Does this MarkupAttribute belong to this MarkupParseResult?",
-                self.text
-            ))
+                    self.text
+                )
+            })
     }
 
     // Documentation taken from `YarnLine`
@@ -183,11 +185,7 @@ impl From<LocalizedLine> for YarnLine {
 }
 
 impl LocalizedLine {
-    pub(crate) fn from_yarn_line(
-        line: YarnLine,
-        assets: LineAssets,
-        metadata: Vec<String>,
-    ) -> Self {
+    pub(crate) fn from_yarn_line(line: YarnLine, assets: LineAssets, metadata: Vec<String>) -> Self {
         Self {
             id: line.id,
             text: line.text,

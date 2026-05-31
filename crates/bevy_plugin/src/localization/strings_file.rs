@@ -1,4 +1,5 @@
-pub(crate) use self::{asset::StringsFile, updating::UpdateAllStringsFilesForStringTableEvent};
+pub(crate) use self::asset::StringsFile;
+pub(crate) use self::updating::UpdateAllStringsFilesForStringTableEvent;
 use bevy::prelude::*;
 
 mod asset;

@@ -78,19 +78,14 @@ impl AppExt for App {
         while !self.world().contains_resource::<YarnProject>() {
             self.update();
         }
-        let mut system_state: SystemState<(Commands, Res<YarnProject>)> =
-            SystemState::new(self.world_mut());
+        let mut system_state: SystemState<(Commands, Res<YarnProject>)> = SystemState::new(self.world_mut());
         let (mut commands, yarn_project) = system_state.get_mut(self.world_mut());
         yarn_project.build_dialogue_runner(&mut commands)
     }
 
     fn clear_and_assert_event<T: Event + Clone + Debug>(&mut self) {
         let resource = self.world_mut().remove_resource::<EventAsserter<T>>();
-        assert!(
-            resource.is_some(),
-            "No EventAsserter with type {} registered",
-            stringify!(T)
-        );
+        assert!(resource.is_some(), "No EventAsserter with type {} registered", stringify!(T));
         let resource = resource.unwrap();
         assert_eq!(
             resource.expected_calls,
@@ -124,8 +119,7 @@ impl AppExt for App {
             entity
         } else {
             self.load_project();
-            let mut system_state: SystemState<(Commands, Res<YarnProject>)> =
-                SystemState::new(self.world_mut());
+            let mut system_state: SystemState<(Commands, Res<YarnProject>)> = SystemState::new(self.world_mut());
             let (mut commands, yarn_project) = system_state.get_mut(self.world_mut());
             let dialogue_runner = yarn_project.create_dialogue_runner(&mut commands);
             system_state.apply(self.world_mut());
@@ -189,8 +183,6 @@ impl DialogueRunnerExt for DialogueRunner {
             text: String::new(),
             attributes: vec![],
         };
-        self.asset_providers()
-            .map(|p| p.get_assets(&line_id))
-            .collect()
+        self.asset_providers().map(|p| p.get_assets(&line_id)).collect()
     }
 }

@@ -1,8 +1,10 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Types/IType.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Types/IType.cs>
 //! ## Implementation Notes
 //! - `IBridgeableType` is not implemented because it is not actually used anywhere.
 
-pub use {function::*, r#type::*, type_util::*};
+pub use function::*;
+pub use r#type::*;
+pub use type_util::*;
 
 mod any;
 mod boolean;

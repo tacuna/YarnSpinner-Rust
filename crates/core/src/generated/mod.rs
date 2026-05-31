@@ -1,6 +1,6 @@
 #![allow(warnings)]
 #![allow(clippy)]
-//! Equivalent to <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/YarnSpinner.cs>
+//! Equivalent to <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/YarnSpinner.cs>
 
 use crate::prelude::*;
 mod ext;

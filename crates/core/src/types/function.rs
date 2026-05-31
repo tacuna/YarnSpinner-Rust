@@ -1,7 +1,6 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Types/FunctionType.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Types/FunctionType.cs>
 use crate::prelude::*;
-use crate::types::TypeProperties;
-use crate::types::{Type, TypeFormat};
+use crate::types::{Type, TypeFormat, TypeProperties};
 use core::fmt::Display;
 
 pub(crate) fn function_type_properties(function_type: &FunctionType) -> TypeProperties {
@@ -12,10 +11,7 @@ pub(crate) fn function_type_properties(function_type: &FunctionType) -> TypeProp
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Default, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 /// A type that represents functions.
 ///
 /// Functions have parameters and a return type, and can be called from
@@ -33,6 +29,14 @@ pub struct FunctionType {
     ///The type of value that this function returns.
     // Needs to be on the heap because of type recursion
     pub return_type: Box<Option<Type>>,
+
+    #[cfg_attr(feature = "bevy", reflect(ignore))]
+    /// If `Some`, this function accepts additional variadic arguments of this type after all fixed
+    /// [`parameters`](Self::parameters). A `None` value means the function is not variadic.
+    ///
+    /// Stored behind a [`Box`] to avoid a recursive-type error (since [`Type`] may contain
+    /// a [`FunctionType`]).
+    pub variadic_parameter_type: Option<Box<Type>>,
 }
 
 impl From<FunctionType> for Type {
@@ -57,12 +61,11 @@ impl FunctionType {
 
 impl Display for FunctionType {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let parameters = self
-            .parameters
-            .iter()
-            .map(TypeFormat::format)
-            .collect::<Vec<_>>()
-            .join(", ");
+        let mut params: Vec<String> = self.parameters.iter().map(TypeFormat::format).collect();
+        if let Some(var_type) = self.variadic_parameter_type.as_deref() {
+            params.push(format!("{}...", var_type.format()));
+        }
+        let parameters = params.join(", ");
         let return_type = self.return_type.as_ref().format();
         write!(f, "Fn({parameters}) -> {return_type}")
     }

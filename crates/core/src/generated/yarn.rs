@@ -13,18 +13,15 @@ pub struct Program {
     pub name: ::prost::alloc::string::String,
     /// The collection of nodes in this program.
     #[prost(btree_map = "string, message", tag = "2")]
-    pub nodes: ::prost::alloc::collections::BTreeMap<
-        ::prost::alloc::string::String,
-        Node,
-    >,
+    pub nodes: ::prost::alloc::collections::BTreeMap<::prost::alloc::string::String, Node>,
     /// The collection of initial values for variables; if a PUSH_VARIABLE
     /// instruction is run, and the value is not found in the storage, this
     /// value will be used
     #[prost(btree_map = "string, message", tag = "3")]
-    pub initial_values: ::prost::alloc::collections::BTreeMap<
-        ::prost::alloc::string::String,
-        Operand,
-    >,
+    pub initial_values: ::prost::alloc::collections::BTreeMap<::prost::alloc::string::String, Operand>,
+    /// The version of the Yarn Spinner language that this program was compiled under.
+    #[prost(int32, tag = "4")]
+    pub language_version: i32,
 }
 /// A collection of instructions
 use crate::prelude::*;
@@ -44,10 +41,7 @@ pub struct Node {
     /// A jump table, mapping the names of labels to positions in the
     /// instructions list.
     #[prost(btree_map = "string, int32", tag = "3")]
-    pub labels: ::prost::alloc::collections::BTreeMap<
-        ::prost::alloc::string::String,
-        i32,
-    >,
+    pub labels: ::prost::alloc::collections::BTreeMap<::prost::alloc::string::String, i32>,
     /// The tags associated with this node.
     #[prost(string, repeated, tag = "4")]
     pub tags: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -94,21 +88,8 @@ pub mod instruction {
     #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
     #[cfg_attr(feature = "bevy", derive(Reflect))]
     #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-    #[cfg_attr(
-        all(feature = "bevy", feature = "serde"),
-        reflect(Serialize, Deserialize)
-    )]
-    #[derive(
-        Clone,
-        Copy,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash,
-        PartialOrd,
-        Ord,
-        ::prost::Enumeration
-    )]
+    #[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
     #[repr(i32)]
     pub enum OpCode {
         /// Jumps to a named position in the node.
@@ -159,7 +140,7 @@ pub mod instruction {
         Pop = 11,
         /// Calls a function in the client. Pops as many arguments as the
         /// client indicates the function receives, and the result (if any)
-        /// is pushed to the stack.		
+        /// is pushed to the stack.
         /// opA = string: name of the function
         CallFunc = 12,
         /// Pushes the contents of a variable onto the stack.
@@ -176,6 +157,28 @@ pub mod instruction {
         /// that name.
         /// No operands.
         RunNode = 16,
+        /// Pops a string off the top of the stack, detours to that node,
+        /// then returns to the instruction after this one when the node ends.
+        /// opA is unused; the node name is on the stack.
+        DetourToNode = 18,
+        /// Peeks at the top of the stack and jumps to the label whose
+        /// name is the value on top of the stack. Does NOT pop.
+        /// No operands.
+        PeekAndJump = 19,
+        /// Returns from a detour, resuming execution at the instruction after
+        /// the DetourToNode that started the current detour.
+        /// No operands.
+        Return = 20,
+        /// Pops a boolean from the stack and adds a saliency candidate.
+        /// opA = string: content ID
+        /// opB = number: complexity score
+        /// opC = string: destination label name
+        AddSaliencyCandidate = 21,
+        /// Selects the best saliency candidate from the current list.
+        /// Pushes the destination label (string) and true, or just false
+        /// if no candidate was available.
+        /// No operands.
+        SelectSaliencyCandidate = 23,
     }
     impl OpCode {
         /// String value of the enum field names used in the ProtoBuf definition.
@@ -201,6 +204,11 @@ pub mod instruction {
                 OpCode::StoreVariable => "STORE_VARIABLE",
                 OpCode::Stop => "STOP",
                 OpCode::RunNode => "RUN_NODE",
+                OpCode::DetourToNode => "DETOUR_TO_NODE",
+                OpCode::PeekAndJump => "PEEK_AND_JUMP",
+                OpCode::Return => "RETURN",
+                OpCode::AddSaliencyCandidate => "ADD_SALIENCY_CANDIDATE",
+                OpCode::SelectSaliencyCandidate => "SELECT_SALIENCY_CANDIDATE",
             }
         }
         /// Creates an enum from field names used in the ProtoBuf definition.
@@ -223,6 +231,11 @@ pub mod instruction {
                 "STORE_VARIABLE" => Some(Self::StoreVariable),
                 "STOP" => Some(Self::Stop),
                 "RUN_NODE" => Some(Self::RunNode),
+                "DETOUR_TO_NODE" => Some(Self::DetourToNode),
+                "PEEK_AND_JUMP" => Some(Self::PeekAndJump),
+                "RETURN" => Some(Self::Return),
+                "ADD_SALIENCY_CANDIDATE" => Some(Self::AddSaliencyCandidate),
+                "SELECT_SALIENCY_CANDIDATE" => Some(Self::SelectSaliencyCandidate),
                 _ => None,
             }
         }
@@ -248,10 +261,7 @@ pub mod operand {
     #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
     #[cfg_attr(feature = "bevy", derive(Reflect))]
     #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-    #[cfg_attr(
-        all(feature = "bevy", feature = "serde"),
-        reflect(Serialize, Deserialize)
-    )]
+    #[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Value {

@@ -2,9 +2,7 @@ use crate::fmt_utils::SkipDebug;
 use crate::prelude::*;
 use bevy::platform::collections::{HashMap, HashSet};
 use bevy::prelude::*;
-pub(crate) use compilation::{
-    RecompileLoadedYarnFilesEvent, YarnFilesBeingLoaded, YarnProjectConfigToLoad,
-};
+pub(crate) use compilation::{RecompileLoadedYarnFilesEvent, YarnFilesBeingLoaded, YarnProjectConfigToLoad};
 use std::fmt::Debug;
 use std::iter;
 
@@ -85,12 +83,29 @@ impl YarnProject {
             .headers
             .iter()
             .fold(HashMap::default(), |mut map: HashMap<_, Vec<_>>, header| {
-                map.entry(header.key.as_str())
-                    .or_default()
-                    .push(header.value.as_str());
+                map.entry(header.key.as_str()).or_default().push(header.value.as_str());
                 map
             })
             .into()
+    }
+
+    /// Constructs a [`YarnProject`] directly from a pre-compiled [`Compilation`], bypassing
+    /// the usual asset-loading / runtime-compilation pipeline.
+    pub fn from_precompiled(compilation: Compilation, localizations: Option<Localizations>, asset_server: AssetServer) -> Self {
+        let metadata = compilation
+            .string_table
+            .iter()
+            .map(|(id, info)| (id.clone(), info.metadata.clone()))
+            .collect();
+        Self {
+            yarn_files: HashSet::new(),
+            compilation,
+            localizations,
+            asset_server: SkipDebug(asset_server),
+            metadata,
+            watching_for_changes: false,
+            development_file_generation: DevelopmentFileGeneration::default(),
+        }
     }
 }
 
@@ -129,10 +144,7 @@ impl LoadYarnProjectEvent {
         T: IntoIterator<Item = U>,
         U: Into<YarnFileSource>,
     {
-        let yarn_files = yarn_files
-            .into_iter()
-            .map(|yarn_file| yarn_file.into())
-            .collect();
+        let yarn_files = yarn_files.into_iter().map(|yarn_file| yarn_file.into()).collect();
         Self {
             localizations: None,
             yarn_files,
@@ -155,12 +167,8 @@ impl LoadYarnProjectEvent {
 
     /// See [`YarnSpinnerPlugin::add_yarn_sources`].
     #[must_use]
-    pub fn add_yarn_sources(
-        mut self,
-        yarn_files: impl IntoIterator<Item = impl Into<YarnFileSource>>,
-    ) -> Self {
-        self.yarn_files
-            .extend(yarn_files.into_iter().map(|yarn_file| yarn_file.into()));
+    pub fn add_yarn_sources(mut self, yarn_files: impl IntoIterator<Item = impl Into<YarnFileSource>>) -> Self {
+        self.yarn_files.extend(yarn_files.into_iter().map(|yarn_file| yarn_file.into()));
         self
     }
 
@@ -175,10 +183,7 @@ impl LoadYarnProjectEvent {
     /// See [`YarnSpinnerPlugin::with_development_file_generation`].
     #[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
     #[must_use]
-    pub fn with_development_file_generation(
-        mut self,
-        development_file_generation: DevelopmentFileGeneration,
-    ) -> Self {
+    pub fn with_development_file_generation(mut self, development_file_generation: DevelopmentFileGeneration) -> Self {
         self.development_file_generation = development_file_generation;
         self
     }

@@ -10,42 +10,93 @@ pub use log;
 pub mod prelude {
     //! Everything you need to get started using Yarn Spinner.
     pub use crate::compiler::{
-        Compilation, CompilationType, Compiler as YarnCompiler, CompilerError, File as YarnFile,
-        LineInfo, Result as YarnCompilerResult, StringInfo,
+        Compilation,
+        CompilationType,
+        Compiler as YarnCompiler,
+        CompilerError,
+        File as YarnFile,
+        LineInfo,
+        Result as YarnCompilerResult,
+        StringInfo,
     };
-    pub use crate::core::{
-        IntoYarnValueFromNonYarnValue, Library as YarnLibrary, LineId, Program as YarnProgram,
-        YarnFn, YarnValue, yarn_library,
-    };
+    pub use crate::core::{IntoYarnValueFromNonYarnValue, Library as YarnLibrary, LineId, Program as YarnProgram, YarnFn, YarnValue, yarn_library};
     pub use crate::runtime::{
-        Command as YarnCommand, CompiledProgramAnalyser as YarnAnalyser,
-        Context as YarnAnalysisContext, Dialogue, DialogueError, DialogueEvent, DialogueOption,
-        Language, Line as YarnLine, MarkupAttribute, MarkupValue, OptionId,
-        Result as YarnRuntimeResult, StringTable, TextProvider, VariableStorage,
+        Command as YarnCommand,
+        CompiledProgramAnalyser as YarnAnalyser,
+        Context as YarnAnalysisContext,
+        Dialogue,
+        DialogueError,
+        DialogueEvent,
+        DialogueOption,
+        Language,
+        Line as YarnLine,
+        MarkupAttribute,
+        MarkupValue,
+        OptionId,
+        Result as YarnRuntimeResult,
+        StringTable,
+        TextProvider,
+        VariableStorage,
     };
 }
 
 pub mod core {
     //! Core types and traits that are used by both the compiler and runtime.
     pub use yarnspinner_core::prelude::{
-        Header, Instruction, IntoYarnValueFromNonYarnValue, InvalidOpCodeError, Library, LineId,
-        Node, Position, Program, Type, UntypedYarnFn, YarnFn, YarnFnParam, YarnFnParamItem,
-        YarnValue, YarnValueCastError, YarnValueWrapper, YarnValueWrapperIter, optionality,
-        yarn_fn_type, yarn_library,
+        Header,
+        Instruction,
+        IntoYarnValueFromNonYarnValue,
+        InvalidOpCodeError,
+        Library,
+        LineId,
+        Node,
+        Position,
+        Program,
+        Type,
+        UntypedYarnFn,
+        YarnFn,
+        YarnFnParam,
+        YarnFnParamItem,
+        YarnValue,
+        YarnValueCastError,
+        YarnValueWrapper,
+        YarnValueWrapperIter,
+        optionality,
+        yarn_fn_type,
+        yarn_library,
     };
 }
 pub mod compiler {
     //! Types and traits used by the compiler, in particular the [`Compiler`] struct.
-    pub use yarnspinner_compiler::Result;
     pub use yarnspinner_compiler::prelude::*;
+    pub use yarnspinner_compiler::{
+        DescriptiveLineTagGenerator,
+        LineTagContext,
+        LineTagGenerator,
+        LineTaggingError,
+        RandomLineTagGenerator,
+        Result,
+        TagAbortBehaviour,
+    };
 }
 
 pub mod runtime {
     //! Types and traits used by the runtime, in particular the [`Dialogue`] struct.
     pub use yarnspinner_runtime::Result;
     pub use yarnspinner_runtime::markup::{
-        CHARACTER_ATTRIBUTE, CHARACTER_ATTRIBUTE_NAME_PROPERTY, MarkupAttribute, MarkupParseError,
-        MarkupValue, TRIM_WHITESPACE_PROPERTY,
+        AttributeMarkerProcessor,
+        CHARACTER_ATTRIBUTE,
+        CHARACTER_ATTRIBUTE_NAME_PROPERTY,
+        DialogueTextProcessor,
+        LineParser,
+        MarkupAttribute,
+        MarkupAttributeMarker,
+        MarkupParseError,
+        MarkupValue,
+        ParsedMarkup,
+        REPLACEMENT_MARKER_CONTENTS,
+        TRIM_WHITESPACE_PROPERTY,
+        TagType,
     };
     pub use yarnspinner_runtime::prelude::*;
 }

@@ -1,8 +1,6 @@
+pub(crate) use self::line_id_generation::LineIdUpdateSystemSet;
 pub use self::localizations::*;
-pub(crate) use self::{
-    line_id_generation::LineIdUpdateSystemSet,
-    strings_file::UpdateAllStringsFilesForStringTableEvent, strings_file::*,
-};
+pub(crate) use self::strings_file::{UpdateAllStringsFilesForStringTableEvent, *};
 use bevy::prelude::*;
 
 mod line_id_generation;

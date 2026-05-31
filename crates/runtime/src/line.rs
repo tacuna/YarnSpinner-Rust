@@ -1,11 +1,9 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Dialogue.cs>, which we split off into multiple files
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Dialogue.cs>, which we split off into multiple files
 //!
 //! ## Implementation notes
 //! Introduced `LineId` newtype for better type safety
 
-use crate::markup::{
-    CHARACTER_ATTRIBUTE, CHARACTER_ATTRIBUTE_NAME_PROPERTY, MarkupAttribute, MarkupValue,
-};
+use crate::markup::{CHARACTER_ATTRIBUTE, CHARACTER_ATTRIBUTE_NAME_PROPERTY, MarkupAttribute, MarkupValue};
 use crate::prelude::*;
 
 /// A line of dialogue, sent from the [`Dialogue`] to the game.
@@ -27,10 +25,7 @@ use crate::prelude::*;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct Line {
     /// The ID of the line in the string table.
     pub id: LineId,
@@ -176,11 +171,7 @@ impl Line {
     /// ## Panics
     /// Panics if `attribute_to_delete` is not an attribute of this [`Line::attribute`].
     pub fn delete_range(&self, attribute_to_delete: &MarkupAttribute) -> Self {
-        if !self
-            .attributes
-            .iter()
-            .any(|attr| attr == attribute_to_delete)
-        {
+        if !self.attributes.iter().any(|attr| attr == attribute_to_delete) {
             panic!("Attribute to delete is not an attribute of this line");
         }
         // Address the trivial case: if the attribute has a zero
@@ -188,12 +179,7 @@ impl Line {
         // The plain text is left unmodified, because this attribute
         // didn't apply to any text.
         if attribute_to_delete.length == 0 {
-            let attributes = self
-                .attributes
-                .iter()
-                .filter(|attr| *attr != attribute_to_delete)
-                .cloned()
-                .collect();
+            let attributes = self.attributes.iter().filter(|attr| *attr != attribute_to_delete).cloned().collect();
             return Line {
                 id: self.id.clone(),
                 text: self.text.to_string(),
@@ -242,8 +228,7 @@ impl Line {
                         // deleting, and ends after it. Its length is
                         // edited to remove the length of the item we're
                         // deleting.
-                        attribute.length =
-                            attribute.length.saturating_sub(attribute_to_delete.length);
+                        attribute.length = attribute.length.saturating_sub(attribute_to_delete.length);
                     }
                 } else if start >= deletion_end {
                     // The item begins after the item we're deleting. Its

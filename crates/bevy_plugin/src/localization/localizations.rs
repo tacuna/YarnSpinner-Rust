@@ -32,15 +32,12 @@ pub struct Localizations {
 impl Localizations {
     /// Returns whether the given language is supported by these [`Localizations`] as either a base language or a translation.
     pub fn supports_language(&self, language: &Language) -> bool {
-        self.supported_languages()
-            .any(|supported_language| supported_language == language)
+        self.supported_languages().any(|supported_language| supported_language == language)
     }
 
     /// Returns the localization for the given translation, if it exists. Will return [`None`] if the given language is not supported or the base language.
     pub(crate) fn translation(&self, language: &Language) -> Option<&Localization> {
-        self.translations
-            .iter()
-            .find(|localization| localization.language == *language)
+        self.translations.iter().find(|localization| localization.language == *language)
     }
 
     pub(crate) fn supported_localization(&self, language: &Language) -> Option<&Localization> {
@@ -51,11 +48,7 @@ impl Localizations {
 
     /// Iterates over all supported languages, including the base language.
     pub fn supported_languages(&self) -> impl Iterator<Item = &Language> {
-        iter::once(&self.base_localization.language).chain(
-            self.translations
-                .iter()
-                .map(|localization| &localization.language),
-        )
+        iter::once(&self.base_localization.language).chain(self.translations.iter().map(|localization| &localization.language))
     }
 
     pub(crate) fn strings_file_path(&self, language: impl Into<Language>) -> Option<&Path> {

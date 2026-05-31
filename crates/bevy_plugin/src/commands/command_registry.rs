@@ -48,11 +48,7 @@ impl YarnCommands {
     /// Adds a new method to the registry. Commands are valid Bevy systems with input and output.
     ///
     /// See the documentation of [`YarnCommand`] for more information about which methods are allowed.
-    pub fn add_command<Marker, F>(
-        &mut self,
-        name: impl Into<Cow<'static, str>>,
-        command: F,
-    ) -> &mut Self
+    pub fn add_command<Marker, F>(&mut self, name: impl Into<Cow<'static, str>>, command: F) -> &mut Self
     where
         Marker: 'static,
         F: YarnCommand<Marker> + 'static + Clone,
@@ -65,9 +61,7 @@ impl YarnCommands {
 
     /// Iterates over all registered commands.
     pub fn iter(&self) -> impl Iterator<Item = (&str, &dyn UntypedYarnCommand)> {
-        self.0
-            .iter()
-            .map(|(key, value)| (key.as_ref(), value.as_ref()))
+        self.0.iter().map(|(key, value)| (key.as_ref(), value.as_ref()))
     }
 
     /// Returns `true` if the registry contains a command with the given name.
@@ -113,9 +107,7 @@ impl YarnCommands {
 
         commands.add_command(
             "wait",
-            bevy_commands.register_system(|In(duration): In<f32>, mut wait: ResMut<Wait>| {
-                wait.add(Duration::from_secs_f32(duration))
-            }),
+            bevy_commands.register_system(|In(duration): In<f32>, mut wait: ResMut<Wait>| wait.add(Duration::from_secs_f32(duration))),
         );
 
         #[allow(clippy::unused_unit)] // Needed for 2024 edition
@@ -190,10 +182,7 @@ mod tests {
         let mut world = World::default();
 
         #[allow(clippy::unused_unit)] // Needed for 2024 edition
-        methods.add_command(
-            "test",
-            world.register_system(|_: In<()>| -> () { panic!("It works!") }),
-        );
+        methods.add_command("test", world.register_system(|_: In<()>| -> () { panic!("It works!") }));
         let method = methods.get_mut("test").unwrap();
         method.call(vec![], &mut world);
     }
@@ -203,10 +192,7 @@ mod tests {
         let mut methods = YarnCommands::default();
         let mut world = World::default();
 
-        methods.add_command(
-            "test",
-            world.register_system(|In(a): In<f32>| assert_eq!(1.0, a)),
-        );
+        methods.add_command("test", world.register_system(|In(a): In<f32>| assert_eq!(1.0, a)));
         let method = methods.get_mut("test").unwrap();
         method.call(to_method_params([1.0]), &mut world);
     }
@@ -226,10 +212,7 @@ mod tests {
         let mut world = World::default();
 
         methods.add_command("test1", world.register_system(|_: In<()>| {}));
-        methods.add_command(
-            "test2",
-            world.register_system(|In(a): In<f32>| assert_eq!(1.0, a)),
-        );
+        methods.add_command("test2", world.register_system(|In(a): In<f32>| assert_eq!(1.0, a)));
 
         {
             let method1 = methods.get_mut("test1").unwrap();
@@ -246,9 +229,7 @@ mod tests {
 
         methods.add_command(
             "test",
-            world.register_system(|In(a): In<f32>, mut commands: Commands| {
-                commands.insert_resource(Data(a))
-            }),
+            world.register_system(|In(a): In<f32>, mut commands: Commands| commands.insert_resource(Data(a))),
         );
 
         #[derive(Resource)]

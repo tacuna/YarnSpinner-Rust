@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/YarnSpinner.Markup/MarkupParseResult.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/YarnSpinner.Markup/MarkupParseResult.cs>
 //! which was split into multiple files.
 
 use crate::prelude::*;
@@ -12,13 +12,10 @@ use core::fmt::Display;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub enum MarkupValue {
     /// An integer value. Note that while Yarn variables make no distinction between integers and floats, markup values do.
-    Integer(u32),
+    Integer(i32),
     /// A floating-point value. Note that while Yarn variables make no distinction between integers and floats, markup values do.
     Float(f32),
     /// A string value.
@@ -62,8 +59,8 @@ impl From<&str> for MarkupValue {
     }
 }
 
-impl From<u32> for MarkupValue {
-    fn from(i: u32) -> Self {
+impl From<i32> for MarkupValue {
+    fn from(i: i32) -> Self {
         MarkupValue::Integer(i)
     }
 }

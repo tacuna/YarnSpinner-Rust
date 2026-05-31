@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use crate::visitors::{LastLineBeforeOptionsVisitor, StringTableGeneratorVisitor};
-use antlr_rust::tree::ParseTreeVisitorCompat;
+use antlr4rust::tree::ParseTreeVisitorCompat;
 
 pub(crate) fn register_strings(mut state: CompilationIntermediate) -> CompilationIntermediate {
     // First pass: parse all files, generate their syntax trees,
@@ -12,8 +12,7 @@ pub(crate) fn register_strings(mut state: CompilationIntermediate) -> Compilatio
         let mut last_line_tagger = LastLineBeforeOptionsVisitor::default();
         last_line_tagger.visit(file.tree.as_ref());
 
-        let mut visitor =
-            StringTableGeneratorVisitor::new(state.string_table.clone(), file.clone());
+        let mut visitor = StringTableGeneratorVisitor::new(state.string_table.clone(), file.clone());
         visitor.visit(file.tree.as_ref());
         state.diagnostics.extend(visitor.diagnostics);
         state.string_table.extend(visitor.string_table_manager);

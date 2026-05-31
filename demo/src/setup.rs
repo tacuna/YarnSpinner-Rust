@@ -1,8 +1,5 @@
 use crate::visual_effects::RotationPhase;
-use crate::yarnspinner_integration::{
-    Speaker, change_sprite, fade_in, fade_out, move_camera_to_clippy, quit, rotate_character,
-    show_bang,
-};
+use crate::yarnspinner_integration::{Speaker, change_sprite, fade_in, fade_out, move_camera_to_clippy, quit, rotate_character, show_bang};
 use crate::{CAMERA_TRANSLATION, CLIPPY_TRANSLATION, FERRIS_TRANSLATION, Sprites};
 use bevy::camera::Exposure;
 use bevy::color::palettes::css;
@@ -35,9 +32,7 @@ pub(crate) fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         MainCamera,
     ));
-    commands.spawn(SceneRoot(
-        asset_server.load("models/coffee_shop.glb#Scene0"),
-    ));
+    commands.spawn(SceneRoot(asset_server.load("models/coffee_shop.glb#Scene0")));
     commands.spawn((
         DirectionalLight {
             color: css::BISQUE.into(),
@@ -54,12 +49,7 @@ pub(crate) fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         Transform::from_xyz(-3.5, 2.3, 1.15).looking_at(FERRIS_TRANSLATION, Vec3::Y),
     ));
 
-    for (x, y, z) in [
-        (-1.0, 2.5, 0.75),
-        (-1.0, 2.5, -1.6),
-        (3.0, 2.5, 0.75),
-        (3.0, 2.5, -1.6),
-    ] {
+    for (x, y, z) in [(-1.0, 2.5, 0.75), (-1.0, 2.5, -1.6), (3.0, 2.5, 0.75), (3.0, 2.5, -1.6)] {
         commands.spawn((
             PointLight {
                 color: Color::srgb(1.0, 0.78, 0.45),
@@ -105,10 +95,7 @@ pub(crate) fn spawn_dialogue_runner(mut commands: Commands, project: Res<YarnPro
         .add_command("fade_out", commands.register_system(fade_out))
         .add_command("quit", commands.register_system(quit))
         .add_command("rotate", commands.register_system(rotate_character))
-        .add_command(
-            "move_camera_to_clippy",
-            commands.register_system(move_camera_to_clippy),
-        )
+        .add_command("move_camera_to_clippy", commands.register_system(move_camera_to_clippy))
         .add_command("show_bang", commands.register_system(show_bang));
     // Immediately start showing the dialogue
     dialogue_runner.start_node("Start");

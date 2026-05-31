@@ -14,10 +14,7 @@ pub struct LineView<'a> {
 
 impl<'a> LineView<'a> {
     pub fn new(line: &'a Line) -> LineView<'a> {
-        LineView {
-            line,
-            style: Style::new(),
-        }
+        LineView { line, style: Style::new() }
     }
 }
 
@@ -68,11 +65,7 @@ impl OptionsViewState {
     pub fn move_cursor_up(&mut self) {
         let current_index = self.list_state.selected().unwrap_or(0);
 
-        let new_index = if current_index == 0 {
-            self.items.len() - 1
-        } else {
-            current_index - 1
-        };
+        let new_index = if current_index == 0 { self.items.len() - 1 } else { current_index - 1 };
 
         self.list_state.select(Some(new_index));
     }
@@ -80,8 +73,7 @@ impl OptionsViewState {
     pub fn move_cursor_down(&mut self) {
         let current_index = self.list_state.selected().unwrap_or(0);
 
-        self.list_state
-            .select(Some((current_index + 1) % self.items.len()));
+        self.list_state.select(Some((current_index + 1) % self.items.len()));
     }
 }
 
@@ -128,12 +120,7 @@ impl Widget for ContinueView {
             .block(Block::default().title("Options").borders(Borders::ALL))
             .highlight_style(Style::new().add_modifier(Modifier::REVERSED));
 
-        StatefulWidget::render(
-            widget,
-            area,
-            buf,
-            &mut ListState::default().with_selected(Some(0)),
-        )
+        StatefulWidget::render(widget, area, buf, &mut ListState::default().with_selected(Some(0)))
     }
 }
 

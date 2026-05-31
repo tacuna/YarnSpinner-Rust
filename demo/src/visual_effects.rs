@@ -7,17 +7,12 @@ use std::ops::DerefMut;
 
 pub(crate) fn bob_speaker(mut speakers: Query<(&Speaker, &mut Transform)>) {
     for (speaker, mut transform) in speakers.iter_mut() {
-        let is_back_at_initial_position =
-            (transform.translation.y - speaker.initial_translation.y).powi(2) < 1e-5;
+        let is_back_at_initial_position = (transform.translation.y - speaker.initial_translation.y).powi(2) < 1e-5;
 
         if !speaker.active && is_back_at_initial_position {
             continue;
         }
-        transform.translation.y = speaker.initial_translation.y
-            + (speaker.last_active.elapsed().as_secs_f32() * 10.0)
-                .sin()
-                .powi(2)
-                * 0.04;
+        transform.translation.y = speaker.initial_translation.y + (speaker.last_active.elapsed().as_secs_f32() * 10.0).sin().powi(2) * 0.04;
     }
 }
 
@@ -32,11 +27,7 @@ pub(crate) enum RotationPhase {
 }
 
 pub(crate) fn rotate_sprite(
-    mut rotators: Query<(
-        &mut Transform,
-        &MeshMaterial3d<StandardMaterial>,
-        &mut RotationPhase,
-    )>,
+    mut rotators: Query<(&mut Transform, &MeshMaterial3d<StandardMaterial>, &mut RotationPhase)>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for (mut transform, material, mut rotator) in rotators.iter_mut() {
@@ -62,11 +53,7 @@ pub(crate) fn rotate_sprite(
 #[derive(Debug, Clone, Resource)]
 pub(crate) struct FadeCurtainAlpha(pub(crate) EasedChange<f32>);
 
-pub(crate) fn handle_fade(
-    mut commands: Commands,
-    mut fade: ResMut<FadeCurtainAlpha>,
-    mut color: Single<&mut BackgroundColor, With<StageCurtains>>,
-) {
+pub(crate) fn handle_fade(mut commands: Commands, mut fade: ResMut<FadeCurtainAlpha>, mut color: Single<&mut BackgroundColor, With<StageCurtains>>) {
     if fade.0.is_done() {
         color.0.set_alpha(fade.0.to);
         commands.remove_resource::<FadeCurtainAlpha>();
@@ -103,11 +90,7 @@ pub(crate) fn move_camera(
             .from
             .translation
             .lerp(camera_movement.0.to.translation, translation_output);
-        transform.rotation = camera_movement
-            .0
-            .from
-            .rotation
-            .slerp(camera_movement.0.to.rotation, rotation_output);
+        transform.rotation = camera_movement.0.from.rotation.slerp(camera_movement.0.to.rotation, rotation_output);
     }
 }
 
@@ -115,12 +98,7 @@ pub(crate) fn move_camera(
 pub(crate) struct Bang(pub(crate) EasedChange<(Vec3, f32)>);
 
 pub(crate) fn ease_bang(
-    mut bangs: Query<(
-        Entity,
-        &Bang,
-        &mut Transform,
-        &MeshMaterial3d<StandardMaterial>,
-    )>,
+    mut bangs: Query<(Entity, &Bang, &mut Transform, &MeshMaterial3d<StandardMaterial>)>,
     mut standard_materials: ResMut<Assets<StandardMaterial>>,
     camera_transform: Single<&Transform, (With<MainCamera>, Without<Bang>)>,
     mut commands: Commands,

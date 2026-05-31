@@ -1,8 +1,6 @@
 use crate::prelude::*;
 
-pub(crate) fn break_on_job_with_only_strings(
-    mut state: CompilationIntermediate,
-) -> CompilationIntermediate {
+pub(crate) fn break_on_job_with_only_strings(mut state: CompilationIntermediate) -> CompilationIntermediate {
     if state.job.compilation_type == CompilationType::StringsOnly {
         state.result = Some(Ok(Compilation {
             string_table: state.string_table.clone().into(),
@@ -15,10 +13,8 @@ pub(crate) fn break_on_job_with_only_strings(
     state
 }
 
-pub(crate) fn break_on_job_with_only_declarations(
-    mut state: CompilationIntermediate,
-) -> CompilationIntermediate {
-    if state.job.compilation_type == CompilationType::DeclarationsOnly {
+pub(crate) fn break_on_job_with_only_declarations(mut state: CompilationIntermediate) -> CompilationIntermediate {
+    if state.job.compilation_type == CompilationType::TypeCheck {
         state.result = Some(Ok(Compilation {
             declarations: state.derived_variable_declarations.clone(),
             warnings: state.diagnostics.clone(),

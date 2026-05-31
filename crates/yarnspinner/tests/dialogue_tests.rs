@@ -1,7 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/DialogueTests.cs>
-//!
-//! ## Implementation notes
-//! `TestDumpingCode` was not ported because `GetByteCode` is not used by a user directly and thus was not implemented at all.
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/DialogueTests.cs>
 
 #[cfg(feature = "bevy")]
 use bevy::prelude::World;
@@ -48,10 +45,7 @@ fn test_analysis() {
         .compile()
         .unwrap();
 
-    test_base
-        .with_compilation(result)
-        .dialogue
-        .analyse(&mut context);
+    test_base.with_compilation(result).dialogue.analyse(&mut context);
 
     let diagnoses: Vec<_> = context
         .finish_analysis()
@@ -61,11 +55,7 @@ fn test_analysis() {
     println!("{diagnoses:#?}");
 
     assert_eq!(1, diagnoses.len());
-    assert!(
-        diagnoses[0]
-            .message
-            .contains("Variable $bar is assigned, but never read from")
-    );
+    assert!(diagnoses[0].message.contains("Variable $bar is assigned, but never read from"));
 }
 
 /// Split off from `test_analysis`
@@ -79,10 +69,7 @@ fn test_analysis_has_no_false_positives() {
         .compile()
         .unwrap();
     let mut context = Context::default_analysers();
-    test_base
-        .with_compilation(result)
-        .dialogue
-        .analyse(&mut context);
+    test_base.with_compilation(result).dialogue.analyse(&mut context);
 
     let diagnoses: Vec<_> = context
         .finish_analysis()
@@ -127,10 +114,7 @@ fn test_getting_current_node_name() {
     assert_eq!(dialogue.current_node(), Some("Sally".to_string()));
 
     let stop_events = dialogue.stop();
-    assert_eq!(
-        Some(DialogueEvent::DialogueComplete),
-        stop_events.into_iter().next_back()
-    );
+    assert_eq!(Some(DialogueEvent::DialogueComplete), stop_events.into_iter().next_back());
 
     // Current node should now be none
     assert!(dialogue.current_node().is_none());
@@ -162,7 +146,12 @@ fn test_getting_tags() {
     test_base = test_base.with_program(result.program.unwrap());
     let dialogue = &test_base.dialogue;
 
-    let tags = dialogue.get_tags_for_node("LearnMore").unwrap();
+    let tags: Vec<String> = dialogue
+        .get_header_value("LearnMore", "tags")
+        .unwrap()
+        .split_whitespace()
+        .map(str::to_owned)
+        .collect();
 
     assert_eq!(tags, vec!["rawText"]);
 }
@@ -197,10 +186,7 @@ fn test_line_hints() {
     let result = Compiler::new().read_file(path).compile().unwrap();
 
     let mut dialogue = TestBase::new().with_compilation(result).dialogue;
-    dialogue
-        .set_line_hints_enabled(true)
-        .set_node("Start")
-        .unwrap();
+    dialogue.set_line_hints_enabled(true).set_node("Start").unwrap();
 
     let mut line_hints_were_sent = false;
 
@@ -277,9 +263,7 @@ fn test_function_argument_type_inference() {
 
 #[test]
 fn test_selecting_option_from_inside_option_callback() {
-    let result = Compiler::from_test_source("-> option 1\n->option 2\nfinal line\n")
-        .compile()
-        .unwrap();
+    let result = Compiler::from_test_source("-> option 1\n->option 2\nfinal line\n").compile().unwrap();
 
     let mut test_base = TestBase::new()
         .with_test_plan(
@@ -300,8 +284,7 @@ fn test_selecting_option_from_inside_option_callback() {
         let events = test_base.dialogue.continue_with_world(&mut world);
         #[cfg(not(feature = "bevy"))]
         let events = test_base.dialogue.continue_();
-        let events =
-            events.unwrap_or_else(|e| panic!("Encountered error while running dialogue: {e}"));
+        let events = events.unwrap_or_else(|e| panic!("Encountered error while running dialogue: {e}"));
         for event in events {
             match event {
                 DialogueEvent::Line(line) => {
@@ -314,11 +297,7 @@ fn test_selecting_option_from_inside_option_callback() {
                     assert_eq!(StepValue::String(line.text), expected_value);
                 }
                 DialogueEvent::Options(options) => {
-                    test_base
-                        .test_plan
-                        .as_mut()
-                        .unwrap()
-                        .next(&mut test_base.dialogue);
+                    test_base.test_plan.as_mut().unwrap().next(&mut test_base.dialogue);
                     let actual_options: Vec<_> = options
                         .into_iter()
                         .map(|o| ProcessedOption {
@@ -340,11 +319,197 @@ fn test_selecting_option_from_inside_option_callback() {
                     let expected_step = test_plan.next_expected_step;
                     assert_eq!(ExpectedStepType::Stop, expected_step);
                 }
-                DialogueEvent::Command(_)
-                | DialogueEvent::NodeComplete(_)
-                | DialogueEvent::NodeStart(_)
-                | DialogueEvent::LineHints(_) => {}
+                DialogueEvent::Command(_) | DialogueEvent::NodeComplete(_) | DialogueEvent::NodeStart(_) | DialogueEvent::LineHints(_) => {}
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// TestDialogueStorageCanRetrieveValues
+// ---------------------------------------------------------------------------
+
+/// Adapted from `TestDialogueStorageCanRetrieveValues`.
+///
+/// After compiling a program with declared variables, the dialogue's variable
+/// storage should contain the declared initial values.
+#[test]
+fn test_dialogue_storage_can_retrieve_values() {
+    use yarnspinner::core::YarnValue;
+
+    let source = "<<declare $numVar = 42>>\n<<declare $stringVar = \"hello\">>\n<<declare $boolVar = true>>";
+    let result = Compiler::from_test_source(source).compile().unwrap();
+    // compile().unwrap() already asserts no errors
+
+    let test_base = TestBase::default().with_compilation(result);
+    let storage = test_base.dialogue.variable_storage();
+
+    let num = storage.get("$numVar").expect("$numVar should be in storage");
+    assert!(
+        matches!(num, YarnValue::Number(n) if (n - 42.0_f32).abs() < f32::EPSILON),
+        "Expected $numVar == 42, got {num:?}"
+    );
+
+    let s = storage.get("$stringVar").expect("$stringVar should be in storage");
+    assert_eq!(String::from(s), "hello");
+
+    let b = storage.get("$boolVar").expect("$boolVar should be in storage");
+    assert_eq!(bool::try_from(b).unwrap(), true);
+}
+
+// ---------------------------------------------------------------------------
+// TestDumpingCode
+// ---------------------------------------------------------------------------
+
+/// # Why ignored
+///
+/// `GetByteCode` is now implemented as `Compilation::dump_program()`.
+#[test]
+fn test_dumping_code() {
+    let path = test_data_path().join("Example.yarn");
+    let result = Compiler::new().read_file(path).compile().unwrap();
+    let byte_code = result.dump_program();
+    assert!(!byte_code.is_empty());
+    assert_ne!(byte_code, "<no program>");
+}
+
+// ---------------------------------------------------------------------------
+// TestVariadicFunctions
+// ---------------------------------------------------------------------------
+
+/// Tests that variadic functions (those accepting a variable number of arguments
+/// after fixed parameters) can be registered, compiled, and executed correctly.
+///
+/// This is a partial port of the C# `TestVariadicFunctions` test.  The Rust
+/// type system does not support C#-style `params T[]` parameters natively, so
+/// variadic functions must be registered explicitly via
+/// [`Library::add_variadic_function`].  Variable-type inference in call sites
+/// is not implemented (the C# version uses a constraint solver), so that part
+/// of the test is omitted here.
+#[test]
+fn test_variadic_functions() {
+    use core::any::TypeId;
+    use yarnspinner::core::YarnValue;
+
+    let mut test_base = TestBase::new();
+
+    // fn variadic_add(params f32[]) -> f32  { args.sum() }
+    test_base.dialogue.library_mut().add_variadic_function(
+        "variadic_add",
+        vec![],              // no fixed params
+        TypeId::of::<f32>(), // variadic param type = Number
+        TypeId::of::<f32>(), // return type = Number
+        |args: Vec<YarnValue>| {
+            // Use explicit fold to guarantee +0.0 for empty args (nightly f32::sum() can yield -0.0).
+            let sum: f32 = args.iter().filter_map(|v| f32::try_from(v.clone()).ok()).fold(0.0_f32, |acc, x| acc + x);
+            YarnValue::Number(sum)
+        },
+    );
+
+    // fn variadic_string_add(s: String, params f32[]) -> String  { s + args.sum() }
+    test_base.dialogue.library_mut().add_variadic_function(
+        "variadic_string_add",
+        vec![TypeId::of::<String>()], // one fixed param: String
+        TypeId::of::<f32>(),          // variadic param type = Number
+        TypeId::of::<String>(),       // return type = String
+        |args: Vec<YarnValue>| {
+            let s = String::try_from(args[0].clone()).unwrap_or_default();
+            let sum: f32 = args[1..].iter().filter_map(|v| f32::try_from(v.clone()).ok()).sum();
+            YarnValue::String(format!("{s}{}", sum as i32))
+        },
+    );
+
+    // Script exercises 0-arg, 3-arg, and mixed-type calls.
+    let source = "title: Start\n---\n\
+        {variadic_add(1,2,3)}\n\
+        {variadic_string_add(\"s\",1,2,3)}\n\
+        {variadic_add()}\n\
+        {variadic_string_add(\"s\")}\n\
+        ===";
+
+    let result = Compiler::new()
+        .add_file(File {
+            file_name: "input.yarn".to_owned(),
+            source: source.to_owned(),
+        })
+        .extend_library(test_base.dialogue.library().clone())
+        .compile()
+        .unwrap();
+
+    // Runtime output verification.
+    let test_plan = TestPlan::new()
+        .expect_line("6")
+        .expect_line("s6")
+        .expect_line("0")
+        .expect_line("s0")
+        .expect_stop();
+    test_base.with_compilation(result).with_test_plan(test_plan).run_standard_testcase();
+}
+
+// ---------------------------------------------------------------------------
+// TestVariadicFunctionsMustAllBeSameType
+// ---------------------------------------------------------------------------
+
+/// Tests that passing an argument of the wrong type to a variadic parameter
+/// produces a compile-time type error.
+#[test]
+fn test_variadic_functions_must_all_be_same_type() {
+    use core::any::TypeId;
+    use yarnspinner::core::YarnValue;
+
+    let mut test_base = TestBase::new();
+
+    test_base.dialogue.library_mut().add_variadic_function(
+        "variadic_add",
+        vec![],
+        TypeId::of::<f32>(),
+        TypeId::of::<f32>(),
+        |args: Vec<YarnValue>| {
+            let sum: f32 = args.iter().filter_map(|v| f32::try_from(v.clone()).ok()).sum();
+            YarnValue::Number(sum)
+        },
+    );
+
+    test_base.dialogue.library_mut().add_variadic_function(
+        "variadic_string_add",
+        vec![TypeId::of::<String>()],
+        TypeId::of::<f32>(),
+        TypeId::of::<String>(),
+        |args: Vec<YarnValue>| {
+            let s = String::try_from(args[0].clone()).unwrap_or_default();
+            let sum: f32 = args[1..].iter().filter_map(|v| f32::try_from(v.clone()).ok()).sum();
+            YarnValue::String(format!("{s}{}", sum as i32))
+        },
+    );
+
+    // Both calls mix Number and Boolean — each should produce a type error.
+    let source = "title: Start\n---\n\
+        {variadic_add(1,true,3)}\n\
+        {variadic_string_add(\"s\",1,true,3)}\n\
+        ===";
+
+    let error = Compiler::new()
+        .add_file(File {
+            file_name: "input.yarn".to_owned(),
+            source: source.to_owned(),
+        })
+        .extend_library(test_base.dialogue.library().clone())
+        .compile()
+        .unwrap_err();
+
+    let error_diagnostics: Vec<_> = error.0.iter().filter(|d| matches!(d.severity, DiagnosticSeverity::Error)).collect();
+    assert_eq!(
+        2,
+        error_diagnostics.len(),
+        "Expected exactly 2 error diagnostics, got: {error_diagnostics:#?}"
+    );
+
+    // Each error should mention that a Bool is not convertible to Number.
+    for diag in &error_diagnostics {
+        assert!(
+            diag.message.contains("Bool") || diag.message.contains("bool") || diag.message.contains("true"),
+            "Error should mention the mismatched Bool argument: {}",
+            diag.message
+        );
     }
 }

@@ -34,11 +34,7 @@ impl IntoIterator for YarnFnRegistry {
 
 impl YarnFnRegistry {
     /// Adds a new function to the registry. See [`YarnFn`]'s documentation for what kinds of functions are allowed.
-    pub(crate) fn register_function<Marker, F>(
-        &mut self,
-        name: impl Into<Cow<'static, str>>,
-        function: F,
-    ) -> &mut Self
+    pub(crate) fn register_function<Marker, F>(&mut self, name: impl Into<Cow<'static, str>>, function: F) -> &mut Self
     where
         Marker: 'static,
         F: YarnFn<Marker> + 'static + Clone,
@@ -52,16 +48,10 @@ impl YarnFnRegistry {
 
     /// Iterates over all functions in the registry.
     pub(crate) fn iter(&self) -> impl Iterator<Item = (&str, &dyn UntypedYarnFn)> {
-        self.0
-            .iter()
-            .map(|(key, value)| (key.as_ref(), value.as_ref()))
+        self.0.iter().map(|(key, value)| (key.as_ref(), value.as_ref()))
     }
 
-    pub(crate) fn add_boxed(
-        &mut self,
-        name: impl Into<Cow<'static, str>>,
-        function: Box<dyn UntypedYarnFn>,
-    ) -> &mut Self {
+    pub(crate) fn add_boxed(&mut self, name: impl Into<Cow<'static, str>>, function: Box<dyn UntypedYarnFn>) -> &mut Self {
         let name = name.into();
         self.0.insert(name, function);
         self
@@ -208,10 +198,7 @@ mod tests {
         functions.register_function("test1", || true);
         functions.register_function("test2", |a: f32, b: f32| a + b);
         functions.register_function("test3", |a: f32, b: f32, c: f32| a + b * c);
-        functions.register_function(
-            "test4",
-            |a: String, b: String, c: String, d: bool, e: f32| format!("{a}{b}{c}{d}{e}"),
-        );
+        functions.register_function("test4", |a: String, b: String, c: String, d: bool, e: f32| format!("{a}{b}{c}{d}{e}"));
 
         let function1 = functions.get("test1").unwrap();
         let function2 = functions.get("test2").unwrap();
@@ -224,13 +211,7 @@ mod tests {
         let params1 = vec![];
         let params2 = to_function_params([1.0, 2.0]);
         let params3 = to_function_params([1.0, 2.0, 3.0]);
-        let params4 = to_function_params([
-            YarnValue::from("a"),
-            "b".into(),
-            "c".into(),
-            true.into(),
-            1.0.into(),
-        ]);
+        let params4 = to_function_params([YarnValue::from("a"), "b".into(), "c".into(), true.into(), 1.0.into()]);
         #[cfg(feature = "bevy")]
         let result1 = function1.call_with_world(params1, &mut world);
         #[cfg(not(feature = "bevy"))]
@@ -258,9 +239,7 @@ mod tests {
         assert_eq!(result4, "abctrue1".to_string());
     }
 
-    fn to_function_params(
-        params: impl IntoIterator<Item = impl Into<YarnValue>>,
-    ) -> Vec<YarnValue> {
+    fn to_function_params(params: impl IntoIterator<Item = impl Into<YarnValue>>) -> Vec<YarnValue> {
         params.into_iter().map(Into::into).collect()
     }
 

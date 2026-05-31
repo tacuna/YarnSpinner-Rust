@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/YarnSpinner.Markup/MarkupParseResult.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/YarnSpinner.Markup/MarkupParseResult.cs>
 //! which was split into multiple files.
 
 use crate::markup::{MarkupValue, TagType};
@@ -9,17 +9,21 @@ use bevy_platform::collections::HashMap;
 ///
 /// You do not create instances of this struct yourself. It is created
 /// by objects that can parse markup, such as [`Dialogue`].
+///
+/// When implementing [`AttributeMarkerProcessor`], you receive this struct
+/// in [`replacement_text_for_marker`](AttributeMarkerProcessor::replacement_text_for_marker)
+/// to inspect the marker's name, properties, and type.
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) struct MarkupAttributeMarker {
+pub struct MarkupAttributeMarker {
     /// The name of the marker.
     /// For example, the marker `[wave]` has the name `wave`.
-    pub(crate) name: Option<String>,
+    pub name: Option<String>,
     /// The position of the marker in the plain text.
-    pub(crate) position: usize,
+    pub position: usize,
     /// The list of properties associated with this marker.
-    pub(crate) properties: HashMap<String, MarkupValue>,
+    pub properties: HashMap<String, MarkupValue>,
     /// The type of marker that this is.
-    pub(crate) tag_type: TagType,
+    pub tag_type: TagType,
     /// The position of this marker in the original source text.
-    pub(crate) source_position: usize,
+    pub source_position: usize,
 }

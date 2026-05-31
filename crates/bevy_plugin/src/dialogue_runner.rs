@@ -1,23 +1,16 @@
-pub use self::events::{
-    DialogueCompleted, DialogueStarted, ExecuteCommand, LineHints, NodeCompleted, NodeStarted,
-    PresentLine, PresentOptions,
-};
-pub use self::{
-    builder::DialogueRunnerBuilder,
-    dialogue_option::DialogueOption,
-    inner::{InnerDialogue, InnerDialogueMut},
-    localized_line::LocalizedLine,
-};
+pub use self::builder::DialogueRunnerBuilder;
+pub use self::dialogue_option::DialogueOption;
+pub use self::events::{DialogueCompleted, DialogueStarted, ExecuteCommand, LineHints, NodeCompleted, NodeStarted, PresentLine, PresentOptions};
+pub use self::inner::{InnerDialogue, InnerDialogueMut};
+pub use self::localized_line::LocalizedLine;
 use crate::UnderlyingYarnLine;
 use crate::commands::TaskFinishedIndicator;
 use crate::line_provider::LineAssets;
 use crate::prelude::*;
 use anyhow::{Result, anyhow, bail};
 use bevy::asset::LoadedUntypedAsset;
-use bevy::{
-    platform::collections::{HashMap, HashSet},
-    prelude::*,
-};
+use bevy::platform::collections::{HashMap, HashSet};
+use bevy::prelude::*;
 use std::any::TypeId;
 use std::fmt::Debug;
 use yarnspinner::core::Library;
@@ -91,10 +84,7 @@ impl DialogueRunner {
                 "Can't select option {option}: the dialogue is currently not running. Please call `DialogueRunner::continue_in_next_update()` only after receiving a `PresentOptions` event."
             )
         }
-        self.inner_mut()
-            .0
-            .set_selected_option(option)
-            .map_err(Error::from)?;
+        self.inner_mut().0.set_selected_option(option).map_err(Error::from)?;
         self.last_selected_option.replace(option);
         self.continue_in_next_update();
         Ok(self)
@@ -109,11 +99,7 @@ impl DialogueRunner {
             )
         }
 
-        let option = self
-            .inner_mut()
-            .0
-            .set_selected_option_by_line_id(line)
-            .map_err(Error::from)?;
+        let option = self.inner_mut().0.set_selected_option_by_line_id(line).map_err(Error::from)?;
         self.last_selected_option.replace(option);
         self.continue_in_next_update();
         Ok(self)
@@ -137,10 +123,7 @@ impl DialogueRunner {
     }
 
     /// If set, every line the user selects will trigger a [`PresentLine`] event. Defaults to `false`.
-    pub fn run_selected_options_as_lines(
-        &mut self,
-        run_selected_options_as_lines: bool,
-    ) -> &mut Self {
+    pub fn run_selected_options_as_lines(&mut self, run_selected_options_as_lines: bool) -> &mut Self {
         self.run_selected_options_as_lines = run_selected_options_as_lines;
         self
     }
@@ -170,17 +153,14 @@ impl DialogueRunner {
     ///
     /// See [`DialogueRunner::try_start_node`] for a fallible version of this method.
     pub fn start_node(&mut self, node_name: impl AsRef<str>) -> &mut Self {
-        self.try_start_node(node_name)
-            .unwrap_or_else(|e| panic!("{e}"))
+        self.try_start_node(node_name).unwrap_or_else(|e| panic!("{e}"))
     }
 
     /// Fallible version of [`DialogueRunner::start_node`].
     pub fn try_start_node(&mut self, node_name: impl AsRef<str>) -> Result<&mut Self> {
         let node_name = node_name.as_ref();
         if self.is_running {
-            bail!(
-                "Can't start dialogue from node {node_name}: the dialogue is currently in the middle of running. Stop the dialogue first."
-            );
+            bail!("Can't start dialogue from node {node_name}: the dialogue is currently in the middle of running. Stop the dialogue first.");
         }
         self.is_running = true;
         self.just_started = true;
@@ -193,15 +173,12 @@ impl DialogueRunner {
         Ok(self)
     }
 
-    /// Returns the tags for the node `node_name`.
+    /// Returns the value of the header named `header_name` on the node named `node_name`.
     ///
-    /// The tags for a node are defined by setting the `tags` header in
-    /// the node's source code. This header must be a space-separated list
-    ///
-    /// Returns [`None`] if the node is not present in the program.
+    /// Returns [`None`] if the node is not present or the header does not exist.
     #[must_use]
-    pub fn get_tags_for_node(&self, node_name: &str) -> Option<Vec<String>> {
-        self.inner().0.get_tags_for_node(node_name)
+    pub fn get_header_value(&self, node_name: &str, header_name: &str) -> Option<String> {
+        self.inner().0.get_header_value(node_name, header_name)
     }
 
     /// Gets a value indicating whether a specified node exists in the Yarn files.
@@ -231,10 +208,7 @@ impl DialogueRunner {
 
     /// Returns whether both the text and asset providers have loaded all their lines.
     #[must_use]
-    pub fn update_line_availability(
-        &mut self,
-        loaded_untyped_assets: &Assets<LoadedUntypedAsset>,
-    ) -> bool {
+    pub fn update_line_availability(&mut self, loaded_untyped_assets: &Assets<LoadedUntypedAsset>) -> bool {
         self.are_texts_available() && self.update_asset_availability(loaded_untyped_assets)
     }
 
@@ -247,10 +221,7 @@ impl DialogueRunner {
     /// Returns whether all asset providers have loaded all their assets.
     /// If no asset providers where added via [`DialogueRunnerBuilder::add_asset_provider`], this will always return `true`.
     #[must_use]
-    fn update_asset_availability(
-        &mut self,
-        loaded_untyped_assets: &Assets<LoadedUntypedAsset>,
-    ) -> bool {
+    fn update_asset_availability(&mut self, loaded_untyped_assets: &Assets<LoadedUntypedAsset>) -> bool {
         self.asset_providers
             .values_mut()
             .all(|provider| provider.update_asset_availability(loaded_untyped_assets))
@@ -259,8 +230,7 @@ impl DialogueRunner {
     /// Sets the language of both the text and asset providers. Same as calling [`DialogueRunner::set_text_language`] and [`DialogueRunner::set_asset_language`].
     pub fn set_language(&mut self, language: impl Into<Language>) -> &mut Self {
         let language = language.into();
-        self.set_text_language(language.clone())
-            .set_asset_language(language)
+        self.set_text_language(language.clone()).set_asset_language(language)
     }
 
     /// Sets the language of the text provider.
@@ -326,36 +296,21 @@ impl DialogueRunner {
     /// Panics if the asset providers have different languages.
     #[must_use]
     pub fn asset_language(&self) -> Option<Language> {
-        let languages: HashSet<_> = self
-            .asset_providers
-            .values()
-            .map(|provider| provider.get_language())
-            .collect();
-        assert!(
-            languages.len() <= 1,
-            "Asset providers have different languages"
-        );
+        let languages: HashSet<_> = self.asset_providers.values().map(|provider| provider.get_language()).collect();
+        assert!(languages.len() <= 1, "Asset providers have different languages");
         languages.into_iter().next().flatten()
     }
 
     /// Returns a struct that can be used to access a portion of the underlying [`Dialogue`]. This is advanced functionality.
     #[must_use]
     pub fn inner(&self) -> InnerDialogue<'_> {
-        InnerDialogue(
-            self.dialogue
-                .as_ref()
-                .expect_or_bug(DIALOGUE_MISSING_MESSAGE),
-        )
+        InnerDialogue(self.dialogue.as_ref().expect_or_bug(DIALOGUE_MISSING_MESSAGE))
     }
 
     /// Mutably returns a struct that can be used to access a portion of the underlying [`Dialogue`]. This is advanced functionality.
     #[must_use]
     pub fn inner_mut(&mut self) -> InnerDialogueMut<'_> {
-        InnerDialogueMut(
-            self.dialogue
-                .as_mut()
-                .expect_or_bug(DIALOGUE_MISSING_MESSAGE),
-        )
+        InnerDialogueMut(self.dialogue.as_mut().expect_or_bug(DIALOGUE_MISSING_MESSAGE))
     }
 
     /// Returns the registered [`TextProvider`]. By default, this is a [`StringsFileTextProvider`](crate::default_impl::StringsFileTextProvider).
@@ -367,10 +322,7 @@ impl DialogueRunner {
     /// Returns the registered [`AssetProvider`] of the given type if it was previously registered with [`DialogueRunnerBuilder::add_asset_provider`].
     #[must_use]
     pub fn asset_provider<T: 'static>(&self) -> Option<&T> {
-        self.asset_providers
-            .values()
-            .filter_map(|p| p.as_any().downcast_ref())
-            .next()
+        self.asset_providers.values().filter_map(|p| p.as_any().downcast_ref()).next()
     }
 
     /// Iterates over all registered [`AssetProvider`]s.
@@ -380,10 +332,7 @@ impl DialogueRunner {
 
     #[must_use]
     pub(crate) fn get_assets(&self, line: &UnderlyingYarnLine) -> LineAssets {
-        self.asset_providers
-            .values()
-            .map(|p| p.get_assets(line))
-            .collect()
+        self.asset_providers.values().map(|p| p.get_assets(line)).collect()
     }
 
     pub(crate) fn add_command_task(&mut self, task: Box<dyn TaskFinishedIndicator>) -> &mut Self {

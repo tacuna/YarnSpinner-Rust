@@ -11,10 +11,7 @@ use crate::prelude::*;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct Command {
     /// The command name, i.e. the first identifier that was passed in the command.
     /// For example, in the command `<<set_sprite ship "happy">>`, the command name is `set_sprite`.
@@ -156,22 +153,10 @@ mod tests {
             ("one two three four", vec!["one", "two", "three", "four"]),
             ("one \"two three\" four", vec!["one", "two three", "four"]),
             ("one \"two three four", vec!["one", "two three four"]),
-            (
-                "one \"two \\\"three\" four",
-                vec!["one", "two \"three", "four"],
-            ),
-            (
-                "one \\two three four",
-                vec!["one", "\\two", "three", "four"],
-            ),
-            (
-                "one \"two \\\\ three\" four",
-                vec!["one", "two \\ three", "four"],
-            ),
-            (
-                "one \"two \\1 three\" four",
-                vec!["one", "two \\1 three", "four"],
-            ),
+            ("one \"two \\\"three\" four", vec!["one", "two \"three", "four"]),
+            ("one \\two three four", vec!["one", "\\two", "three", "four"]),
+            ("one \"two \\\\ three\" four", vec!["one", "two \\ three", "four"]),
+            ("one \"two \\1 three\" four", vec!["one", "two \\1 three", "four"]),
             ("one      two", vec!["one", "two"]),
         ] {
             let parsed_components = split_command_text(input);

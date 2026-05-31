@@ -66,31 +66,25 @@ impl YarnFileSource {
     }
 
     #[cfg(not(any(target_arch = "wasm32", target_os = "android")))]
-    fn load_folder(
-        asset_server: &AssetServer,
-        path: &std::path::Path,
-        asset_root: &AssetRoot,
-    ) -> Result<Vec<Handle<YarnFile>>> {
+    fn load_folder(asset_server: &AssetServer, path: &std::path::Path, asset_root: &AssetRoot) -> Result<Vec<Handle<YarnFile>>> {
         let path = asset_root.0.join(path);
         ensure!(
             path.is_dir(),
             "Failed to load Yarn file folder {path}.\nHelp: Does the folder exist?",
             path = path.display()
         );
-        let handles: Result<Vec<_>> =
-            glob(path.join("**/*.yarn").to_str().with_context(|| {
-                format!(
-                    "Failed to create string from path: {path}",
-                    path = path.display(),
-                )
-            })?)?
-            .map(|entry| {
-                let full_path = entry?;
-                let path = full_path.strip_prefix(&asset_root.0)?;
-                let asset_path = path.to_string_lossy().replace('\\', "/");
-                Ok(asset_server.load(asset_path))
-            })
-            .collect();
+        let handles: Result<Vec<_>> = glob(
+            path.join("**/*.yarn")
+                .to_str()
+                .with_context(|| format!("Failed to create string from path: {path}", path = path.display(),))?,
+        )?
+        .map(|entry| {
+            let full_path = entry?;
+            let path = full_path.strip_prefix(&asset_root.0)?;
+            let asset_path = path.to_string_lossy().replace('\\', "/");
+            Ok(asset_server.load(asset_path))
+        })
+        .collect();
         let handles = handles?;
 
         if handles.is_empty() {

@@ -10,15 +10,21 @@ mod line_parser;
 mod markup_parse_error;
 mod parsed_markup;
 
+pub use self::attribute_marker_processor::{AttributeMarkerProcessor, *};
 pub use self::line_parser::{
-    CHARACTER_ATTRIBUTE, CHARACTER_ATTRIBUTE_NAME_PROPERTY, Result, TRIM_WHITESPACE_PROPERTY,
+    CHARACTER_ATTRIBUTE,
+    CHARACTER_ATTRIBUTE_NAME_PROPERTY,
+    REPLACEMENT_MARKER_CONTENTS,
+    Result,
+    TRIM_WHITESPACE_PROPERTY,
+    *,
 };
-pub(crate) use self::{attribute_marker_processor::*, line_parser::*};
-pub use self::{markup_parse_error::*, parsed_markup::*};
+pub use self::markup_parse_error::*;
+pub use self::parsed_markup::*;
 
 #[cfg(test)]
 mod tests {
-    //! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/MarkupTests.cs>
+    //! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/MarkupTests.cs>
     use super::*;
     use crate::prelude::*;
 
@@ -109,14 +115,7 @@ mod tests {
 
     #[test]
     fn test_multibyte_character_parsing() {
-        for input in [
-            "á [á]S[/á]",
-            "á [a]á[/a]",
-            "á [a]S[/a]",
-            "S [á]S[/á]",
-            "S [a]á[/a]",
-            "S [a]S[/a]",
-        ] {
+        for input in ["á [á]S[/á]", "á [a]á[/a]", "á [a]S[/a]", "S [á]S[/á]", "S [a]á[/a]", "S [a]S[/a]"] {
             let markup = line_parser().parse_markup(input).unwrap();
 
             // All versions of this string should have the same position
@@ -269,10 +268,7 @@ mod tests {
             assert_eq!(5, attribute.length);
 
             assert_eq!(1, attribute.properties.len());
-            assert_eq!(
-                &MarkupValue::String("Mae".to_owned()),
-                attribute.properties.get("name").unwrap()
-            );
+            assert_eq!(&MarkupValue::String("Mae".to_owned()), attribute.properties.get("name").unwrap());
         }
     }
 
@@ -319,22 +315,10 @@ mod tests {
 
         assert_eq!("select", attribute.name);
         assert_eq!(4, attribute.properties.len());
-        assert_eq!(
-            &MarkupValue::Integer(1),
-            attribute.properties.get("value").unwrap()
-        );
-        assert_eq!(
-            &MarkupValue::String("one".to_owned()),
-            attribute.properties.get("1").unwrap()
-        );
-        assert_eq!(
-            &MarkupValue::String("two".to_owned()),
-            attribute.properties.get("2").unwrap()
-        );
-        assert_eq!(
-            &MarkupValue::String("three".to_owned()),
-            attribute.properties.get("3").unwrap()
-        );
+        assert_eq!(&MarkupValue::Integer(1), attribute.properties.get("value").unwrap());
+        assert_eq!(&MarkupValue::String("one".to_owned()), attribute.properties.get("1").unwrap());
+        assert_eq!(&MarkupValue::String("two".to_owned()), attribute.properties.get("2").unwrap());
+        assert_eq!(&MarkupValue::String("three".to_owned()), attribute.properties.get("3").unwrap());
 
         assert_eq!("one", markup.text);
     }

@@ -3,7 +3,7 @@ pub use asset_provider::AudioAssetProvider;
 pub use asset_provider::{AssetProvider, FileExtensionAssetProvider, LineAssets, file_extensions};
 use bevy::prelude::*;
 pub(crate) use text_provider::SharedTextProvider;
-pub use text_provider::{StringsFileTextProvider, TextProvider};
+pub use text_provider::{EmbeddedTextProvider, StringsFileTextProvider, TextProvider};
 
 mod asset_provider;
 mod text_provider;

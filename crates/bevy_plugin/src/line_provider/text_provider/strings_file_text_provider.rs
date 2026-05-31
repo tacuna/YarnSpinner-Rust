@@ -66,9 +66,7 @@ impl UnderlyingTextProvider for StringsFileTextProvider {
         let language = language.unwrap();
 
         let Some(localizations) = self.localizations.clone() else {
-            panic!(
-                "Set language to {language}, but no localizations have been registered as supported."
-            );
+            panic!("Set language to {language}, but no localizations have been registered as supported.");
         };
         if language == localizations.base_localization.language {
             self.set_language_invalidating_translation(None);
@@ -80,14 +78,11 @@ impl UnderlyingTextProvider for StringsFileTextProvider {
                 .map(ToString::to_string)
                 .collect::<Vec<_>>()
                 .join(", ");
-            panic!(
-                "Set language to {language}, but that language is not supported. Expected one of {languages}."
-            );
+            panic!("Set language to {language}, but that language is not supported. Expected one of {languages}.");
         };
         let path = localization.strings_file.as_path();
         let asset_path = path.to_string_lossy().replace('\\', "/");
-        self.strings_file_handle
-            .replace(self.asset_server.load(asset_path));
+        self.strings_file_handle.replace(self.asset_server.load(asset_path));
     }
 
     fn get_language(&self) -> Option<Language> {
@@ -122,6 +117,28 @@ impl StringsFileTextProvider {
             event_cursor: Default::default(),
         }
     }
+
+    /// Creates a new text provider directly from a string table, without requiring a [`YarnProject`].
+    ///
+    /// This constructor is intended for **precompiled-binary workflows**, where the
+    /// [`Program`] and string table were serialised ahead of time and are loaded without
+    /// going through the normal Yarn source compilation path.  See
+    /// [`DialogueRunnerBuilder::from_compilation`] for the full workflow.
+    ///
+    /// Pass `localizations` if you need runtime translation support (i.e. if you intend to
+    /// call [`DialogueRunner::set_language`] with a non-base language).  For base-language-
+    /// only projects, `None` is fine.
+    pub fn from_string_table(string_table: HashMap<LineId, StringInfo>, asset_server: AssetServer, localizations: Option<Localizations>) -> Self {
+        Self {
+            asset_server: SkipDebug(asset_server),
+            localizations,
+            language: None,
+            base_string_table: string_table,
+            strings_file_handle: None,
+            translation_string_table: None,
+            event_cursor: Default::default(),
+        }
+    }
     fn set_language_invalidating_translation(&mut self, language: impl Into<Option<Language>>) {
         self.language = language.into();
         self.translation_string_table = None;
@@ -130,11 +147,7 @@ impl StringsFileTextProvider {
 
     fn is_base_language(&self) -> bool {
         self.language.is_none()
-            || self.language.as_ref()
-                == self
-                    .localizations
-                    .as_ref()
-                    .map(|localizations| &localizations.base_localization.language)
+            || self.language.as_ref() == self.localizations.as_ref().map(|localizations| &localizations.base_localization.language)
     }
 }
 
@@ -181,10 +194,7 @@ impl TextProvider for StringsFileTextProvider {
                     actual_language = record.language,
                 );
             }
-            let string_table: HashMap<LineId, String> = strings_file
-                .iter()
-                .map(|(id, record)| (id.clone(), record.text.clone()))
-                .collect();
+            let string_table: HashMap<LineId, String> = strings_file.iter().map(|(id, record)| (id.clone(), record.text.clone())).collect();
             Some(Box::new(string_table))
         } else {
             None

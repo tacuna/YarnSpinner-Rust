@@ -1,10 +1,10 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/ConstantValueVisitor.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/Visitors/LiteralValueVisitor.cs>
 
 use crate::prelude::generated::yarnspinnerparser::*;
 use crate::prelude::generated::yarnspinnerparservisitor::YarnSpinnerParserVisitorCompat;
 use crate::prelude::*;
-use antlr_rust::parser::ParserNodeType;
-use antlr_rust::tree::{ParseTree, ParseTreeVisitorCompat, VisitChildren};
+use antlr4rust::parser::ParserNodeType;
+use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat, VisitChildren};
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use yarnspinner_core::prelude::*;
@@ -56,7 +56,8 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for ConstantValueVisitor<'in
             self.diagnostics.push(
                 Diagnostic::from_message(message)
                     .with_file_name(&self.file.name)
-                    .with_parser_context(ctx, self.file.tokens()),
+                    .with_parser_context(ctx, self.file.tokens())
+                    .with_code("YS0037"),
             );
             // This default value seems very "JavaScript-y" with the pseudo-sensible default value on errors.
             // But this is not so! We just pushed an error diagnostic, so there will be no program emitted from this compilation attempt.
@@ -75,13 +76,12 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for ConstantValueVisitor<'in
 
     fn visit_valueVar(&mut self, ctx: &ValueVarContext<'input>) -> Self::Return {
         let text = ctx.get_text();
-        let message = format!(
-            "Variable declarations must be constant values, but `{text}` is another variable",
-        );
+        let message = format!("Variable declarations must be constant values, but `{text}` is another variable",);
         self.diagnostics.push(
             Diagnostic::from_message(message)
                 .with_file_name(&self.file.name)
-                .with_parser_context(ctx, self.file.tokens()),
+                .with_parser_context(ctx, self.file.tokens())
+                .with_code("YS0002"),
         );
         ConstantValue::non_panicking_default()
     }
@@ -91,24 +91,16 @@ impl<'input> YarnSpinnerParserVisitorCompat<'input> for ConstantValueVisitor<'in
         InternalValue::from(text.trim_matches('"')).into()
     }
 
-    fn visit_valueNull(&mut self, ctx: &ValueNullContext<'input>) -> Self::Return {
-        let message = "Null is not a permitted type in Yarn Spinner 2.0 and later";
-        self.diagnostics.push(
-            Diagnostic::from_message(message)
-                .with_file_name(&self.file.name)
-                .with_parser_context(ctx, self.file.tokens()),
-        );
-        ConstantValue::non_panicking_default()
-    }
+    // visit_valueNull removed: `null` is no longer in the grammar (YarnSpinner v3.0+)
 
     fn visit_valueFunc(&mut self, ctx: &ValueFuncContext<'input>) -> Self::Return {
         let text = ctx.get_text();
-        let message =
-            format!("Variable declarations must be constant values, but `{text}` is a function",);
+        let message = format!("Variable declarations must be constant values, but `{text}` is a function",);
         self.diagnostics.push(
             Diagnostic::from_message(message)
                 .with_file_name(&self.file.name)
-                .with_parser_context(ctx, self.file.tokens()),
+                .with_parser_context(ctx, self.file.tokens())
+                .with_code("YS0002"),
         );
         ConstantValue::non_panicking_default()
     }

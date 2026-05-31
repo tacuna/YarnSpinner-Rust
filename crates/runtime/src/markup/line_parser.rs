@@ -1,11 +1,16 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/YarnSpinner.Markup/LineParser.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/YarnSpinner.Markup/LineParser.cs>
 
 use alloc::collections::VecDeque;
 
 use crate::markup::parsed_markup::ParsedMarkup;
 use crate::markup::{
-    AttributeMarkerProcessor, MarkupAttribute, MarkupAttributeMarker, MarkupParseError,
-    MarkupValue, NoMarkupTextProcessor, TagType,
+    AttributeMarkerProcessor,
+    MarkupAttribute,
+    MarkupAttributeMarker,
+    MarkupParseError,
+    MarkupValue,
+    NoMarkupTextProcessor,
+    TagType,
 };
 use crate::prelude::*;
 use bevy_platform::collections::HashMap;
@@ -21,11 +26,9 @@ pub type Result<T> = core::result::Result<T, MarkupParseError>;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
-pub(crate) struct LineParser {
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
+/// Parses Yarn markup in a line of dialogue and returns a [`ParsedMarkup`] result.
+pub struct LineParser {
     // ## Implementation notes
     // We don't port `stringReader` because [`BufReader`] is not [`Clone`]
     /// A map for the names of attributes to an object that can generate replacement text for those attributes.
@@ -55,7 +58,8 @@ impl Default for LineParser {
 }
 
 impl LineParser {
-    pub(crate) fn new() -> Self {
+    /// Creates a new [`LineParser`] with the default `nomarkup` processor registered.
+    pub fn new() -> Self {
         Self::default()
     }
 
@@ -69,15 +73,9 @@ impl LineParser {
     /// implemented in this way by the [`LineParser`]
     /// directly; the [`Dialogue`] uses this mechanism
     /// to implement the `select`, `plural` and `ordinal` markers.
-    pub(crate) fn register_marker_processor(
-        mut self,
-        attribute_name: impl Into<String>,
-        processor: Box<dyn AttributeMarkerProcessor>,
-    ) -> Self {
+    pub fn register_marker_processor(mut self, attribute_name: impl Into<String>, processor: Box<dyn AttributeMarkerProcessor>) -> Self {
         let attribute_name = attribute_name.into();
-        let previous_value = self
-            .marker_processors
-            .insert(attribute_name.clone(), processor);
+        let previous_value = self.marker_processors.insert(attribute_name.clone(), processor);
         assert_or_bug!(
             previous_value.is_none(),
             "A marker processor for the attribute '{attribute_name}' has already been added."
@@ -85,12 +83,22 @@ impl LineParser {
         self
     }
 
+    /// Registers a marker processor by mutable reference (for post-construction registration).
+    pub fn register_marker_processor_mut(&mut self, attribute_name: impl Into<String>, processor: Box<dyn AttributeMarkerProcessor>) {
+        let attribute_name = attribute_name.into();
+        let previous_value = self.marker_processors.insert(attribute_name.clone(), processor);
+        assert_or_bug!(
+            previous_value.is_none(),
+            "A marker processor for the attribute '{attribute_name}' has already been added."
+        );
+    }
+
     /// Parses a line of text, and produces a [`ParsedMarkup`] containing the processed text
     ///
     /// ## Implementation notes
     ///
     /// The original does not reset the internal `source_position`. This was likely a bug.
-    pub(crate) fn parse_markup(&mut self, input: &str) -> Result<ParsedMarkup> {
+    pub fn parse_markup(&mut self, input: &str) -> Result<ParsedMarkup> {
         if input.is_empty() {
             // We got a null input; return an empty markup parse result
             return Ok(ParsedMarkup::new());
@@ -99,9 +107,26 @@ impl LineParser {
         self.input = normalize(input);
         self.source_position = 0;
 
+        // v3.2.0: Inject implicit character markup BEFORE processing other
+        // markup. If the line doesn't already contain an explicit [character]
+        // marker, look for "Name: " at the start and wrap it in markup.
+        if !CHARACTER_MARKER_REGEX.is_match(&self.input)
+            && let Some(caps) = IMPLICIT_CHARACTER_REGEX.captures(&self.input)
+        {
+            let full_match = caps.get(0).unwrap();
+            let name = &caps[1];
+            let replacement = format!("[character name=\"{name}\"]{match_text}[/character]", match_text = full_match.as_str(),);
+            self.input = format!("{replacement}{}", &self.input[full_match.end()..]);
+        }
+
+        // Replace escaped colons with literal colons now that character
+        // detection is done (the regex above skips `\:` sequences).
+        if self.input.contains("\\:") {
+            self.input = self.input.replace("\\:", ":");
+        }
+
         let mut text = String::new();
         let mut markers = Vec::new();
-        let mut last_character = 0 as char;
 
         // Read the entirety of the line
         while let Some(character) = self.read_next() {
@@ -126,9 +151,6 @@ impl LineParser {
                     // The start of a marker!
                     let mut marker = self.parse_attribute_marker()?;
 
-                    let had_preceding_whitespace_or_line_start =
-                        self.source_position == 0 || last_character.is_whitespace();
-
                     // Is this a replacement marker?
                     let was_replacement_marker = marker
                         .name
@@ -142,27 +164,26 @@ impl LineParser {
                         // Insert it into our final string and update our position accordingly
                         text.push_str(&replacement_text);
                     }
-                    let mut trim_whitespace_if_able = false;
-                    if had_preceding_whitespace_or_line_start {
-                        // By default, self-closing markers will trim a single trailing whitespace after it if there was preceding whitespace.
-                        // This doesn't happen if the marker was a replacement marker, or it has a property "trimwhitespace" (which must be boolean) set to false.
-                        // All markers can opt-in to trailing whitespace trimming by having a 'trimwhitespace' property set to true.
-                        if marker.tag_type == TagType::SelfClosing {
-                            trim_whitespace_if_able = !was_replacement_marker;
-                        }
-                        if let Some(prop) = marker.properties.get(TRIM_WHITESPACE_PROPERTY) {
-                            let MarkupValue::Bool(trim_whitespace) = prop else {
-                                return Err(
-                                    MarkupParseError::TrimWhitespaceAttributeIsNotBoolean {
-                                        input: self.input.clone(),
-                                        name: marker.name,
-                                        position: self.position,
-                                        type_: prop.type_name().to_lowercase(),
-                                    },
-                                );
-                            };
-                            trim_whitespace_if_able = *trim_whitespace;
-                        }
+                    // By default, self-closing markers will trim a single trailing whitespace after them.
+                    // This doesn't happen if the marker was a replacement marker, or it has a property
+                    // "trimwhitespace" (which must be boolean) set to false.
+                    // All markers can opt-in to trailing whitespace trimming by having a 'trimwhitespace'
+                    // property set to true.
+                    let mut trim_whitespace_if_able = if marker.tag_type == TagType::SelfClosing {
+                        !was_replacement_marker
+                    } else {
+                        false
+                    };
+                    if let Some(prop) = marker.properties.get(TRIM_WHITESPACE_PROPERTY) {
+                        let MarkupValue::Bool(trim_whitespace) = prop else {
+                            return Err(MarkupParseError::TrimWhitespaceAttributeIsNotBoolean {
+                                input: self.input.clone(),
+                                name: marker.name,
+                                position: self.position,
+                                type_: prop.type_name().to_lowercase(),
+                            });
+                        };
+                        trim_whitespace_if_able = *trim_whitespace;
                     }
                     if trim_whitespace_if_able {
                         // If there's trailing whitespace, and we want to remove it, do so
@@ -179,42 +200,14 @@ impl LineParser {
                     text.push(character);
                 }
             }
-
-            last_character = character;
         }
 
-        let mut attributes = self.build_attributes_from_markers(markers)?;
-        let character_attribute_is_present = attributes
-            .iter()
-            .any(|attr| attr.name == CHARACTER_ATTRIBUTE);
-        if character_attribute_is_present {
-            return Ok(ParsedMarkup { text, attributes });
-        }
-
-        // Attempt to generate a character attribute from the start
-        // of the string to the first colon
-        let Some(match_) = END_OF_CHARACTER_MARKER.find(&self.input) else {
-            return Ok(ParsedMarkup { text, attributes });
-        };
-
-        let character_name = self.input[..match_.start()].to_string();
-
-        let character_attribute = MarkupAttribute {
-            name: CHARACTER_ATTRIBUTE.to_string(),
-            position: 0,
-            length: match_.end(),
-            properties: HashMap::from([(
-                CHARACTER_ATTRIBUTE_NAME_PROPERTY.to_string(),
-                character_name.into(),
-            )]),
-            source_position: 0,
-        };
-
-        attributes.push(character_attribute);
+        let attributes = self.build_attributes_from_markers(markers)?;
         Ok(ParsedMarkup { text, attributes })
     }
 
-    pub(crate) fn set_language_code(&mut self, language_code: impl Into<Option<Language>>) {
+    /// Sets the language code used by marker processors for locale-aware formatting.
+    pub fn set_language_code(&mut self, language_code: impl Into<Option<Language>>) {
         let language_code = language_code.into();
         for processor in self.marker_processors.values_mut() {
             processor.set_language_code(language_code.clone());
@@ -289,9 +282,7 @@ impl LineParser {
             self.consume_whitespace()?;
             let next = self
                 .peek_next()
-                .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                    input: self.input.clone(),
-                })?;
+                .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
             match next {
                 ']' => {
                     // End of an Opening tag.
@@ -347,10 +338,7 @@ impl LineParser {
                 let marker_contents = self.parse_raw_text_up_to_attribute_close(name)?;
 
                 // Add this as a property
-                marker.properties.insert(
-                    REPLACEMENT_MARKER_CONTENTS.to_string(),
-                    marker_contents.into(),
-                );
+                marker.properties.insert(REPLACEMENT_MARKER_CONTENTS.to_string(), marker_contents.into());
             }
             TagType::SelfClosing => {}
             TagType::CloseAll | TagType::Close => {
@@ -361,11 +349,7 @@ impl LineParser {
         }
         // Fetch the text that should be inserted into the string at
         // this point
-        let replacement = self
-            .marker_processors
-            .get(name)
-            .unwrap()
-            .replacement_text_for_marker(marker);
+        let replacement = self.marker_processors.get(name).unwrap().replacement_text_for_marker(marker);
         Ok(replacement)
     }
 
@@ -381,10 +365,7 @@ impl LineParser {
     /// ## Retuns
     ///
     /// Returns an `Err` when a close marker is encountered, but no corresponding open marker for it exists.
-    fn build_attributes_from_markers(
-        &self,
-        markers: Vec<MarkupAttributeMarker>,
-    ) -> Result<Vec<MarkupAttribute>> {
+    fn build_attributes_from_markers(&self, markers: Vec<MarkupAttributeMarker>) -> Result<Vec<MarkupAttribute>> {
         let mut unclosed_markers = VecDeque::new();
         let mut attributes = Vec::with_capacity(markers.len());
         for marker in markers {
@@ -400,19 +381,17 @@ impl LineParser {
                     // unclosed stack to find the most recent
                     // marker of the same type to find its pair.
                     assert!(marker.name.is_some());
-                    let matched_open_marker_index = unclosed_markers
-                        .iter()
-                        .position(|open_marker| open_marker.name == marker.name)
-                        .ok_or_else(|| MarkupParseError::UnmatchedCloseMarker {
+                    let Some(matched_open_marker_index) = unclosed_markers.iter().position(|open_marker| open_marker.name == marker.name) else {
+                        return Err(MarkupParseError::UnmatchedCloseMarker {
                             input: self.input.clone(),
                             name: marker.name.unwrap(),
                             position: marker.position,
-                        })?;
+                        });
+                    };
 
                     // This attribute is now closed, so we can
                     // remove the marker from the unmatched list
-                    let matched_open_marker =
-                        unclosed_markers.remove(matched_open_marker_index).unwrap();
+                    let matched_open_marker = unclosed_markers.remove(matched_open_marker_index).unwrap();
 
                     // We can now construct the attribute!
                     let length = marker.position - matched_open_marker.position;
@@ -445,6 +424,14 @@ impl LineParser {
         }
 
         attributes.sort_by_key(|attribute| attribute.source_position);
+        // Any markers that remain unclosed at end of line are errors
+        if let Some(unclosed) = unclosed_markers.pop_front() {
+            return Err(MarkupParseError::UnterminatedMarker {
+                input: self.input.clone(),
+                name: unclosed.name.unwrap_or_default(),
+                position: unclosed.position,
+            });
+        }
         Ok(attributes)
     }
 
@@ -476,9 +463,7 @@ impl LineParser {
         self.consume_whitespace()?;
         let next = self
             .read_next()
-            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                input: self.input.clone(),
-            })?;
+            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
         if next != character {
             return Err(MarkupParseError::UnexpectedCharacter {
                 input: self.input.clone(),
@@ -499,11 +484,9 @@ impl LineParser {
     /// `allowEndOfLine` was not ported because it was always `false`
     fn consume_whitespace(&mut self) -> Result<()> {
         loop {
-            let next =
-                self.peek_next()
-                    .ok_or_else(|| MarkupParseError::UnexpectedWhitespaceEnd {
-                        input: self.input.clone(),
-                    })?;
+            let next = self
+                .peek_next()
+                .ok_or_else(|| MarkupParseError::UnexpectedWhitespaceEnd { input: self.input.clone() })?;
             if !next.is_whitespace() {
                 // no more whitespace ahead; don't consume it, but
                 // instead stop eating whitespace
@@ -521,18 +504,14 @@ impl LineParser {
         // Read the first character, which must be a letter, number, or underscore
         let next = self
             .read_next()
-            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                input: self.input.clone(),
-            })?;
+            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
 
         // Implementation notes: no surrogate checks because UTF-16 surrogates are not valid Rust chars
         // See <https://github.com/rust-lang/rust/issues/94919>
         if next.is_alphanumeric() || next == '_' {
             id.push(next);
         } else {
-            return Err(MarkupParseError::NoIdentifierFound {
-                input: self.input.clone(),
-            });
+            return Err(MarkupParseError::NoIdentifierFound { input: self.input.clone() });
         }
 
         // Read zero or more letters, numbers, or underscores
@@ -566,15 +545,28 @@ impl LineParser {
     /// - Expressions (delimited by curly braces), which are processed
     ///   as inline expressions.
     fn parse_value(&mut self) -> Result<MarkupValue> {
-        // parse integers or floats:
-        if self.peek_numeric()? {
+        // parse integers or floats (optionally negative):
+        let is_negative = self.peek_character('-')?;
+        if is_negative {
+            self.consume_whitespace()?;
+            // peek past the '-' to see if it's followed by a digit
+            let after_minus = self.input.chars().nth(self.source_position + 1);
+            if !after_minus.map(|c| c.is_ascii_digit()).unwrap_or(false) {
+                // '-' not followed by digit; fall through to parse_id (which will error)
+                return Err(MarkupParseError::NoIdentifierFound { input: self.input.clone() });
+            }
+            // consume the '-'
+            self.read_next();
+        }
+        if is_negative || self.peek_numeric()? {
             // could be an int or a float
             let integer = self.parse_integer()?;
 
             // if there's a decimal separator, this is a float
             if !self.peek_character('.')? {
                 // no decimal separator, so this is an integer
-                return Ok(integer.into());
+                let value: i32 = if is_negative { -(integer as i32) } else { integer as i32 };
+                return Ok(value.into());
             }
 
             // a float
@@ -582,7 +574,7 @@ impl LineParser {
 
             // parse the fractional value
             let fraction = self.parse_integer()?;
-            let float: f32 = format!("{integer}.{fraction}").parse().unwrap();
+            let float: f32 = format!("{}{integer}.{fraction}", if is_negative { "-" } else { "" }).parse().unwrap();
             return Ok(float.into());
         }
         if self.peek_character('"')? {
@@ -596,8 +588,8 @@ impl LineParser {
         // This ID is expected to be 'true', 'false', or something
         // else. if it's 'true' or 'false', interpret it as a bool.
         match word.as_str() {
-            "true" => Ok(true.into()),
-            "false" => Ok(false.into()),
+            s if s.eq_ignore_ascii_case("true") => Ok(true.into()),
+            s if s.eq_ignore_ascii_case("false") => Ok(false.into()),
             // interpret this as a one-word string
             _ => Ok(word.into()),
         }
@@ -613,14 +605,11 @@ impl LineParser {
 
         // Parse up to either [/name] or [/], allowing whitespace between any elements.
         let regex = Regex::new(&format!(r"\[\s*\/\s*({name})?\s*\]")).unwrap();
-        let match_ =
-            regex
-                .find(&remainder_of_line)
-                .ok_or_else(|| MarkupParseError::UnterminatedMarker {
-                    input: self.input.clone(),
-                    name: name.to_string(),
-                    position: self.position,
-                })?;
+        let match_ = regex.find(&remainder_of_line).ok_or_else(|| MarkupParseError::UnterminatedMarker {
+            input: self.input.clone(),
+            name: name.to_string(),
+            position: self.position,
+        })?;
 
         // Split the line into the part up to the closing tag, and the
         // part afterwards
@@ -658,9 +647,7 @@ impl LineParser {
         loop {
             let next = self
                 .peek_next()
-                .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                    input: self.input.clone(),
-                })?;
+                .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
             if next.is_ascii_digit() {
                 self.read_next().unwrap();
                 integer_string.push(next);
@@ -679,21 +666,15 @@ impl LineParser {
 
         let next = self
             .read_next()
-            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                input: self.input.clone(),
-            })?;
+            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
 
         if next != '"' {
-            return Err(MarkupParseError::NoStringFound {
-                input: self.input.clone(),
-            });
+            return Err(MarkupParseError::NoStringFound { input: self.input.clone() });
         }
         loop {
             let next = self
                 .read_next()
-                .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                    input: self.input.clone(),
-                })?;
+                .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
             match next {
                 '"' => {
                     // end of string - consume it but don't append to the final collection
@@ -701,19 +682,15 @@ impl LineParser {
                 }
                 '\\' => {
                     // an escaped quote or backslash
-                    let next =
-                        self.read_next()
-                            .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine {
-                                input: self.input.clone(),
-                            })?;
+                    let next = self
+                        .read_next()
+                        .ok_or_else(|| MarkupParseError::UnexpectedEndOfLine { input: self.input.clone() })?;
                     if next == '"' || next == '\\' {
                         string.push(next);
                     } else {
                         // Implementation note:
                         // Not an error in the original implementation, but that seems like an oversight.
-                        return Err(MarkupParseError::InvalidEscapeSequence {
-                            input: self.input.clone(),
-                        });
+                        return Err(MarkupParseError::InvalidEscapeSequence { input: self.input.clone() });
                     }
                 }
                 _ => {
@@ -730,7 +707,9 @@ pub(crate) fn normalize(string: &str) -> String {
 }
 
 /// The name of the property in replacement attributes that contains the text of the attribute.
-pub(crate) const REPLACEMENT_MARKER_CONTENTS: &str = "contents";
+/// When implementing a custom [`AttributeMarkerProcessor`], you can look up this
+/// key in the marker's properties to get the text content enclosed by the marker.
+pub const REPLACEMENT_MARKER_CONTENTS: &str = "contents";
 
 /// The name of the implicitly-generated `character` attribute.
 pub const CHARACTER_ATTRIBUTE: &str = "character";
@@ -742,5 +721,12 @@ pub const CHARACTER_ATTRIBUTE_NAME_PROPERTY: &str = "name";
 /// if a tag had preceding whitespace or begins the line. This property must be a bool value.
 pub const TRIM_WHITESPACE_PROPERTY: &str = "trimwhitespace";
 
-/// A regular expression that matches a colon followed by optional whitespace.
-static END_OF_CHARACTER_MARKER: Lazy<Regex> = Lazy::new(|| Regex::new(r":\s*").unwrap());
+/// Matches an implicit character name at the start of a line: everything up to
+/// the first unescaped colon, followed by optional whitespace. Escaped colons
+/// (`\:`) are skipped. Capture group 1 is the character name.
+static IMPLICIT_CHARACTER_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^((?:[^:\\]|\\.)*):\s*").unwrap());
+
+/// Detects an explicit `[character` marker at the start of the input
+/// (with optional leading whitespace). When present, the implicit character
+/// detection is skipped.
+static CHARACTER_MARKER_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^\s*\[character").unwrap());

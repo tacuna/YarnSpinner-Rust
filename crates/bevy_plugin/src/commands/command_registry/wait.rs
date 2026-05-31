@@ -9,8 +9,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 pub(crate) fn wait_command_plugin(app: &mut App) {
-    app.init_resource::<Wait>()
-        .add_systems(Update, update_wait.in_set(YarnSpinnerSystemSet));
+    app.init_resource::<Wait>().add_systems(Update, update_wait.in_set(YarnSpinnerSystemSet));
 }
 
 #[derive(Debug, Clone, Resource, Default)]

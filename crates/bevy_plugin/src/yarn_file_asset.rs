@@ -10,10 +10,11 @@ use yarnspinner::prelude::YarnFile as InnerYarnFile;
 
 /// A Yarn file. These will mostly be created by loading them from disk with the [`AssetServer`].
 #[derive(Debug, Clone, Eq, PartialEq, Reflect, Asset, Serialize, Deserialize)]
-#[reflect(Debug, PartialEq, Hash, Serialize, Deserialize)]
 pub struct YarnFile {
-    pub(crate) file: InnerYarnFile,
-    pub(crate) string_table: std::collections::HashMap<LineId, StringInfo>,
+    /// The raw parsed Yarn file data.
+    pub file: InnerYarnFile,
+    /// The string table extracted from this file, mapping each [`LineId`] to its [`StringInfo`].
+    pub string_table: std::collections::HashMap<LineId, StringInfo>,
 }
 
 impl YarnFile {
@@ -48,9 +49,7 @@ impl YarnFile {
     }
 }
 
-fn compile_string_table(
-    file: InnerYarnFile,
-) -> Result<std::collections::HashMap<LineId, StringInfo>> {
+fn compile_string_table(file: InnerYarnFile) -> Result<std::collections::HashMap<LineId, StringInfo>> {
     let string_table = YarnCompiler::new()
         .with_compilation_type(CompilationType::StringsOnly)
         .add_file(file)
@@ -79,12 +78,7 @@ impl AssetLoader for YarnFileAssetLoader {
     type Asset = YarnFile;
     type Settings = ();
     type Error = anyhow::Error;
-    async fn load(
-        &self,
-        reader: &mut dyn Reader,
-        _settings: &(),
-        load_context: &mut LoadContext<'_>,
-    ) -> Result<Self::Asset, Self::Error> {
+    async fn load(&self, reader: &mut dyn Reader, _settings: &(), load_context: &mut LoadContext<'_>) -> Result<Self::Asset, Self::Error> {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
         let yarn_file = read_yarn_file(bytes, load_context)?;

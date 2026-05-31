@@ -2,7 +2,8 @@
 
 use crate::prelude::*;
 use anyhow::{Result, anyhow, bail};
-use bevy::asset::{AssetLoader, LoadContext, io::Reader};
+use bevy::asset::io::Reader;
+use bevy::asset::{AssetLoader, LoadContext};
 use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
 use bevy::reflect::TypePath;
@@ -12,8 +13,7 @@ use std::fs::File;
 use std::path::Path;
 
 pub(crate) fn strings_file_asset_plugin(app: &mut App) {
-    app.init_asset::<StringsFile>()
-        .init_asset_loader::<StringsFileAssetLoader>();
+    app.init_asset::<StringsFile>().init_asset_loader::<StringsFileAssetLoader>();
 }
 
 #[derive(Debug, Default, TypePath)]
@@ -23,12 +23,7 @@ impl AssetLoader for StringsFileAssetLoader {
     type Asset = StringsFile;
     type Settings = ();
     type Error = anyhow::Error;
-    async fn load(
-        &self,
-        reader: &mut dyn Reader,
-        _settings: &(),
-        _load_context: &mut LoadContext<'_>,
-    ) -> Result<Self::Asset, Self::Error> {
+    async fn load(&self, reader: &mut dyn Reader, _settings: &(), _load_context: &mut LoadContext<'_>) -> Result<Self::Asset, Self::Error> {
         let mut bytes = Vec::new();
         reader.read_to_end(&mut bytes).await?;
         let mut csv_reader = csv::Reader::from_reader(bytes.as_slice());
@@ -60,10 +55,7 @@ impl StringsFile {
                 }
             }
         }
-        let records = records
-            .into_iter()
-            .map(|record| (record.id.clone(), record))
-            .collect::<HashMap<_, _>>();
+        let records = records.into_iter().map(|record| (record.id.clone(), record)).collect::<HashMap<_, _>>();
         Ok(Self(records))
     }
 
@@ -87,12 +79,7 @@ impl StringsFile {
             )
         }
 
-        let single_yarn_file = other
-            .0
-            .values()
-            .skip(1)
-            .map(|rec| rec.file.as_str())
-            .all(|other_file| other_file == file);
+        let single_yarn_file = other.0.values().skip(1).map(|rec| rec.file.as_str()).all(|other_file| other_file == file);
 
         let mut changed = false;
         for (id, record) in self.0.iter_mut() {
@@ -103,13 +90,9 @@ impl StringsFile {
                 if records_equal_except_for_text(record, &other_record) {
                     continue;
                 }
-                let text_is_copied_from_base_language =
-                    Lock::compute_from(&record.text) == record.lock;
-                let text = if record.lock != other_record.lock
-                    && !record.text.starts_with(UPDATE_PREFIX)
-                    && !text_is_copied_from_base_language
-                {
-                    format!("{UPDATE_PREFIX}{}", &record.text)
+                let text_is_copied_from_base_language = Lock::compute_from(&record.text) == record.lock;
+                let text = if record.lock != other_record.lock && !record.text.starts_with(UPDATE_PREFIX) && !text_is_copied_from_base_language {
+                    format!("{UPDATE_PREFIX}{}", record.text)
                 } else if !text_is_copied_from_base_language {
                     // not `other_record` because that one might not contain (NEEDS UPDATE)
                     record.text.clone()
@@ -140,10 +123,7 @@ impl StringsFile {
         changed
     }
 
-    pub(crate) fn from_string_table(
-        language: impl Into<Language>,
-        string_table: impl IntoIterator<Item = (LineId, StringInfo)>,
-    ) -> Result<Self> {
+    pub(crate) fn from_string_table(language: impl Into<Language>, string_table: impl IntoIterator<Item = (LineId, StringInfo)>) -> Result<Self> {
         let language = language.into();
         let mut records = HashMap::default();
         for (id, string_info) in string_table {
@@ -175,22 +155,12 @@ impl StringsFile {
 
     pub(crate) fn write_asset(&self, path: &Path) -> Result<()> {
         if let Some(parent_dir) = path.parent() {
-            fs::create_dir_all(parent_dir).map_err(|e| {
-                anyhow!(
-                    "Failed to create dialogue asset subdirectory \"{}\": {e}",
-                    parent_dir.display(),
-                )
-            })?;
+            fs::create_dir_all(parent_dir).map_err(|e| anyhow!("Failed to create dialogue asset subdirectory \"{}\": {e}", parent_dir.display(),))?;
         }
-        let file = File::create(path)
-            .map_err(|e| anyhow!("Failed to create strings file \"{}\": {e}", path.display(),))?;
+        let file = File::create(path).map_err(|e| anyhow!("Failed to create strings file \"{}\": {e}", path.display(),))?;
         let mut writer = csv::Writer::from_writer(file);
         let mut records = self.0.iter().map(|(_, record)| record).collect::<Vec<_>>();
-        records.sort_by(|lhs, rhs| {
-            lhs.file
-                .cmp(&rhs.file)
-                .then(lhs.line_number.cmp(&rhs.line_number))
-        });
+        records.sort_by(|lhs, rhs| lhs.file.cmp(&rhs.file).then(lhs.line_number.cmp(&rhs.line_number)));
         for record in records {
             writer.serialize(record)?;
         }
@@ -198,13 +168,8 @@ impl StringsFile {
         Ok(())
     }
 
-    pub(crate) fn get_offending_language(
-        &self,
-        expected_language: &Language,
-    ) -> Option<&StringsFileRecord> {
-        self.0
-            .values()
-            .find(|record| &record.language != expected_language)
+    pub(crate) fn get_offending_language(&self, expected_language: &Language) -> Option<&StringsFileRecord> {
+        self.0.values().find(|record| &record.language != expected_language)
     }
 
     pub(crate) fn iter(&self) -> impl Iterator<Item = (&LineId, &StringsFileRecord)> {
@@ -287,7 +252,6 @@ pub(crate) struct StringsFileRecord {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Reflect, Serialize, Deserialize)]
-#[reflect(Debug, PartialEq, Hash, Serialize, Deserialize)]
 pub(crate) struct Lock(String);
 
 impl Lock {
@@ -313,10 +277,7 @@ impl Lock {
 /// instead.
 fn read_comments(metadata: impl IntoIterator<Item = String>) -> String {
     // Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner-Unity/blob/462c735766a4c4881cd1ef1f15de28c83b2ba0a8/Editor/Importers/YarnProjectImporter.cs#L652>
-    let cleaned_metadata: Vec<_> = metadata
-        .into_iter()
-        .filter(|metadata| !metadata.starts_with(LINE_ID_PREFIX))
-        .collect();
+    let cleaned_metadata: Vec<_> = metadata.into_iter().filter(|metadata| !metadata.starts_with(LINE_ID_PREFIX)).collect();
     if cleaned_metadata.is_empty() {
         String::new()
     } else {

@@ -1,7 +1,9 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Dialogue.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Dialogue.cs>
 
 use crate::markup::{DialogueTextProcessor, LineParser, MarkupParseError};
 use crate::prelude::*;
+use crate::saliency::{ContentSaliencyOption, ContentSaliencyStrategy, ContentType};
+use crate::virtual_machine::smart_variable_eval::collect_hub_saliency_candidates;
 #[cfg(feature = "bevy")]
 use bevy::prelude::World;
 use bevy_platform::collections::HashMap;
@@ -26,30 +28,16 @@ pub type Result<T> = core::result::Result<T, DialogueError>;
 #[derive(Debug)]
 pub enum DialogueError {
     MarkupParseError(MarkupParseError),
-    LineProviderError {
-        id: LineId,
-        language_code: Option<Language>,
-    },
-    InvalidOptionIdError {
-        selected_option_id: OptionId,
-        max_id: usize,
-    },
-    InvalidLineIdError {
-        selected_line_id: LineId,
-        line_ids: Vec<LineId>,
-    },
+    LineProviderError { id: LineId, language_code: Option<Language> },
+    InvalidOptionIdError { selected_option_id: OptionId, max_id: usize },
+    InvalidLineIdError { selected_line_id: LineId, line_ids: Vec<LineId> },
     UnexpectedOptionSelectionError,
     ContinueOnOptionSelectionError,
     NoNodeSelectedOnContinue,
     NoProgramLoaded,
-    InvalidNode {
-        node_name: String,
-    },
+    InvalidNode { node_name: String },
     VariableStorageError(VariableStorageError),
-    FunctionNotFound {
-        function_name: String,
-        library: Library,
-    },
+    FunctionNotFound { function_name: String, library: Library },
 }
 
 impl Error for DialogueError {
@@ -104,14 +92,17 @@ impl Dialogue {
     ///
     /// If you don't need any fancy behavior, you can use [`StringTableTextProvider`] and [`MemoryVariableStorage`].
     #[must_use]
-    pub fn new(
-        variable_storage: Box<dyn VariableStorage>,
-        text_provider: Box<dyn TextProvider>,
-    ) -> Self {
+    pub fn new(variable_storage: Box<dyn VariableStorage>, text_provider: Box<dyn TextProvider>) -> Self {
         let mut library = Library::standard_library();
         library
             .add_function("visited", visited(variable_storage.clone()))
-            .add_function("visited_count", visited_count(variable_storage.clone()));
+            .add_function("visited_count", visited_count(variable_storage.clone()))
+            .add_function("has_any_content", |_node_group: String| -> bool {
+                // Placeholder: the VM intercepts this function at runtime
+                // and evaluates it with access to the program state.
+                // This registration exists so the compiler knows the signature.
+                false
+            });
 
         let dialogue_text_processor = Box::new(DialogueTextProcessor::new());
         let line_parser = LineParser::new()
@@ -168,10 +159,7 @@ impl Dialogue {
 
     /// Sets the [`Dialogue`]'s language. A value of `None` means that you are using the base language, i.e. the one the Yarn files are written in.
     /// Returns the last language code.
-    pub fn set_language_code(
-        &mut self,
-        language_code: impl Into<Option<Language>>,
-    ) -> Option<Language> {
+    pub fn set_language_code(&mut self, language_code: impl Into<Option<Language>>) -> Option<Language> {
         let language_code = language_code.into();
         self.vm.set_language_code(language_code.clone());
         core::mem::replace(&mut self.language_code, language_code)
@@ -225,6 +213,36 @@ impl Dialogue {
     pub fn variable_storage_mut(&mut self) -> &mut dyn VariableStorage {
         self.vm.variable_storage_mut()
     }
+
+    /// Gets the current content saliency strategy.
+    pub fn content_saliency_strategy(&self) -> &dyn ContentSaliencyStrategy {
+        self.vm.content_saliency_strategy.as_ref()
+    }
+
+    /// Sets the content saliency strategy used for selecting content from
+    /// line groups and node groups.
+    pub fn set_content_saliency_strategy(&mut self, strategy: Box<dyn ContentSaliencyStrategy>) -> &mut Self {
+        self.vm.content_saliency_strategy = strategy;
+        self
+    }
+
+    /// Registers a custom markup processor for the given marker name.
+    ///
+    /// When the dialogue encounters a marker with the given name during
+    /// line parsing, it will call the processor's
+    /// [`replacement_text_for_marker`](crate::markup::AttributeMarkerProcessor::replacement_text_for_marker)
+    /// method to get the replacement text.
+    ///
+    /// ## Panics
+    /// Panics if a processor has already been registered for the given name.
+    pub fn register_marker_processor(
+        &mut self,
+        attribute_name: impl Into<String>,
+        processor: Box<dyn crate::markup::AttributeMarkerProcessor>,
+    ) -> &mut Self {
+        self.vm.register_marker_processor(attribute_name, processor);
+        self
+    }
 }
 
 // VM proxy
@@ -253,11 +271,8 @@ impl Dialogue {
             "Called `continue_` on a dialogue that was compiled with the `bevy` feature. Did you mean to call `continue_with_world` instead?"
         );
 
-        self.vm.continue_(|vm, instruction| {
-            vm.run_instruction(instruction, |function, parameters| {
-                function.call(parameters)
-            })
-        })
+        self.vm
+            .continue_(|vm, instruction| vm.run_instruction(instruction, |function, parameters| function.call(parameters)))
     }
 
     #[cfg(feature = "bevy")]
@@ -279,11 +294,8 @@ impl Dialogue {
     /// Specifically, we cannot guarantee [`Send`] and [`Sync`] properly without a lot of [`std::sync::RwLock`] boilerplate. The original implementation
     /// also allows unsound parallel mutation of [`Dialogue`]'s state, which would result in a deadlock in our case.
     pub fn continue_with_world(&mut self, world: &mut World) -> Result<Vec<DialogueEvent>> {
-        self.vm.continue_(move |vm, instruction| {
-            vm.run_instruction(instruction, |function, parameters| {
-                function.call_with_world(parameters, world)
-            })
-        })
+        self.vm
+            .continue_(move |vm, instruction| vm.run_instruction(instruction, |function, parameters| function.call_with_world(parameters, world)))
     }
 
     /// Returns true if the [`Dialogue`] is in a state where [`Dialogue::continue_`] can be called.
@@ -292,11 +304,7 @@ impl Dialogue {
     }
 
     fn extend_variable_storage_from(&mut self, program: &Program) {
-        let initial: HashMap<String, YarnValue> = program
-            .initial_values
-            .iter()
-            .map(|(k, v)| (k.clone(), v.clone().into()))
-            .collect();
+        let initial: HashMap<String, YarnValue> = program.initial_values.iter().map(|(k, v)| (k.clone(), v.clone().into())).collect();
 
         // Extend the VariableStorage with the initial values from the program
         if let Err(e) = self.variable_storage_mut().extend(initial) {
@@ -315,8 +323,7 @@ impl Dialogue {
     /// Merges the currently set [`Program`] with the given one. If there is no program set, the given one is set.
     pub fn add_program(&mut self, program: Program) -> &mut Self {
         if let Some(existing_program) = self.vm.program.as_mut() {
-            *existing_program =
-                Program::combine(vec![existing_program.clone(), program.clone()]).unwrap();
+            *existing_program = Program::combine(vec![existing_program.clone(), program.clone()]).unwrap();
         } else {
             self.vm.program.replace(program.clone());
             self.vm.reset_state();
@@ -345,10 +352,7 @@ impl Dialogue {
     ///
     /// Panics if [`Dialogue::line_hints_enabled`] is `false`.
     pub fn pop_line_hints(&mut self) -> Option<Vec<LineId>> {
-        assert!(
-            self.line_hints_enabled(),
-            "Tried to call pop_line_hints when line hints are disabled."
-        );
+        assert!(self.line_hints_enabled(), "Tried to call pop_line_hints when line hints are disabled.");
         self.vm.pop_line_hints()
     }
 
@@ -367,10 +371,7 @@ impl Dialogue {
     /// Gets the names of the nodes in the currently loaded Program, if there is one.
     #[must_use]
     pub fn node_names(&self) -> Option<impl Iterator<Item = &str>> {
-        self.vm
-            .program
-            .as_ref()
-            .map(|program| program.nodes.keys().map(|s| s.as_str()))
+        self.vm.program.as_ref().map(|program| program.nodes.keys().map(|s| s.as_str()))
     }
 
     /// Returns the line ID that contains the original, uncompiled source
@@ -389,16 +390,16 @@ impl Dialogue {
             .map(|_| format!("{LINE_ID_PREFIX}{node_name}").into())
     }
 
-    /// Returns the tags for the node `node_name`.
+    /// Returns the value of the header named `header_name` on the node named `node_name`.
     ///
-    /// The tags for a node are defined by setting the `tags` header in
-    /// the node's source code. This header must be a space-separated list
+    /// Returns [`None`] if the node is not present in the program or the header does not exist.
+    /// If the node has more than one header with `header_name`, the first one is used.
     ///
-    /// Returns [`None`] if the node is not present in the program.
+    /// This is the Rust counterpart of C#'s `Dialogue.GetHeaderValue(nodeName, headerName)`.
     #[must_use]
-    pub fn get_tags_for_node(&self, node_name: &str) -> Option<Vec<String>> {
+    pub fn get_header_value(&self, node_name: &str, header_name: &str) -> Option<String> {
         self.get_node_logging_errors(node_name)
-            .map(|node| node.tags)
+            .and_then(|node| node.headers.iter().find(|h| h.key == header_name).map(|h| h.value.clone()))
     }
 
     /// Returns the headers for the node `node_name`.
@@ -409,12 +410,8 @@ impl Dialogue {
     /// Returns [`None`] if the node is not present in the program.
     #[must_use]
     pub fn get_headers_for_node(&self, node_name: &str) -> Option<HashMap<String, String>> {
-        self.get_node_logging_errors(node_name).map(|node| {
-            node.headers
-                .iter()
-                .map(|header| (header.key.clone(), header.value.clone()))
-                .collect()
-        })
+        self.get_node_logging_errors(node_name)
+            .map(|node| node.headers.iter().map(|header| (header.key.clone(), header.value.clone())).collect())
     }
 
     /// Gets a value indicating whether a specified node exists in the [`Program`].
@@ -429,6 +426,75 @@ impl Dialogue {
         }
     }
 
+    /// Returns `true` if the named node is a node-group hub (i.e. was compiled from
+    /// multiple nodes with the same title in the Yarn source).
+    ///
+    /// A hub node is identified by the internal `"yarn_internal_node_group"` tag that
+    /// the compiler adds to it during the node-group compilation step.
+    ///
+    /// Returns `false` if no program is loaded or if the node does not exist.
+    #[must_use]
+    pub fn is_node_group(&self, node_name: &str) -> bool {
+        const HUB_TAG: &str = "yarn_internal_node_group";
+        if let Some(program) = self.vm.program.as_ref() {
+            if let Some(node) = program.nodes.get(node_name) {
+                node.tags.iter().any(|t| t == HUB_TAG)
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
+    /// Returns all content saliency candidates for a node or node-group.
+    ///
+    /// - If `node_name` does not exist, returns an [`Err`] containing [`DialogueError::InvalidNode`].
+    /// - If `node_name` exists but is **not** a node-group hub (i.e. a plain node), returns a
+    ///   single [`ContentSaliencyOption`] representing that node with no conditions.
+    /// - If `node_name` is a node-group hub, evaluates every member's `when:` conditions against
+    ///   the current variable storage and returns all candidates (both passing and failing), without
+    ///   invoking the content saliency strategy.
+    ///
+    /// This is useful for inspecting which members of a node group are currently eligible before
+    /// the dialogue actually runs one.
+    pub fn get_saliency_options_for_node_group(&self, node_name: &str) -> Result<Vec<ContentSaliencyOption>> {
+        if !self.node_exists(node_name) {
+            return Err(DialogueError::InvalidNode {
+                node_name: node_name.to_string(),
+            });
+        }
+
+        if !self.is_node_group(node_name) {
+            // Plain (non-hub) node: return a single option representing the node itself.
+            // A plain node has no conditions, so it always passes.
+            return Ok(vec![ContentSaliencyOption {
+                content_id: node_name.to_string(),
+                passing_condition_count: 1,
+                failing_condition_count: 0,
+                complexity_score: 0,
+                content_type: ContentType::Node,
+                destination: 0,
+            }]);
+        }
+
+        let program = self.vm.program.as_ref().expect("program must be loaded — node_exists returned true");
+        let mut call_fn = |function: &dyn yarnspinner_core::prelude::UntypedYarnFn, parameters: Vec<yarnspinner_core::prelude::YarnValue>| {
+            function.call(parameters)
+        };
+
+        let candidates = collect_hub_saliency_candidates(
+            node_name,
+            program,
+            self.vm.variable_storage.as_ref(),
+            &self.vm.library,
+            self.vm.content_saliency_strategy.as_ref(),
+            &mut call_fn,
+        );
+
+        Ok(candidates.unwrap_or_default())
+    }
+
     /// Gets the name of the node that this Dialogue is currently executing.
     ///
     /// If [`Dialogue::continue_`] has never been called, this value will be [`None`].
@@ -439,11 +505,7 @@ impl Dialogue {
 
     /// Analyses the currently loaded Yarn program with the given [`Context`]. Call [`Context::finish_analysis`] afterwards to get the results.
     pub fn analyse(&self, context: &mut Context) -> &Self {
-        let program = self
-            .vm
-            .program
-            .as_ref()
-            .expect("Failed to analyse program: No program loaded");
+        let program = self.vm.program.as_ref().expect("Failed to analyse program: No program loaded");
         context.diagnose_program(program);
         self
     }
@@ -480,6 +542,18 @@ impl Dialogue {
     /// - [`Dialogue::continue_`]
     pub fn set_selected_option(&mut self, selected_option_id: OptionId) -> Result<&mut Self> {
         self.vm.set_selected_option(selected_option_id)?;
+        Ok(self)
+    }
+
+    /// Signals to the [`Dialogue`] that no option was selected. The dialogue
+    /// will fall through past the option block and continue with the next
+    /// content after it.
+    ///
+    /// This should be called instead of [`Dialogue::set_selected_option`] when
+    /// all options are unavailable and the dialogue should continue past the
+    /// option block.
+    pub fn set_no_option_selected(&mut self) -> Result<&mut Self> {
+        self.vm.set_no_option_selected()?;
         Ok(self)
     }
 

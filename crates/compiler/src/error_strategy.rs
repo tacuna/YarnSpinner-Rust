@@ -1,15 +1,15 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/ErrorStrategy.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/IndentAwareLexer.cs>
 
 use crate::prelude::generated::yarnspinnerparser;
 use crate::prelude::*;
-use antlr_rust::errors::{ANTLRError, InputMisMatchError, NoViableAltError};
-use antlr_rust::parser::ParserNodeType;
-use antlr_rust::parser_rule_context::ParserRuleContext;
-use antlr_rust::rule_context::CustomRuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::token_factory::TokenFactory;
-use antlr_rust::tree::Tree;
-use antlr_rust::{DefaultErrorStrategy, ErrorStrategy as AntlrErrorStrategy, Parser};
+use antlr4rust::errors::{ANTLRError, InputMisMatchError, NoViableAltError};
+use antlr4rust::parser::ParserNodeType;
+use antlr4rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::rule_context::CustomRuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::token_factory::TokenFactory;
+use antlr4rust::tree::Tree;
+use antlr4rust::{DefaultErrorStrategy, ErrorStrategy as AntlrErrorStrategy, Parser};
 use std::rc::Rc;
 
 pub(crate) struct ErrorStrategy<'input, Ctx: ParserNodeType<'input>> {
@@ -33,10 +33,7 @@ impl<'input, T: Parser<'input>> AntlrErrorStrategy<'input, T> for ErrorStrategy<
         self.default_error_strategy.reset(recognizer);
     }
 
-    fn recover_inline(
-        &mut self,
-        recognizer: &mut T,
-    ) -> Result<<T::TF as TokenFactory<'input>>::Tok, ANTLRError> {
+    fn recover_inline(&mut self, recognizer: &mut T) -> Result<<T::TF as TokenFactory<'input>>::Tok, ANTLRError> {
         self.default_error_strategy.recover_inline(recognizer)
     }
 
@@ -49,8 +46,7 @@ impl<'input, T: Parser<'input>> AntlrErrorStrategy<'input, T> for ErrorStrategy<
     }
 
     fn in_error_recovery_mode(&mut self, recognizer: &mut T) -> bool {
-        self.default_error_strategy
-            .in_error_recovery_mode(recognizer)
+        self.default_error_strategy.in_error_recovery_mode(recognizer)
     }
 
     /// ## Implementation notes
@@ -81,14 +77,9 @@ impl<'input, T: Parser<'input>> AntlrErrorStrategy<'input, T> for ErrorStrategy<
 }
 
 impl<'input, Ctx: ParserNodeType<'input>> ErrorStrategy<'input, Ctx> {
-    fn report_no_viable_alternative<T: Parser<'input, Node = Ctx, TF = Ctx::TF>>(
-        &self,
-        recognizer: &mut T,
-        e: &NoViableAltError,
-    ) -> String {
+    fn report_no_viable_alternative<T: Parser<'input, Node = Ctx, TF = Ctx::TF>>(&self, recognizer: &mut T, e: &NoViableAltError) -> String {
         if is_inside_rule(recognizer, yarnspinnerparser::RULE_if_statement)
-            && recognizer.get_parser_rule_context().get_rule_index()
-                == yarnspinnerparser::RULE_statement
+            && recognizer.get_parser_rule_context().get_rule_index() == yarnspinnerparser::RULE_statement
             && e.start_token.token_type == yarnspinnerparser::COMMAND_START
             && e.base.offending_token.token_type == yarnspinnerparser::COMMAND_ELSE
         {
@@ -96,8 +87,7 @@ impl<'input, Ctx: ParserNodeType<'input>> ErrorStrategy<'input, Ctx> {
             // statement, and we got an '<<', 'else', and we weren't able
             // to match that. The programmer included an extra '<<else>>'.
             "More than one <<else>> statement in an <<if>> statement isn't allowed".to_owned()
-        } else if e.start_token.token_type == yarnspinnerparser::COMMAND_START
-            && e.base.offending_token.token_type == yarnspinnerparser::COMMAND_END
+        } else if e.start_token.token_type == yarnspinnerparser::COMMAND_START && e.base.offending_token.token_type == yarnspinnerparser::COMMAND_END
         {
             // We saw a << immediately followed by a >>. The programmer
             // forgot to include command text.
@@ -112,11 +102,7 @@ impl<'input, Ctx: ParserNodeType<'input>> ErrorStrategy<'input, Ctx> {
         }
     }
 
-    fn report_input_mismatch<T: Parser<'input, Node = Ctx, TF = Ctx::TF>>(
-        &self,
-        recognizer: &mut T,
-        e: &InputMisMatchError,
-    ) -> String {
+    fn report_input_mismatch<T: Parser<'input, Node = Ctx, TF = Ctx::TF>>(&self, recognizer: &mut T, e: &InputMisMatchError) -> String {
         let rule_context = recognizer.get_parser_rule_context();
         let msg = match rule_context.get_rule_index() {
             yarnspinnerparser::RULE_if_statement => {
@@ -130,24 +116,15 @@ impl<'input, Ctx: ParserNodeType<'input>> ErrorStrategy<'input, Ctx> {
                             rule_context.start().get_line_as_usize()
                         ))
                     }
-                    yarnspinnerparser::COMMAND_ELSE
-                        if recognizer
-                            .get_expected_tokens()
-                            .contains(yarnspinnerparser::COMMAND_ENDIF) =>
-                    {
+                    yarnspinnerparser::COMMAND_ELSE if recognizer.get_expected_tokens().contains(yarnspinnerparser::COMMAND_ENDIF) => {
                         // We saw an else, but we expected to see an endif. The
                         // programmer wrote an additional <<else>>.
-                        Some(
-                            "More than one <<else>> statement in an <<if>> statement isn't allowed"
-                                .to_owned(),
-                        )
+                        Some("More than one <<else>> statement in an <<if>> statement isn't allowed".to_owned())
                     }
                     _ => None,
                 }
             }
-            yarnspinnerparser::RULE_variable
-                if e.base.offending_token.token_type == yarnspinnerparser::FUNC_ID =>
-            {
+            yarnspinnerparser::RULE_variable if e.base.offending_token.token_type == yarnspinnerparser::FUNC_ID => {
                 // We're parsing a variable (which starts with a '$'),
                 // but we encountered a FUNC_ID (which doesn't). The
                 // programmer forgot to include the '$'.
@@ -170,11 +147,7 @@ impl<'input, Ctx: ParserNodeType<'input>> ErrorStrategy<'input, Ctx> {
         // If the friendly name's first character is a vowel, the
         // article is 'an'; otherwise, 'a'.
         let first_letter = friendly_name.chars().next().unwrap();
-        let article = if "aeiou".contains(first_letter) {
-            "an"
-        } else {
-            "a"
-        };
+        let article = if "aeiou".contains(first_letter) { "an" } else { "a" };
         format!("{article} {friendly_name}")
     }
 }

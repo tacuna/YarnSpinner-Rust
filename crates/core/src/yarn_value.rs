@@ -16,10 +16,7 @@ use core::fmt::{Display, Formatter};
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub enum YarnValue {
     /// Any kind of Rust number, i.e. one of `f32`, `f64`, `i8`, `i16`, `i32`, `i64`, `i128`, `u8`, `u16`, `u32`, `u64`, `u128`, `usize`, `isize`.
     /// They are internally stored as `f32` through simple type casts.
@@ -135,9 +132,7 @@ macro_rules! impl_whole_number {
     };
 }
 
-impl_whole_number![
-    i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, usize, isize,
-];
+impl_whole_number![i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, usize, isize,];
 
 impl From<YarnValue> for String {
     fn from(value: YarnValue) -> Self {

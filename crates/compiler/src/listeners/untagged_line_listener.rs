@@ -1,20 +1,17 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/Utils.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/Utility.cs>
 
 use crate::parser::generated::yarnspinnerparser::Line_statementContext;
-use crate::prelude::generated::yarnspinnerparser::{
-    Line_statementContextAttrs, YarnSpinnerParserContextType,
-};
+use crate::prelude::generated::yarnspinnerparser::{Line_statementContextAttrs, YarnSpinnerParserContextType};
 use crate::prelude::generated::yarnspinnerparserlistener::YarnSpinnerParserListener;
 use crate::prelude::*;
 use crate::visitors::get_hashtag_texts;
-use antlr_rust::int_stream::IntStream;
-use antlr_rust::parser_rule_context::ParserRuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::token_stream::TokenStream;
-use antlr_rust::tree::ParseTreeListener;
-use rand::RngExt as _;
-use rand::rngs::SysRng;
-use rand::{SeedableRng, rngs::SmallRng};
+use antlr4rust::int_stream::IntStream;
+use antlr4rust::parser_rule_context::ParserRuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::token_stream::TokenStream;
+use antlr4rust::tree::ParseTreeListener;
+use rand::rngs::{SmallRng, SysRng};
+use rand::{RngExt as _, SeedableRng};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
@@ -28,12 +25,7 @@ pub(crate) struct UntaggedLineListener<'input> {
 
 impl<'input> UntaggedLineListener<'input> {
     pub fn new(existing_line_tags: Vec<LineId>, file: FileParseResult<'input>) -> Self {
-        let original_source = file
-            .tokens()
-            .get_all_text()
-            .lines()
-            .map(|s| s.to_owned())
-            .collect();
+        let original_source = file.tokens().get_all_text().lines().map(|s| s.to_owned()).collect();
         Self {
             existing_line_tags,
             file,
@@ -55,10 +47,7 @@ impl<'input> UntaggedLineListener<'input> {
     }
 }
 
-impl<'input> ParseTreeListener<'input, YarnSpinnerParserContextType>
-    for UntaggedLineListener<'input>
-{
-}
+impl<'input> ParseTreeListener<'input, YarnSpinnerParserContextType> for UntaggedLineListener<'input> {}
 
 impl<'input> YarnSpinnerParserListener<'input> for UntaggedLineListener<'input> {
     fn exit_line_statement(&mut self, ctx: &Line_statementContext<'input>) {
@@ -107,13 +96,12 @@ impl<'input> YarnSpinnerParserListener<'input> for UntaggedLineListener<'input> 
             .char_indices()
             .map(|(byte_pos, _char)| byte_pos)
             .nth(previous_token.get_column_as_usize())
-            .expect_or_bug_with(
-                format_args!("Internal error: failed to convert char pos to byte pos for insertion index on line {line_index}.")
-            )
+            .expect_or_bug_with(format_args!(
+                "Internal error: failed to convert char pos to byte pos for insertion index on line {line_index}."
+            ))
             + previous_token.get_text().len();
         line.insert_str(insertion_index, &format!(" #{new_line_id} "));
-        self.rewrote_anything
-            .store(true, std::sync::atomic::Ordering::Relaxed);
+        self.rewrote_anything.store(true, std::sync::atomic::Ordering::Relaxed);
     }
 }
 
@@ -123,10 +111,7 @@ impl<'input> YarnSpinnerParserListener<'input> for UntaggedLineListener<'input> 
 ///
 /// Returns the index of the first token before the token at `index` that is on the channel `0`.
 /// If none is found, returns [`None`]. If `index` is beyond the size of `token_stream`, returns the index of the last token in the stream.
-fn index_of_previous_token_on_channel(
-    token_stream: &ActualTokenStream,
-    index: isize,
-) -> Option<isize> {
+fn index_of_previous_token_on_channel(token_stream: &ActualTokenStream, index: isize) -> Option<isize> {
     let default_token_channel = 0;
     // Are we beyond the list of tokens?
     if index >= token_stream.size() {
@@ -137,7 +122,5 @@ fn index_of_previous_token_on_channel(
     // to find items before it, so start looking from the token before it.
 
     // Walk backwards through the tokens list.
-    (0..index)
-        .rev()
-        .find(|&i| token_stream.get(i).get_channel() == default_token_channel)
+    (0..index).rev().find(|&i| token_stream.get(i).get_channel() == default_token_channel)
 }

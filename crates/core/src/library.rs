@@ -1,14 +1,13 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Library.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Library.cs>
 
 use crate::prelude::*;
 use alloc::borrow::Cow;
 use core::fmt::Display;
+use crc32fast::hash as crc32;
 
 use hashbrown::hash_map;
-use rand::{
-    RngExt as _, SeedableRng,
-    rngs::{SmallRng, SysRng},
-};
+use rand::rngs::{SmallRng, SysRng};
+use rand::{RngExt as _, SeedableRng};
 
 /// A collection of functions that can be called from Yarn scripts.
 ///
@@ -17,10 +16,7 @@ use rand::{
 pub struct Library(YarnFnRegistry);
 
 impl Extend<<YarnFnRegistry as IntoIterator>::Item> for Library {
-    fn extend<T: IntoIterator<Item = (Cow<'static, str>, Box<dyn UntypedYarnFn>)>>(
-        &mut self,
-        iter: T,
-    ) {
+    fn extend<T: IntoIterator<Item = (Cow<'static, str>, Box<dyn UntypedYarnFn>)>>(&mut self, iter: T) {
         self.0.extend(iter);
     }
 }
@@ -69,6 +65,26 @@ impl Library {
         format!("$Yarn.Internal.Visiting.{node_name}")
     }
 
+    /// Gets the name of the boolean variable that stores whether the content
+    /// identified by `line_id` has been seen by the player before.
+    ///
+    /// For example, if you have `Alice: once line <<once>> #line:abc123`,
+    /// pass `"line:abc123"` to get the variable name.
+    pub fn generate_unique_content_viewed_variable_name(line_id: &str) -> String {
+        format!("$Yarn.Internal.Once.{line_id}")
+    }
+
+    /// Gets the name of the boolean variable that stores whether a `<<once>>`
+    /// command block has been seen by the player before.
+    ///
+    /// This is inherently unstable as it relies on layout attributes of the
+    /// yarn code. Uses a CRC32 hash of a description string.
+    pub fn generate_unique_command_block_viewed_variable_name(source_file_name: &str, node: &str, line_number: usize) -> String {
+        let description = format!("'once' statement in file {source_file_name}, node {node}, line {line_number}");
+        let hash = crc32(description.as_bytes());
+        Self::generate_unique_content_viewed_variable_name(&hash.to_string())
+    }
+
     /// Creates a [`Library`] with the standard functions that are included in Yarn Spinner.
     /// These are:
     /// - `string`: Converts a value to a string.
@@ -105,6 +121,8 @@ impl Library {
             "dec" => |value: f32| value.ceil() as i32 - 1,
             "decimal" => |value: f32| value.fract(),
             "int" => |value: f32| value.trunc() as i32,
+            "min" => |a: f32, b: f32| if a <= b { a } else { b },
+            "max" => |a: f32, b: f32| if a >= b { a } else { b },
             // "format" => TODO: Hard to do without dedicated crate. Is it useful ?
         );
         for r#type in [Type::Number, Type::String, Type::Boolean] {
@@ -161,17 +179,59 @@ impl Library {
     /// }
     /// ```
     ///
-    pub fn add_function<Marker, F>(
-        &mut self,
-        name: impl Into<Cow<'static, str>>,
-        function: F,
-    ) -> &mut Self
+    pub fn add_function<Marker, F>(&mut self, name: impl Into<Cow<'static, str>>, function: F) -> &mut Self
     where
         Marker: 'static,
         F: YarnFn<Marker> + 'static + Clone,
         F::Out: IntoYarnValueFromNonYarnValue + 'static + Clone,
     {
         self.0.register_function(name, function);
+        self
+    }
+
+    /// Adds a variadic function to the library.
+    ///
+    /// A variadic function accepts zero or more *fixed* parameters followed by any number of
+    /// *variadic* parameters of the same type.  The implementation closure receives all
+    /// arguments – fixed and variadic – in a single flat [`Vec<YarnValue>`].
+    ///
+    /// ## Type IDs
+    ///
+    /// Use [`core::any::TypeId::of::<T>()`] to build the type arguments:
+    /// * `f32` → [`Type::Number`]
+    /// * `String` / `&str` → [`Type::String`]
+    /// * `bool` → [`Type::Boolean`]
+    ///
+    /// ## Example
+    ///
+    /// ```rust
+    /// # use yarnspinner_core::prelude::*;
+    /// # use core::any::TypeId;
+    /// # let mut library = Library::default();
+    /// // fn variadic_add(params f32[]) -> f32 { args.iter().sum() }
+    /// library.add_variadic_function(
+    ///     "variadic_add",
+    ///     vec![],                  // no fixed parameters
+    ///     TypeId::of::<f32>(),     // variadic param type = Number
+    ///     TypeId::of::<f32>(),     // return type = Number
+    ///     |args: Vec<YarnValue>| -> YarnValue {
+    ///         let sum: f32 = args.iter()
+    ///             .filter_map(|v| f32::try_from(v.clone()).ok())
+    ///             .sum();
+    ///         YarnValue::Number(sum)
+    ///     },
+    /// );
+    /// ```
+    pub fn add_variadic_function(
+        &mut self,
+        name: impl Into<Cow<'static, str>>,
+        fixed_param_type_ids: Vec<core::any::TypeId>,
+        variadic_type_id: core::any::TypeId,
+        return_type_id: core::any::TypeId,
+        func: impl Fn(Vec<YarnValue>) -> YarnValue + Send + Sync + 'static,
+    ) -> &mut Self {
+        let wrapper = VariadicYarnFn::new(fixed_param_type_ids, variadic_type_id, return_type_id, func);
+        self.0.add_boxed(name, Box::new(wrapper));
         self
     }
 

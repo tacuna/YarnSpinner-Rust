@@ -138,10 +138,7 @@ pub trait AssetProvider: Debug + Send + Sync {
 
     /// Returns whether the assets for all lines announced by [`AssetProvider::accept_line_hints`] are available, i.e. have been loaded and are ready to be used.
     /// This method is allowed to process already loaded assets to make them ready for delivery.
-    fn update_asset_availability(
-        &mut self,
-        loaded_untyped_assets: &Assets<LoadedUntypedAsset>,
-    ) -> bool;
+    fn update_asset_availability(&mut self, loaded_untyped_assets: &Assets<LoadedUntypedAsset>) -> bool;
 
     /// Passes the [`LineId`]s that this [`AssetProvider`] should soon provide assets for. These are the [`LineId`]s that are contained in the current node and are not required to be actually reached.
     fn accept_line_hints(&mut self, line_ids: &[LineId]);
@@ -170,9 +167,9 @@ impl LineAssets {
     where
         T: Asset,
     {
-        self.0.iter().find_map(|(type_id, handle)| {
-            (T::type_path() == *type_id).then(|| handle.clone().typed())
-        })
+        self.0
+            .iter()
+            .find_map(|(type_id, handle)| (T::type_path() == *type_id).then(|| handle.clone().typed()))
     }
 
     /// Gets the number of assets provided.
@@ -203,10 +200,7 @@ impl IntoIterator for LineAssets {
 
 impl Extend<LineAssets> for LineAssets {
     fn extend<T: IntoIterator<Item = LineAssets>>(&mut self, iter: T) {
-        self.0.extend(
-            iter.into_iter()
-                .flat_map(|line_assets| line_assets.0.into_iter()),
-        )
+        self.0.extend(iter.into_iter().flat_map(|line_assets| line_assets.0.into_iter()))
     }
 }
 
@@ -224,10 +218,6 @@ impl FromIterator<(&'static str, UntypedHandle)> for LineAssets {
 
 impl FromIterator<LineAssets> for LineAssets {
     fn from_iter<T: IntoIterator<Item = LineAssets>>(iter: T) -> Self {
-        Self(
-            iter.into_iter()
-                .flat_map(|line_assets| line_assets.0.into_iter())
-                .collect(),
-        )
+        Self(iter.into_iter().flat_map(|line_assets| line_assets.0.into_iter()).collect())
     }
 }

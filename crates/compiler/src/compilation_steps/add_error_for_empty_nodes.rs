@@ -1,30 +1,19 @@
-//! Replace the method AddErrorsForEmptyNodes of https://github.com/YarnSpinnerTool/YarnSpinner/blob/838761ad55d8d08be3b46e6f2bea2d017208e445/YarnSpinner.Compiler/Compiler.cs#L657
+//! Replaces the `AddErrorsForEmptyNodes` logic previously in <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/Compiler.cs>
 
 use std::collections::HashSet;
 
-use antlr_rust::token::Token;
+use antlr4rust::tree::ParseTree;
 
-use crate::parser::generated::yarnspinnerparser::{
-    BodyContextAttrs, DialogueContextAttrs, NodeContextAttrs,
-};
-use crate::prelude::CompilationIntermediate;
-use crate::prelude::*;
+use crate::parser::generated::yarnspinnerparser::{BodyContextAttrs, DialogueContextAttrs, NodeContextAttrs, Title_headerContextAttrs};
+use crate::prelude::{CompilationIntermediate, *};
 
-pub(crate) fn add_error_for_empty_nodes(
-    mut state: CompilationIntermediate,
-) -> CompilationIntermediate {
+pub(crate) fn add_error_for_empty_nodes(mut state: CompilationIntermediate) -> CompilationIntermediate {
     let mut empty_nodes: HashSet<String> = HashSet::new();
 
     let empties = state
         .parsed_files
         .iter()
-        .flat_map(|(file, _)| {
-            file.tree
-                .node_all()
-                .iter()
-                .map(|node| (node.clone(), file))
-                .collect::<Vec<_>>()
-        })
+        .flat_map(|(file, _)| file.tree.node_all().iter().map(|node| (node.clone(), file)).collect::<Vec<_>>())
         .filter(|(node, _)| {
             if let Some(body) = node.body() {
                 body.statement_all().is_empty()
@@ -34,28 +23,17 @@ pub(crate) fn add_error_for_empty_nodes(
         });
 
     for (node, file) in empties {
-        let (title, title_header) = node
-            .header_all()
-            .iter()
-            .find(|header| header.header_key.as_ref().unwrap().get_text() == "title")
-            .map(|title_header| {
-                let title = title_header
-                    .header_value
-                    .as_ref()
-                    .unwrap()
-                    .get_text()
-                    .to_owned();
-                (title, Some(title_header.clone()))
-            })
+        let (title, title_context) = node
+            .title_header(0)
+            .and_then(|h| h.ID().map(|t| (t.get_text(), Some(h.clone()))))
             .unwrap_or_default();
 
-        let mut diag = Diagnostic::from_message(format!(
-            "Node \"{title}\" is empty and will not be included in the compiled output.",
-        ))
-        .with_file_name(file.name.clone())
-        .with_severity(DiagnosticSeverity::Warning);
+        let mut diag = Diagnostic::from_message(format!("Node \"{title}\" is empty and will not be included in the compiled output.",))
+            .with_file_name(file.name.clone())
+            .with_severity(DiagnosticSeverity::Warning)
+            .with_code("YS0033");
 
-        if let Some(context) = title_header {
+        if let Some(context) = title_context {
             diag = diag.with_parser_context(context.as_ref(), file.tokens());
         }
 

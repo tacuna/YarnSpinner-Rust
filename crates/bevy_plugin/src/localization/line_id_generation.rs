@@ -13,12 +13,8 @@ pub(crate) fn line_id_generation_plugin(app: &mut App) {
     app.add_systems(
         Update,
         (
-            handle_yarn_file_events
-                .pipe(panic_on_err)
-                .run_if(in_development.and(has_localizations)),
-            handle_yarn_file_events_outside_development.run_if(
-                resource_exists::<YarnProject>.and(not(in_development.and(has_localizations))),
-            ),
+            handle_yarn_file_events.pipe(panic_on_err).run_if(in_development.and(has_localizations)),
+            handle_yarn_file_events_outside_development.run_if(resource_exists::<YarnProject>.and(not(in_development.and(has_localizations)))),
         )
             .chain()
             .in_set(LineIdUpdateSystemSet)
@@ -36,12 +32,7 @@ fn handle_yarn_file_events_outside_development(
         let AssetEvent::Modified { id } = event else {
             continue;
         };
-        if !(yarn_files_being_loaded
-            .0
-            .iter()
-            .any(|handle| handle.id() == *id)
-            || project.yarn_files.iter().any(|handle| handle.id() == *id))
-        {
+        if !(yarn_files_being_loaded.0.iter().any(|handle| handle.id() == *id) || project.yarn_files.iter().any(|handle| handle.id() == *id)) {
             continue;
         }
         recompile_events.write(RecompileLoadedYarnFilesEvent);
@@ -64,8 +55,7 @@ fn handle_yarn_file_events(
     let mut recompilation_needed = false;
     let mut already_handled: HashSet<AssetId<YarnFile>> = HashSet::default();
     for event in events.read() {
-        let (AssetEvent::LoadedWithDependencies { id } | AssetEvent::Modified { id }) = event
-        else {
+        let (AssetEvent::LoadedWithDependencies { id } | AssetEvent::Modified { id }) = event else {
             continue;
         };
 
@@ -73,10 +63,7 @@ fn handle_yarn_file_events(
             continue;
         }
         already_handled.insert(*id);
-        if !yarn_files_being_loaded
-            .0
-            .iter()
-            .any(|handle| handle.id() == *id)
+        if !yarn_files_being_loaded.0.iter().any(|handle| handle.id() == *id)
             && !project
                 .as_ref()
                 .map(|p| p.yarn_files.iter().any(|handle| handle.id() == *id))
@@ -86,9 +73,7 @@ fn handle_yarn_file_events(
         }
         let yarn_file = assets.get(*id).unwrap();
 
-        update_strings_files_writer.write(UpdateAllStringsFilesForStringTableEvent(
-            yarn_file.string_table.clone(),
-        ));
+        update_strings_files_writer.write(UpdateAllStringsFilesForStringTableEvent(yarn_file.string_table.clone()));
 
         let Some((source_with_added_ids, _)) = add_tags_to_lines(yarn_file)? else {
             if matches!(event, AssetEvent::LoadedWithDependencies { .. }) {
@@ -100,9 +85,7 @@ fn handle_yarn_file_events(
             }
             last_recompiled_yarn_file.replace(yarn_file.clone());
             for mut dialogue_runner in dialogue_runners.iter_mut() {
-                dialogue_runner
-                    .text_provider
-                    .extend_base_string_table(yarn_file.string_table.clone());
+                dialogue_runner.text_provider.extend_base_string_table(yarn_file.string_table.clone());
             }
             added_tags.remove(id);
             recompilation_needed = true;
@@ -112,26 +95,22 @@ fn handle_yarn_file_events(
         if added_tags.contains(id) {
             continue;
         }
-        let asset_path = asset_server
-            .get_path(*id)
-            .with_context(|| format!("Failed to overwrite Yarn file \"{}\" with new IDs because it was not found on disk",
-                                     yarn_file.file_name()))?;
+        let asset_path = asset_server.get_path(*id).with_context(|| {
+            format!(
+                "Failed to overwrite Yarn file \"{}\" with new IDs because it was not found on disk",
+                yarn_file.file_name()
+            )
+        })?;
         let path = asset_root.0.join(asset_path.path());
 
-        std::fs::write(&path, &source_with_added_ids)
-                    .context(
-                        format!("Failed to overwrite Yarn file at {} with new line IDs. \
+        std::fs::write(&path, &source_with_added_ids).context(format!(
+            "Failed to overwrite Yarn file at {} with new line IDs. \
                                  Aborting because localization requires all lines to have IDs, but this file is missing some.",
-                                path.display()))?;
-
-        info!(
-            "Automatically generated line IDs for Yarn file at {}",
             path.display()
-        );
-        let is_watching = project
-            .as_ref()
-            .map(|p| p.watching_for_changes)
-            .unwrap_or_default();
+        ))?;
+
+        info!("Automatically generated line IDs for Yarn file at {}", path.display());
+        let is_watching = project.as_ref().map(|p| p.watching_for_changes).unwrap_or_default();
         if is_watching {
             added_tags.insert(*id);
         } else {

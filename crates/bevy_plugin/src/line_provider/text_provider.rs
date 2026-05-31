@@ -2,23 +2,20 @@ use crate::UnderlyingTextProvider;
 use crate::line_provider::LineProviderSystemSet;
 use crate::prelude::*;
 use bevy::prelude::*;
+pub use embedded_text_provider::EmbeddedTextProvider;
 pub(crate) use shared_text_provider::SharedTextProvider;
 use std::any::Any;
 use std::collections::HashMap;
 pub use strings_file_text_provider::StringsFileTextProvider;
 
+mod embedded_text_provider;
 mod shared_text_provider;
 mod strings_file_text_provider;
 
 pub(crate) fn text_provider_plugin(app: &mut App) {
     app.add_plugins(shared_text_provider::shared_text_provider_plugin)
         .add_plugins(strings_file_text_provider::strings_file_text_provider_plugin)
-        .add_systems(
-            Update,
-            fetch_resources
-                .in_set(LineProviderSystemSet)
-                .in_set(YarnSpinnerSystemSet),
-        );
+        .add_systems(Update, fetch_resources.in_set(LineProviderSystemSet).in_set(YarnSpinnerSystemSet));
 }
 
 /// Trait for the provider the [`DialogueRunner`]s text. By default, this is a [`StringsFileTextProvider`].
@@ -43,10 +40,7 @@ pub trait TextProvider: UnderlyingTextProvider {
 }
 
 pub(crate) fn fetch_resources(world: &mut World) {
-    let dialogue_runner_entities: Vec<_> = world
-        .query_filtered::<Entity, With<DialogueRunner>>()
-        .iter(world)
-        .collect();
+    let dialogue_runner_entities: Vec<_> = world.query_filtered::<Entity, With<DialogueRunner>>().iter(world).collect();
 
     for entity in dialogue_runner_entities {
         let assets = {

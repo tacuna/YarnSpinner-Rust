@@ -3,7 +3,8 @@ use crate::option_selection::OptionSelection;
 use crate::setup::{DialogueContinueNode, DialogueNameNode, UiRootNode};
 use crate::typewriter::Typewriter;
 use bevy::prelude::*;
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 
 pub(crate) fn ui_updating_plugin(app: &mut App) {
     app.add_systems(
@@ -26,7 +27,6 @@ pub(crate) fn ui_updating_plugin(app: &mut App) {
 /// A speaker starts speaking when a new line is presented with a [`PresentLine`] event which has a character name.
 /// A speaker stops speaking when the line is fully displayed on the screen, which happens over the course of a few seconds
 #[derive(Debug, Eq, PartialEq, Hash, Reflect, Message)]
-#[reflect(Debug, PartialEq, Hash)]
 #[non_exhaustive]
 pub struct SpeakerChangeEvent {
     /// The name of the character who is or was speaking.
@@ -39,10 +39,7 @@ fn show_dialog(_: On<DialogueStarted>, mut visibility: Single<&mut Visibility, W
     **visibility = Visibility::Inherited;
 }
 
-fn hide_dialog(
-    _: On<DialogueCompleted>,
-    mut root_visibility: Single<&mut Visibility, With<UiRootNode>>,
-) {
+fn hide_dialog(_: On<DialogueCompleted>, mut root_visibility: Single<&mut Visibility, With<UiRootNode>>) {
     **root_visibility = Visibility::Hidden;
 }
 
@@ -79,10 +76,7 @@ fn continue_dialogue(
     mut typewriter: ResMut<Typewriter>,
     option_selection: Option<Res<OptionSelection>>,
     mut root_visibility: Single<&mut Visibility, With<UiRootNode>>,
-    mut continue_visibility: Single<
-        &mut Visibility,
-        (With<DialogueContinueNode>, Without<UiRootNode>),
-    >,
+    mut continue_visibility: Single<&mut Visibility, (With<DialogueContinueNode>, Without<UiRootNode>)>,
 ) {
     let explicit_continue = keys.just_pressed(KeyCode::Space)
         || keys.just_pressed(KeyCode::Enter)

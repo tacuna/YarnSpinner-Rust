@@ -1,6 +1,7 @@
 use anyhow::Result;
 use bevy::prelude::*;
-use bevy_yarnspinner::{events::*, prelude::*};
+use bevy_yarnspinner::events::*;
+use bevy_yarnspinner::prelude::*;
 use std::fs;
 use tempfile::tempdir;
 use utils::prelude::*;
@@ -10,9 +11,7 @@ mod utils;
 #[test]
 fn errs_on_selection_without_start() -> Result<()> {
     let mut app = App::new();
-    app.setup_dialogue_runner()
-        .select_option(OptionId(0))
-        .unwrap_err();
+    app.setup_dialogue_runner().select_option(OptionId(0)).unwrap_err();
 
     Ok(())
 }
@@ -37,9 +36,7 @@ fn errs_on_unexpected_selection_timing() -> Result<()> {
     let mut app = App::new();
     app.setup_dialogue_runner().start_node("Start");
     app.continue_dialogue_and_update_n_times(3);
-    app.dialogue_runner_mut()
-        .select_option(OptionId(0))
-        .unwrap_err();
+    app.dialogue_runner_mut().select_option(OptionId(0)).unwrap_err();
 
     Ok(())
 }
@@ -48,9 +45,7 @@ fn errs_on_unexpected_selection_value() -> Result<()> {
     let mut app = App::new();
     app.setup_dialogue_runner().start_node("Start");
     app.continue_dialogue_and_update_n_times(4);
-    app.dialogue_runner_mut()
-        .select_option(OptionId(2))
-        .unwrap_err();
+    app.dialogue_runner_mut().select_option(OptionId(2)).unwrap_err();
 
     Ok(())
 }
@@ -162,8 +157,7 @@ fn can_select_by_line_id() -> Result<()> {
     let mut app = App::new();
     app.setup_dialogue_runner().start_node("Start");
     app.continue_dialogue_and_update_n_times(4);
-    app.dialogue_runner_mut()
-        .select_option_by_line_id(LineId("line:x1".to_string()))?;
+    app.dialogue_runner_mut().select_option_by_line_id(LineId("line:x1".to_string()))?;
     app.continue_dialogue_and_update();
 
     app.dialogue_runner_mut().continue_in_next_update();
@@ -210,9 +204,7 @@ trait OptionTestAppExt {
 impl OptionTestAppExt for App {
     fn setup_dialogue_runner(&mut self) -> Mut<'_, DialogueRunner> {
         self.setup_default_plugins()
-            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file(
-                "options.yarn",
-            )))
+            .add_plugins(YarnSpinnerPlugin::with_yarn_source(YarnFileSource::file("options.yarn")))
             .add_plugins(AssertionPlugin)
             .dialogue_runner_mut()
     }

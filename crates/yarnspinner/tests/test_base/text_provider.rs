@@ -1,7 +1,5 @@
-use std::{
-    any::Any,
-    sync::{Arc, RwLock},
-};
+use std::any::Any;
+use std::sync::{Arc, RwLock};
 use yarnspinner_core::prelude::*;
 use yarnspinner_runtime::prelude::*;
 

@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner/Analyser.cs>,
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner/Analyser.cs>,
 //! which was split into multiple files.
 
 use crate::prelude::*;
@@ -23,9 +23,7 @@ impl CompiledProgramAnalyser for UnusedVariableChecker {
             node.instructions
                 .iter()
                 .filter_map(|instruction| match instruction.opcode() {
-                    OpCode::PushVariable | OpCode::StoreVariable => {
-                        Some((instruction.opcode(), instruction.operands[0].clone()))
-                    }
+                    OpCode::PushVariable | OpCode::StoreVariable => Some((instruction.opcode(), instruction.operands[0].clone())),
                     _ => None,
                 })
                 .map(|(opcode, operand)| (opcode, operand.try_into().unwrap()))

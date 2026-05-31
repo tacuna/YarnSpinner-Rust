@@ -1,10 +1,20 @@
 mod add_error_for_empty_nodes;
 mod add_initial_value_registrations;
 mod add_tracking_declarations;
+mod check_preview_features;
 mod check_types;
+mod check_unused_variables;
 mod clean_up_diagnostics;
+mod collect_user_defined_types;
+mod compile_node_groups;
+mod compile_smart_variables;
 mod create_declarations_for_tracking_nodes;
+mod detect_cyclic_nodes;
+mod detect_smart_variable_loops;
+mod detect_unreachable_code;
+mod detect_unreferenced_nodes;
 mod early_breaks;
+mod find_node_groups;
 mod find_tracking_nodes;
 mod generate_code;
 mod get_declarations;
@@ -12,12 +22,38 @@ mod parse_files;
 mod register_initial_variables;
 mod register_strings;
 mod resolve_deferred_type_diagnostic;
+mod type_check_when_headers;
+mod validate_shadow_lines;
+mod validate_syntax;
+mod validate_undefined_node_references;
 mod validate_unique_node_names;
 
-pub(crate) use self::{
-    add_error_for_empty_nodes::*, add_initial_value_registrations::*, add_tracking_declarations::*,
-    check_types::*, clean_up_diagnostics::*, create_declarations_for_tracking_nodes::*,
-    early_breaks::*, find_tracking_nodes::*, generate_code::*, get_declarations::*, parse_files::*,
-    register_initial_variables::*, register_strings::*, resolve_deferred_type_diagnostic::*,
-    validate_unique_node_names::*,
-};
+pub(crate) use self::add_error_for_empty_nodes::*;
+pub(crate) use self::add_initial_value_registrations::*;
+pub(crate) use self::add_tracking_declarations::*;
+pub(crate) use self::check_preview_features::*;
+pub(crate) use self::check_types::*;
+pub(crate) use self::check_unused_variables::*;
+pub(crate) use self::clean_up_diagnostics::*;
+pub(crate) use self::collect_user_defined_types::*;
+pub(crate) use self::compile_node_groups::*;
+pub(crate) use self::compile_smart_variables::*;
+pub(crate) use self::create_declarations_for_tracking_nodes::*;
+pub(crate) use self::detect_cyclic_nodes::*;
+pub(crate) use self::detect_smart_variable_loops::*;
+pub(crate) use self::detect_unreachable_code::*;
+pub(crate) use self::detect_unreferenced_nodes::*;
+pub(crate) use self::early_breaks::*;
+pub(crate) use self::find_node_groups::*;
+pub(crate) use self::find_tracking_nodes::*;
+pub(crate) use self::generate_code::*;
+pub(crate) use self::get_declarations::*;
+pub(crate) use self::parse_files::*;
+pub(crate) use self::register_initial_variables::*;
+pub(crate) use self::register_strings::*;
+pub(crate) use self::resolve_deferred_type_diagnostic::*;
+pub(crate) use self::type_check_when_headers::*;
+pub(crate) use self::validate_shadow_lines::*;
+pub(crate) use self::validate_syntax::*;
+pub(crate) use self::validate_undefined_node_references::*;
+pub(crate) use self::validate_unique_node_names::*;

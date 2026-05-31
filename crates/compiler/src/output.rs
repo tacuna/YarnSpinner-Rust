@@ -1,7 +1,10 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Compiler/CompilationResult.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Compiler/CompilationResult.cs>
 
 use crate::listeners::*;
-pub use crate::output::{debug_info::*, declaration::*, string_info::*};
+pub use crate::output::debug_info::*;
+pub use crate::output::declaration::*;
+pub use crate::output::enum_type::*;
+pub use crate::output::string_info::*;
 use crate::prelude::*;
 use std::collections::HashMap;
 use std::error::Error;
@@ -10,6 +13,7 @@ use yarnspinner_core::prelude::*;
 
 mod debug_info;
 mod declaration;
+pub mod enum_type;
 mod string_info;
 
 /// The result of a compilation.
@@ -24,10 +28,7 @@ mod string_info;
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, Default))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct Compilation {
     /// The compiled Yarn program that the [`Compiler`] produced.
     /// produced.
@@ -75,6 +76,18 @@ pub struct Compilation {
     /// file tags associated with that file.
     pub file_tags: HashMap<String, Vec<String>>,
 
+    /// The user-defined enum types encountered during compilation.
+    ///
+    /// Each entry corresponds to one `<<enum>>...<<endenum>>` block found in
+    /// the source, or an externally-declared enum supplied via
+    /// [`Compiler::with_type_declarations`].
+    ///
+    /// **Note**: this field is excluded from Bevy reflection and serde
+    /// serialisation because [`EnumType`] does not implement those traits.
+    #[cfg_attr(feature = "bevy", reflect(ignore))]
+    #[cfg_attr(feature = "serde", serde(skip))]
+    pub user_defined_types: Vec<EnumType>,
+
     /// The collection of [`Diagnostic`] objects that
     /// describe possible problems that the user should fix,
     /// but do not cause the compilation process to fail.
@@ -84,28 +97,54 @@ pub struct Compilation {
     /// error diagnostics instead of this [`Compilation`].
     pub warnings: Vec<Diagnostic>,
 
-    /// The collection of [`DebugInfo`] objects for each node in [`Program`].
-    pub debug_info: HashMap<String, DebugInfo>,
+    /// The debugging information for all nodes in the compiled project.
+    ///
+    /// Use [`ProjectDebugInfo::get_node_debug_info`] to look up a node by name.
+    pub debug_info: ProjectDebugInfo,
+    // NOTE: No `parse_results` field (unlike C#'s `CompilationResult.ParseResults`).
+    //
+    // In C#, `FileParseResult` holds `IParseTree` / `CommonTokenStream` as GC-managed heap
+    // objects that survive indefinitely. In Rust, `FileParseResult<'input>` carries a lifetime
+    // tied to the lexer's UTF-32 input buffer (`&'input [u32]`). That buffer is a local
+    // temporary inside `compile()`, so the parse result cannot outlive the call without either:
+    //
+    //   1. A self-referential struct (unsound / requires `unsafe` + `Pin`), or
+    //   2. Switching the input buffer to `Arc<Vec<u32>>` and threading that ownership
+    //      through `FileParseResult`, the ANTLR parser, and all generated node types.
+    //
+    // The performance benefit (avoiding re-lex/re-parse of unchanged files) is primarily
+    // relevant for language-server tooling. It is not needed for game-runtime use and the
+    // refactor required is substantial, so the feature is deferred.
+    //
+    // C# counterpart: `CompilationResult.ParseResults` / `TestCompilingFromExistingParseTree`.
 }
 
 impl Compilation {
+    /// Returns a debug dump of the compiled program as a string.
+    ///
+    /// If no program was produced (e.g. after a strings-only compilation),
+    /// returns `"<no program>"`.
+    pub fn dump_program(&self) -> String {
+        match &self.program {
+            None => "<no program>".to_string(),
+            Some(prog) => format!("{prog:#?}"),
+        }
+    }
+
     /// Combines multiple [`CompilationResult`] objects together into one object.
-    pub(crate) fn combine(
-        compilations: impl Iterator<Item = Compilation>,
-        string_table_manager: StringTableManager,
-    ) -> Self {
+    pub(crate) fn combine(compilations: impl Iterator<Item = Compilation>, string_table_manager: StringTableManager) -> Self {
         let mut programs = Vec::new();
         let mut declarations = Vec::new();
         let mut tags = HashMap::default();
         let mut diagnostics = Vec::new();
-        let mut node_debug_infos = HashMap::default();
+        let mut node_debug_infos = ProjectDebugInfo::default();
 
         for compilation in compilations {
             programs.push(compilation.program.unwrap());
             declarations.extend(compilation.declarations);
             tags.extend(compilation.file_tags);
             diagnostics.extend(compilation.warnings);
-            node_debug_infos.extend(compilation.debug_info);
+            node_debug_infos.nodes.extend(compilation.debug_info.nodes);
         }
         let combined_program = Program::combine(programs);
         let contains_implicit_string_tags = string_table_manager.contains_implicit_string_tags();
@@ -117,6 +156,7 @@ impl Compilation {
             contains_implicit_string_tags,
             file_tags: tags,
             warnings: diagnostics,
+            user_defined_types: Vec::new(),
         }
     }
 }
@@ -127,10 +167,7 @@ impl Compilation {
 #[cfg_attr(feature = "bevy", derive(Reflect))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "bevy", reflect(Debug, PartialEq, Hash))]
-#[cfg_attr(
-    all(feature = "bevy", feature = "serde"),
-    reflect(Serialize, Deserialize)
-)]
+#[cfg_attr(all(feature = "bevy", feature = "serde"), reflect(Serialize, Deserialize))]
 pub struct CompilerError(pub Vec<Diagnostic>);
 
 impl Error for CompilerError {}

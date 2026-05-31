@@ -3,9 +3,7 @@ use yarnspinner_core::prelude::*;
 use yarnspinner_core::types::{Type, TypeFormat};
 use yarnspinner_internal_shared::prelude::*;
 
-pub(crate) fn add_initial_value_registrations(
-    mut state: CompilationIntermediate,
-) -> CompilationIntermediate {
+pub(crate) fn add_initial_value_registrations(mut state: CompilationIntermediate) -> CompilationIntermediate {
     // Last step: take every variable declaration we found in all
     // of the inputs, and create an initial value registration for
     // it.
@@ -16,7 +14,8 @@ pub(crate) fn add_initial_value_registrations(
     let declarations = state
         .known_variable_declarations
         .iter()
-        .filter(|decl| !matches!(decl.r#type, Type::Function(_)));
+        .filter(|decl| !matches!(decl.r#type, Type::Function(_)))
+        .filter(|decl| !decl.is_inline_expansion);
 
     for declaration in declarations {
         let Some(default_value) = declaration.default_value.clone() else {
@@ -32,19 +31,12 @@ pub(crate) fn add_initial_value_registrations(
                 Type::String => Operand::from(String::from(default_value)),
                 Type::Number => Operand::from(f32::try_from(default_value).unwrap()),
                 Type::Boolean => Operand::from(bool::try_from(default_value).unwrap()),
-                _ => bug!(
-                    "Cannot create initial value registration for type {}.",
-                    declaration.r#type.format()
-                ),
+                _ => bug!("Cannot create initial value registration for type {}.", declaration.r#type.format()),
             };
-            program
-                .initial_values
-                .insert(declaration.name.clone(), value);
+            program.initial_values.insert(declaration.name.clone(), value);
         }
     }
 
-    compilation
-        .declarations
-        .clone_from(&state.derived_variable_declarations);
+    compilation.declarations.clone_from(&state.derived_variable_declarations);
     state
 }

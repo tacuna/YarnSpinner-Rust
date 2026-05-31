@@ -1,4 +1,4 @@
-//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/da39c7195107d8211f21c263e4084f773b84eaff/YarnSpinner.Tests/TestPlan.cs>
+//! Adapted from <https://github.com/YarnSpinnerTool/YarnSpinner/blob/3a5b7343f715e4e9a3705fa4224e7fa510b92f1c/YarnSpinner.Tests/TestPlan.cs>
 
 use crate::prelude::*;
 use std::fs;
@@ -32,11 +32,70 @@ impl TestPlan {
             .filter(|line| !line.trim_start().starts_with('#'))
             // Skip empty or blank lines
             .filter(|line| !line.trim().is_empty())
-            .map(Step::read)
+            // Filter out standalone 'd' tokens (detour-done markers used in some v3.0 testplans)
+            .filter(|line| line.trim() != "d")
+            .map(|line| {
+                // v3.0 testplan: `---` (or `--`) means restart dialogue
+                if line.trim() == "---" || line.trim() == "--" {
+                    Step::with_expected_step_type(ExpectedStepType::Restart)
+                } else if Step::has_known_prefix(line) {
+                    Step::read(line)
+                } else {
+                    // v3.0: bare text lines without a step prefix are treated as expected lines
+                    Step::read(&format!("line: {}", line.trim()))
+                }
+            })
             .collect();
-        Self {
-            steps,
-            ..Default::default()
+        Self { steps, ..Default::default() }
+    }
+
+    /// Process all non-blocking steps starting from the current position,
+    /// stopping just before the first blocking step. Does not consume the
+    /// first blocking step.
+    pub fn process_non_blocking(&mut self, dialogue: &mut Dialogue) {
+        while let Some(step) = self.steps.get(self.current_test_plan_step) {
+            if step.expected_step_type.is_blocking() {
+                break;
+            }
+            // Process this non-blocking step
+            self.current_test_plan_step += 1;
+            match step.expected_step_type {
+                ExpectedStepType::Set => {
+                    let Some(StepValue::StringPair(var, value)) = step.value.clone() else {
+                        panic!("Expected set to be a pair of strings");
+                    };
+                    let current_value = dialogue.variable_storage().get(&var).unwrap();
+                    let new_value = match current_value {
+                        YarnValue::Number(_) => YarnValue::Number(value.parse::<f32>().unwrap()),
+                        YarnValue::String(_) => YarnValue::String(value),
+                        YarnValue::Boolean(_) => YarnValue::Boolean(value.parse::<bool>().unwrap()),
+                    };
+                    println!("INFO: Variable {} set to {}", var, new_value);
+                    dialogue.variable_storage_mut().set(var, new_value).unwrap();
+                }
+                ExpectedStepType::Run => {
+                    let Some(StepValue::String(next_node)) = step.value.clone() else {
+                        panic!("Expected run to be a string");
+                    };
+                    println!("INFO: Jumped to node {}", next_node);
+                    let _ = dialogue.set_node(next_node);
+                }
+                ExpectedStepType::Restart => {
+                    println!("INFO: Restarting dialogue");
+                    let _ = dialogue.set_node("Start");
+                }
+                ExpectedStepType::Saliency => {
+                    // Saliency mode change -- skip
+                }
+                ExpectedStepType::Node => {
+                    // v3.0: override the start node after a restart
+                    if let Some(StepValue::String(next_node)) = step.value.clone() {
+                        println!("INFO: Starting at node {}", next_node);
+                        let _ = dialogue.set_node(next_node);
+                    }
+                }
+                _ => {}
+            }
         }
     }
 
@@ -100,6 +159,21 @@ impl TestPlan {
                     println!("INFO: Jumped to node {}", next_node);
                     let _ = dialogue.set_node(next_node);
                 }
+                ExpectedStepType::Saliency => {
+                    // Saliency mode change -- skip
+                }
+                ExpectedStepType::Node => {
+                    // v3.0: override the start node
+                    if let Some(StepValue::String(next_node)) = current_step.value.clone() {
+                        println!("INFO: Starting at node {}", next_node);
+                        let _ = dialogue.set_node(next_node);
+                    }
+                }
+                ExpectedStepType::Restart => {
+                    // v3.0: restart dialogue from the Start node
+                    println!("INFO: Restarting dialogue");
+                    let _ = dialogue.set_node("Start");
+                }
             }
         }
 
@@ -110,6 +184,37 @@ impl TestPlan {
 
     pub fn current_step(&self) -> Option<Step> {
         self.steps.get(self.current_test_plan_step).cloned()
+    }
+
+    /// Check if there's a Restart step among the upcoming non-blocking steps.
+    pub fn has_pending_restart(&self) -> bool {
+        let mut i = self.current_test_plan_step;
+        while i < self.steps.len() && !self.steps[i].expected_step_type.is_blocking() {
+            if self.steps[i].expected_step_type == ExpectedStepType::Restart {
+                return true;
+            }
+            i += 1;
+        }
+        false
+    }
+
+    /// Check if the current run (steps before the next Restart or end)
+    /// has any more blocking steps remaining. Used to mimic C#'s pull-based
+    /// test runner: when no more blocking steps remain, we stop driving
+    /// the dialogue instead of eagerly calling continue_().
+    pub fn has_more_blocking_steps_in_current_run(&self) -> bool {
+        let mut i = self.current_test_plan_step;
+        while i < self.steps.len() {
+            let step_type = self.steps[i].expected_step_type;
+            if step_type == ExpectedStepType::Restart {
+                return false; // Hit run boundary without finding a blocking step
+            }
+            if step_type.is_blocking() {
+                return true;
+            }
+            i += 1;
+        }
+        false
     }
 
     pub fn expect_line(mut self, line: impl Into<String>) -> Self {

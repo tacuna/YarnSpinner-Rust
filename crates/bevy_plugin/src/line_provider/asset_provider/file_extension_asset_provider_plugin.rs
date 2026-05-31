@@ -88,16 +88,15 @@ impl FileExtensionAssetProvider {
         U: IntoIterator<Item = V>,
         V: AsRef<str>,
     {
-        self.file_extensions
-            .extend(file_extensions.into_iter().map(|(type_id, extensions)| {
-                (
-                    type_id,
-                    extensions
-                        .into_iter()
-                        .map(|s| s.as_ref().trim_start_matches('.').to_owned())
-                        .collect::<Vec<_>>(),
-                )
-            }));
+        self.file_extensions.extend(file_extensions.into_iter().map(|(type_id, extensions)| {
+            (
+                type_id,
+                extensions
+                    .into_iter()
+                    .map(|s| s.as_ref().trim_start_matches('.').to_owned())
+                    .collect::<Vec<_>>(),
+            )
+        }));
         self
     }
 }
@@ -128,10 +127,7 @@ impl AssetProvider for FileExtensionAssetProvider {
         self.asset_server.replace(asset_server);
     }
 
-    fn update_asset_availability(
-        &mut self,
-        loaded_untyped_assets: &Assets<LoadedUntypedAsset>,
-    ) -> bool {
+    fn update_asset_availability(&mut self, loaded_untyped_assets: &Assets<LoadedUntypedAsset>) -> bool {
         if self.language.is_none() || self.localizations.is_none() || self.line_ids.is_empty() {
             return false;
         };
@@ -144,23 +140,14 @@ impl AssetProvider for FileExtensionAssetProvider {
             return false;
         };
 
-        self.loading_handles.retain(|_path, handle| {
-            !matches!(
-                asset_server.get_load_state(handle.id()),
-                Some(LoadState::Failed(..))
-            )
-        });
+        self.loading_handles
+            .retain(|_path, handle| !matches!(asset_server.get_load_state(handle.id()), Some(LoadState::Failed(..))));
         let newly_loaded: HashMap<_, _> = self
             .loading_handles
             .iter()
-            .filter_map(|(path, handle)| {
-                loaded_untyped_assets
-                    .get(handle)
-                    .map(|loaded| (path.clone(), loaded.handle.clone()))
-            })
+            .filter_map(|(path, handle)| loaded_untyped_assets.get(handle).map(|loaded| (path.clone(), loaded.handle.clone())))
             .collect();
-        self.loading_handles
-            .retain(|path, _| !newly_loaded.contains_key(path));
+        self.loading_handles.retain(|path, _| !newly_loaded.contains_key(path));
         self.loaded_handles.extend(newly_loaded);
         if !self.loading_handles.is_empty() {
             false
@@ -193,17 +180,13 @@ impl AssetProvider for FileExtensionAssetProvider {
                         exts.iter().find_map(|ext| {
                             let file_name = format!("{file_name_without_extension}.{ext}");
                             let path = dir.join(file_name);
-                            self.loaded_handles
-                                .get(&path)
-                                .map(|handle| (*type_id, handle.clone()))
+                            self.loaded_handles.get(&path).map(|handle| (*type_id, handle.clone()))
                         })
                     })
                     .collect::<HashSet<_>>();
                 return LineAssets::with_assets(assets);
             } else {
-                panic!(
-                    "Tried to find an asset for \"{language}\", which is a language that is not supported by localizations"
-                );
+                panic!("Tried to find an asset for \"{language}\", which is a language that is not supported by localizations");
             }
         }
         default()
@@ -224,10 +207,7 @@ impl FileExtensionAssetProvider {
                 };
                 for line_id in self.line_ids.iter() {
                     for extension in self.file_extensions.values().flatten() {
-                        let file_name = format!(
-                            "{}.{extension}",
-                            line_id.0.trim_start_matches(LINE_ID_PREFIX)
-                        );
+                        let file_name = format!("{}.{extension}", line_id.0.trim_start_matches(LINE_ID_PREFIX));
                         let path = dir.join(file_name);
                         let asset_path = path.to_string_lossy().replace('\\', "/");
                         let handle = asset_server.load_untyped(asset_path);
@@ -235,9 +215,7 @@ impl FileExtensionAssetProvider {
                     }
                 }
             } else {
-                panic!(
-                    "Tried to find an asset for \"{language}\", which is a language that is not supported by localizations"
-                );
+                panic!("Tried to find an asset for \"{language}\", which is a language that is not supported by localizations");
             }
         }
     }

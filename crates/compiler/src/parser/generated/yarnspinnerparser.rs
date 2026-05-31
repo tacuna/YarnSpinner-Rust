@@ -1,4 +1,4 @@
-// Generated from third-party\YarnSpinner\YarnSpinner.Compiler\YarnSpinnerParser.g4 by ANTLR 4.8
+﻿// Generated from third-party/YarnSpinner/YarnSpinner.Compiler/Grammars/YarnSpinnerParser.g4 by ANTLR 4.13.2
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
@@ -8,27 +8,25 @@
 #![allow(unused_braces)]
 use super::yarnspinnerparserlistener::*;
 use super::yarnspinnerparservisitor::*;
-use antlr_rust::PredictionContextCache;
-use antlr_rust::TokenSource;
-use antlr_rust::atn::{ATN, INVALID_ALT};
-use antlr_rust::atn_deserializer::ATNDeserializer;
-use antlr_rust::dfa::DFA;
-use antlr_rust::error_strategy::{DefaultErrorStrategy, ErrorStrategy};
-use antlr_rust::errors::*;
-use antlr_rust::int_stream::EOF;
-use antlr_rust::parser::{BaseParser, Parser, ParserNodeType, ParserRecog};
-use antlr_rust::parser_atn_simulator::ParserATNSimulator;
-use antlr_rust::parser_rule_context::{BaseParserRuleContext, ParserRuleContext, cast, cast_mut};
-use antlr_rust::recognizer::{Actions, Recognizer};
-use antlr_rust::rule_context::{BaseRuleContext, CustomRuleContext, RuleContext};
-use antlr_rust::token::{OwningToken, TOKEN_EOF, Token};
-use antlr_rust::token_factory::{CommonTokenFactory, TokenAware, TokenFactory};
-use antlr_rust::token_stream::TokenStream;
-use antlr_rust::tree::*;
-use antlr_rust::vocabulary::{Vocabulary, VocabularyImpl};
+use antlr4rust::atn::{ATN, INVALID_ALT};
+use antlr4rust::atn_deserializer::ATNDeserializer;
+use antlr4rust::dfa::DFA;
+use antlr4rust::error_strategy::{DefaultErrorStrategy, ErrorStrategy};
+use antlr4rust::errors::*;
+use antlr4rust::int_stream::EOF;
+use antlr4rust::parser::{BaseParser, Parser, ParserNodeType, ParserRecog};
+use antlr4rust::parser_atn_simulator::ParserATNSimulator;
+use antlr4rust::parser_rule_context::{cast, cast_mut, BaseParserRuleContext, ParserRuleContext};
+use antlr4rust::recognizer::{Actions, Recognizer};
+use antlr4rust::rule_context::{BaseRuleContext, CustomRuleContext, RuleContext};
+use antlr4rust::token::{OwningToken, Token, TOKEN_EOF};
+use antlr4rust::token_factory::{CommonTokenFactory, TokenAware, TokenFactory};
+use antlr4rust::token_stream::TokenStream;
+use antlr4rust::tree::*;
+use antlr4rust::vocabulary::{Vocabulary, VocabularyImpl};
+use antlr4rust::{PredictionContextCache, TokenSource};
 
-use antlr_rust::lazy_static;
-use antlr_rust::{TidAble, TidExt};
+use antlr4rust::{lazy_static, TidAble, TidExt};
 
 use std::any::{Any, TypeId};
 use std::borrow::{Borrow, BorrowMut};
@@ -39,121 +37,200 @@ use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
 use std::sync::Arc;
 
-pub const INDENT: isize = 1;
-pub const DEDENT: isize = 2;
-pub const BLANK_LINE_FOLLOWING_OPTION: isize = 3;
-pub const WS: isize = 4;
-pub const COMMENT: isize = 5;
-pub const NEWLINE: isize = 6;
-pub const ID: isize = 7;
-pub const BODY_START: isize = 8;
-pub const HEADER_DELIMITER: isize = 9;
-pub const HASHTAG: isize = 10;
-pub const REST_OF_LINE: isize = 11;
-pub const BODY_WS: isize = 12;
-pub const BODY_END: isize = 13;
-pub const SHORTCUT_ARROW: isize = 14;
-pub const COMMAND_START: isize = 15;
-pub const EXPRESSION_START: isize = 16;
-pub const ESCAPED_ANY: isize = 17;
-pub const TEXT_ESCAPE: isize = 18;
-pub const TEXT_COMMENT: isize = 19;
-pub const TEXT: isize = 20;
-pub const UNESCAPABLE_CHARACTER: isize = 21;
-pub const TEXT_COMMANDHASHTAG_WS: isize = 22;
-pub const TEXT_COMMANDHASHTAG_COMMENT: isize = 23;
-pub const TEXT_COMMANDHASHTAG_ERROR: isize = 24;
-pub const HASHTAG_WS: isize = 25;
-pub const HASHTAG_TEXT: isize = 26;
-pub const EXPR_WS: isize = 27;
-pub const KEYWORD_TRUE: isize = 28;
-pub const KEYWORD_FALSE: isize = 29;
-pub const KEYWORD_NULL: isize = 30;
-pub const OPERATOR_ASSIGNMENT: isize = 31;
-pub const OPERATOR_LOGICAL_LESS_THAN_EQUALS: isize = 32;
-pub const OPERATOR_LOGICAL_GREATER_THAN_EQUALS: isize = 33;
-pub const OPERATOR_LOGICAL_EQUALS: isize = 34;
-pub const OPERATOR_LOGICAL_LESS: isize = 35;
-pub const OPERATOR_LOGICAL_GREATER: isize = 36;
-pub const OPERATOR_LOGICAL_NOT_EQUALS: isize = 37;
-pub const OPERATOR_LOGICAL_AND: isize = 38;
-pub const OPERATOR_LOGICAL_OR: isize = 39;
-pub const OPERATOR_LOGICAL_XOR: isize = 40;
-pub const OPERATOR_LOGICAL_NOT: isize = 41;
-pub const OPERATOR_MATHS_ADDITION_EQUALS: isize = 42;
-pub const OPERATOR_MATHS_SUBTRACTION_EQUALS: isize = 43;
-pub const OPERATOR_MATHS_MULTIPLICATION_EQUALS: isize = 44;
-pub const OPERATOR_MATHS_MODULUS_EQUALS: isize = 45;
-pub const OPERATOR_MATHS_DIVISION_EQUALS: isize = 46;
-pub const OPERATOR_MATHS_ADDITION: isize = 47;
-pub const OPERATOR_MATHS_SUBTRACTION: isize = 48;
-pub const OPERATOR_MATHS_MULTIPLICATION: isize = 49;
-pub const OPERATOR_MATHS_DIVISION: isize = 50;
-pub const OPERATOR_MATHS_MODULUS: isize = 51;
-pub const LPAREN: isize = 52;
-pub const RPAREN: isize = 53;
-pub const COMMA: isize = 54;
-pub const EXPRESSION_AS: isize = 55;
-pub const STRING: isize = 56;
-pub const FUNC_ID: isize = 57;
-pub const EXPRESSION_END: isize = 58;
-pub const VAR_ID: isize = 59;
-pub const DOT: isize = 60;
-pub const NUMBER: isize = 61;
-pub const COMMAND_NEWLINE: isize = 62;
-pub const COMMAND_WS: isize = 63;
-pub const COMMAND_IF: isize = 64;
-pub const COMMAND_ELSEIF: isize = 65;
-pub const COMMAND_ELSE: isize = 66;
-pub const COMMAND_SET: isize = 67;
-pub const COMMAND_ENDIF: isize = 68;
-pub const COMMAND_CALL: isize = 69;
-pub const COMMAND_DECLARE: isize = 70;
-pub const COMMAND_JUMP: isize = 71;
-pub const COMMAND_ENUM: isize = 72;
-pub const COMMAND_CASE: isize = 73;
-pub const COMMAND_ENDENUM: isize = 74;
-pub const COMMAND_LOCAL: isize = 75;
-pub const COMMAND_END: isize = 76;
-pub const COMMAND_TEXT_NEWLINE: isize = 77;
-pub const COMMAND_TEXT_END: isize = 78;
-pub const COMMAND_EXPRESSION_START: isize = 79;
-pub const COMMAND_TEXT: isize = 80;
-pub const COMMAND_ID_NEWLINE: isize = 81;
-pub const TYPE_STRING: isize = 82;
-pub const TYPE_NUMBER: isize = 83;
-pub const TYPE_BOOL: isize = 84;
+pub const YarnSpinnerParser_INDENT: i32 = 1;
+pub const YarnSpinnerParser_DEDENT: i32 = 2;
+pub const YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION: i32 = 3;
+pub const YarnSpinnerParser_WS: i32 = 4;
+pub const YarnSpinnerParser_COMMENT: i32 = 5;
+pub const YarnSpinnerParser_NEWLINE: i32 = 6;
+pub const YarnSpinnerParser_HEADER_WHEN: i32 = 7;
+pub const YarnSpinnerParser_HEADER_TITLE: i32 = 8;
+pub const YarnSpinnerParser_ID: i32 = 9;
+pub const YarnSpinnerParser_BODY_START: i32 = 10;
+pub const YarnSpinnerParser_HEADER_DELIMITER: i32 = 11;
+pub const YarnSpinnerParser_HASHTAG: i32 = 12;
+pub const YarnSpinnerParser_HEADER_WHEN_UNKNOWN: i32 = 13;
+pub const YarnSpinnerParser_HEADER_TEXT: i32 = 14;
+pub const YarnSpinnerParser_BODY_WS: i32 = 15;
+pub const YarnSpinnerParser_BODY_END: i32 = 16;
+pub const YarnSpinnerParser_SHORTCUT_ARROW: i32 = 17;
+pub const YarnSpinnerParser_LINE_GROUP_ARROW: i32 = 18;
+pub const YarnSpinnerParser_COMMAND_START: i32 = 19;
+pub const YarnSpinnerParser_EXPRESSION_START: i32 = 20;
+pub const YarnSpinnerParser_ESCAPED_ANY: i32 = 21;
+pub const YarnSpinnerParser_TEXT_ESCAPE: i32 = 22;
+pub const YarnSpinnerParser_TEXT_COMMENT: i32 = 23;
+pub const YarnSpinnerParser_TEXT: i32 = 24;
+pub const YarnSpinnerParser_UNESCAPABLE_CHARACTER: i32 = 25;
+pub const YarnSpinnerParser_TEXT_COMMANDHASHTAG_WS: i32 = 26;
+pub const YarnSpinnerParser_TEXT_COMMANDHASHTAG_COMMENT: i32 = 27;
+pub const YarnSpinnerParser_TEXT_COMMANDHASHTAG_ERROR: i32 = 28;
+pub const YarnSpinnerParser_HASHTAG_WS: i32 = 29;
+pub const YarnSpinnerParser_HASHTAG_TEXT: i32 = 30;
+pub const YarnSpinnerParser_EXPR_WS: i32 = 31;
+pub const YarnSpinnerParser_EXPRESSION_WHEN_ALWAYS: i32 = 32;
+pub const YarnSpinnerParser_KEYWORD_TRUE: i32 = 33;
+pub const YarnSpinnerParser_KEYWORD_FALSE: i32 = 34;
+pub const YarnSpinnerParser_KEYWORD_NULL: i32 = 35;
+pub const YarnSpinnerParser_NUMBER: i32 = 36;
+pub const YarnSpinnerParser_OPERATOR_ASSIGNMENT: i32 = 37;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_LESS_THAN_EQUALS: i32 = 38;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_GREATER_THAN_EQUALS: i32 = 39;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_EQUALS: i32 = 40;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_LESS: i32 = 41;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_GREATER: i32 = 42;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_NOT_EQUALS: i32 = 43;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_AND: i32 = 44;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_OR: i32 = 45;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_XOR: i32 = 46;
+pub const YarnSpinnerParser_OPERATOR_LOGICAL_NOT: i32 = 47;
+pub const YarnSpinnerParser_OPERATOR_MATHS_ADDITION_EQUALS: i32 = 48;
+pub const YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION_EQUALS: i32 = 49;
+pub const YarnSpinnerParser_OPERATOR_MATHS_MULTIPLICATION_EQUALS: i32 = 50;
+pub const YarnSpinnerParser_OPERATOR_MATHS_MODULUS_EQUALS: i32 = 51;
+pub const YarnSpinnerParser_OPERATOR_MATHS_DIVISION_EQUALS: i32 = 52;
+pub const YarnSpinnerParser_OPERATOR_MATHS_ADDITION: i32 = 53;
+pub const YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION: i32 = 54;
+pub const YarnSpinnerParser_OPERATOR_MATHS_MULTIPLICATION: i32 = 55;
+pub const YarnSpinnerParser_OPERATOR_MATHS_DIVISION: i32 = 56;
+pub const YarnSpinnerParser_OPERATOR_MATHS_MODULUS: i32 = 57;
+pub const YarnSpinnerParser_LPAREN: i32 = 58;
+pub const YarnSpinnerParser_RPAREN: i32 = 59;
+pub const YarnSpinnerParser_COMMA: i32 = 60;
+pub const YarnSpinnerParser_EXPRESSION_AS: i32 = 61;
+pub const YarnSpinnerParser_STRING: i32 = 62;
+pub const YarnSpinnerParser_FUNC_ID: i32 = 63;
+pub const YarnSpinnerParser_EXPRESSION_END: i32 = 64;
+pub const YarnSpinnerParser_VAR_ID: i32 = 65;
+pub const YarnSpinnerParser_DOT: i32 = 66;
+pub const YarnSpinnerParser_COMMAND_NEWLINE: i32 = 67;
+pub const YarnSpinnerParser_COMMAND_WS: i32 = 68;
+pub const YarnSpinnerParser_COMMAND_IF: i32 = 69;
+pub const YarnSpinnerParser_COMMAND_ELSEIF: i32 = 70;
+pub const YarnSpinnerParser_COMMAND_ELSE: i32 = 71;
+pub const YarnSpinnerParser_COMMAND_SET: i32 = 72;
+pub const YarnSpinnerParser_COMMAND_ENDIF: i32 = 73;
+pub const YarnSpinnerParser_COMMAND_CALL: i32 = 74;
+pub const YarnSpinnerParser_COMMAND_DECLARE: i32 = 75;
+pub const YarnSpinnerParser_COMMAND_JUMP: i32 = 76;
+pub const YarnSpinnerParser_COMMAND_DETOUR: i32 = 77;
+pub const YarnSpinnerParser_COMMAND_RETURN: i32 = 78;
+pub const YarnSpinnerParser_COMMAND_ENUM: i32 = 79;
+pub const YarnSpinnerParser_COMMAND_CASE: i32 = 80;
+pub const YarnSpinnerParser_COMMAND_ENDENUM: i32 = 81;
+pub const YarnSpinnerParser_COMMAND_ONCE: i32 = 82;
+pub const YarnSpinnerParser_COMMAND_ENDONCE: i32 = 83;
+pub const YarnSpinnerParser_COMMAND_LOCAL: i32 = 84;
+pub const YarnSpinnerParser_COMMAND_END: i32 = 85;
+pub const YarnSpinnerParser_COMMAND_TEXT_NEWLINE: i32 = 86;
+pub const YarnSpinnerParser_COMMAND_TEXT: i32 = 87;
+pub const YarnSpinnerParser_COMMAND_ID_WS: i32 = 88;
+pub const YarnSpinnerParser_COMMAND_ID_NEWLINE: i32 = 89;
+pub const YarnSpinnerParser_COMMAND_ID_OR_EXPRESSION_WS: i32 = 90;
+pub const YarnSpinnerParser_TEXT_ESCAPED_SPEAKER: i32 = 91;
+pub const YarnSpinnerParser_TYPE_STRING: i32 = 92;
+pub const YarnSpinnerParser_TYPE_NUMBER: i32 = 93;
+pub const YarnSpinnerParser_TYPE_BOOL: i32 = 94;
+pub const YarnSpinnerParser_EOF: i32 = EOF;
+// Unprefixed aliases for backwards compatibility
+pub const INDENT: i32 = YarnSpinnerParser_INDENT;
+pub const DEDENT: i32 = YarnSpinnerParser_DEDENT;
+pub const WS: i32 = YarnSpinnerParser_WS;
+pub const COMMENT: i32 = YarnSpinnerParser_COMMENT;
+pub const NEWLINE: i32 = YarnSpinnerParser_NEWLINE;
+pub const HEADER_WHEN: i32 = YarnSpinnerParser_HEADER_WHEN;
+pub const HEADER_TITLE: i32 = YarnSpinnerParser_HEADER_TITLE;
+pub const ID: i32 = YarnSpinnerParser_ID;
+pub const BODY_START: i32 = YarnSpinnerParser_BODY_START;
+pub const HEADER_DELIMITER: i32 = YarnSpinnerParser_HEADER_DELIMITER;
+pub const HASHTAG: i32 = YarnSpinnerParser_HASHTAG;
+pub const HEADER_WHEN_UNKNOWN: i32 = YarnSpinnerParser_HEADER_WHEN_UNKNOWN;
+pub const HEADER_TEXT: i32 = YarnSpinnerParser_HEADER_TEXT;
+pub const BODY_WS: i32 = YarnSpinnerParser_BODY_WS;
+pub const BODY_END: i32 = YarnSpinnerParser_BODY_END;
+pub const SHORTCUT_ARROW: i32 = YarnSpinnerParser_SHORTCUT_ARROW;
+pub const LINE_GROUP_ARROW: i32 = YarnSpinnerParser_LINE_GROUP_ARROW;
+pub const COMMAND_START: i32 = YarnSpinnerParser_COMMAND_START;
+pub const EXPRESSION_START: i32 = YarnSpinnerParser_EXPRESSION_START;
+pub const ESCAPED_ANY: i32 = YarnSpinnerParser_ESCAPED_ANY;
+pub const TEXT_ESCAPE: i32 = YarnSpinnerParser_TEXT_ESCAPE;
+pub const TEXT_COMMENT: i32 = YarnSpinnerParser_TEXT_COMMENT;
+pub const TEXT: i32 = YarnSpinnerParser_TEXT;
+pub const HASHTAG_TEXT: i32 = YarnSpinnerParser_HASHTAG_TEXT;
+pub const EXPR_WS: i32 = YarnSpinnerParser_EXPR_WS;
+pub const KEYWORD_TRUE: i32 = YarnSpinnerParser_KEYWORD_TRUE;
+pub const KEYWORD_FALSE: i32 = YarnSpinnerParser_KEYWORD_FALSE;
+pub const KEYWORD_NULL: i32 = YarnSpinnerParser_KEYWORD_NULL;
+pub const NUMBER: i32 = YarnSpinnerParser_NUMBER;
+pub const STRING: i32 = YarnSpinnerParser_STRING;
+pub const FUNC_ID: i32 = YarnSpinnerParser_FUNC_ID;
+pub const VAR_ID: i32 = YarnSpinnerParser_VAR_ID;
+pub const COMMAND_IF: i32 = YarnSpinnerParser_COMMAND_IF;
+pub const COMMAND_ELSEIF: i32 = YarnSpinnerParser_COMMAND_ELSEIF;
+pub const COMMAND_ELSE: i32 = YarnSpinnerParser_COMMAND_ELSE;
+pub const COMMAND_SET: i32 = YarnSpinnerParser_COMMAND_SET;
+pub const COMMAND_ENDIF: i32 = YarnSpinnerParser_COMMAND_ENDIF;
+pub const COMMAND_CALL: i32 = YarnSpinnerParser_COMMAND_CALL;
+pub const COMMAND_DECLARE: i32 = YarnSpinnerParser_COMMAND_DECLARE;
+pub const COMMAND_JUMP: i32 = YarnSpinnerParser_COMMAND_JUMP;
+pub const COMMAND_DETOUR: i32 = YarnSpinnerParser_COMMAND_DETOUR;
+pub const COMMAND_RETURN: i32 = YarnSpinnerParser_COMMAND_RETURN;
+pub const COMMAND_END: i32 = YarnSpinnerParser_COMMAND_END;
+pub const COMMAND_ONCE: i32 = YarnSpinnerParser_COMMAND_ONCE;
+pub const COMMAND_LOCAL: i32 = YarnSpinnerParser_COMMAND_LOCAL;
+pub const COMMAND_TEXT: i32 = YarnSpinnerParser_COMMAND_TEXT;
+pub const TYPE_STRING: i32 = YarnSpinnerParser_TYPE_STRING;
+pub const TYPE_NUMBER: i32 = YarnSpinnerParser_TYPE_NUMBER;
+pub const TYPE_BOOL: i32 = YarnSpinnerParser_TYPE_BOOL;
+
 pub const RULE_dialogue: usize = 0;
 pub const RULE_file_hashtag: usize = 1;
 pub const RULE_node: usize = 2;
-pub const RULE_header: usize = 3;
-pub const RULE_body: usize = 4;
-pub const RULE_statement: usize = 5;
-pub const RULE_line_statement: usize = 6;
-pub const RULE_line_formatted_text: usize = 7;
-pub const RULE_hashtag: usize = 8;
-pub const RULE_line_condition: usize = 9;
-pub const RULE_expression: usize = 10;
-pub const RULE_value: usize = 11;
-pub const RULE_variable: usize = 12;
-pub const RULE_function_call: usize = 13;
-pub const RULE_if_statement: usize = 14;
-pub const RULE_if_clause: usize = 15;
-pub const RULE_else_if_clause: usize = 16;
-pub const RULE_else_clause: usize = 17;
-pub const RULE_set_statement: usize = 18;
-pub const RULE_call_statement: usize = 19;
-pub const RULE_command_statement: usize = 20;
-pub const RULE_command_formatted_text: usize = 21;
-pub const RULE_shortcut_option_statement: usize = 22;
-pub const RULE_shortcut_option: usize = 23;
-pub const RULE_declare_statement: usize = 24;
-pub const RULE_jump_statement: usize = 25;
-pub const ruleNames: [&'static str; 26] = [
+pub const RULE_title_header: usize = 3;
+pub const RULE_when_header: usize = 4;
+pub const RULE_header: usize = 5;
+pub const RULE_header_when_expression: usize = 6;
+pub const RULE_body: usize = 7;
+pub const RULE_statement: usize = 8;
+pub const RULE_line_statement: usize = 9;
+pub const RULE_line_formatted_text: usize = 10;
+pub const RULE_hashtag: usize = 11;
+pub const RULE_line_condition: usize = 12;
+pub const RULE_expression: usize = 13;
+pub const RULE_value: usize = 14;
+pub const RULE_variable: usize = 15;
+pub const RULE_function_call: usize = 16;
+pub const RULE_typeMemberReference: usize = 17;
+pub const RULE_if_statement: usize = 18;
+pub const RULE_if_clause: usize = 19;
+pub const RULE_else_if_clause: usize = 20;
+pub const RULE_else_clause: usize = 21;
+pub const RULE_set_statement: usize = 22;
+pub const RULE_call_statement: usize = 23;
+pub const RULE_command_statement: usize = 24;
+pub const RULE_command_formatted_text: usize = 25;
+pub const RULE_shortcut_option_statement: usize = 26;
+pub const RULE_shortcut_option: usize = 27;
+pub const RULE_line_group_statement: usize = 28;
+pub const RULE_line_group_item: usize = 29;
+pub const RULE_declare_statement: usize = 30;
+pub const RULE_enum_statement: usize = 31;
+pub const RULE_enum_case_statement: usize = 32;
+pub const RULE_jump_statement: usize = 33;
+pub const RULE_return_statement: usize = 34;
+pub const RULE_once_statement: usize = 35;
+pub const RULE_once_primary_clause: usize = 36;
+pub const RULE_once_alternate_clause: usize = 37;
+pub const RULE_structured_command: usize = 38;
+pub const RULE_structured_command_value: usize = 39;
+pub const ruleNames: [&'static str; 40] = [
     "dialogue",
     "file_hashtag",
     "node",
+    "title_header",
+    "when_header",
     "header",
+    "header_when_expression",
     "body",
     "statement",
     "line_statement",
@@ -164,6 +241,7 @@ pub const ruleNames: [&'static str; 26] = [
     "value",
     "variable",
     "function_call",
+    "typeMemberReference",
     "if_statement",
     "if_clause",
     "else_if_clause",
@@ -174,11 +252,21 @@ pub const ruleNames: [&'static str; 26] = [
     "command_formatted_text",
     "shortcut_option_statement",
     "shortcut_option",
+    "line_group_statement",
+    "line_group_item",
     "declare_statement",
+    "enum_statement",
+    "enum_case_statement",
     "jump_statement",
+    "return_statement",
+    "once_statement",
+    "once_primary_clause",
+    "once_alternate_clause",
+    "structured_command",
+    "structured_command_value",
 ];
 
-pub const _LITERAL_NAMES: [Option<&'static str>; 85] = [
+pub const _LITERAL_NAMES: [Option<&'static str>; 95] = [
     None,
     None,
     None,
@@ -186,18 +274,21 @@ pub const _LITERAL_NAMES: [Option<&'static str>; 85] = [
     None,
     None,
     None,
+    Some("'when'"),
+    Some("'title'"),
     None,
     Some("'---'"),
     None,
     Some("'#'"),
     None,
     None,
+    None,
     Some("'==='"),
     Some("'->'"),
+    Some("'=>'"),
     Some("'<<'"),
     None,
     None,
-    Some("'\\'"),
     None,
     None,
     None,
@@ -207,9 +298,12 @@ pub const _LITERAL_NAMES: [Option<&'static str>; 85] = [
     None,
     None,
     None,
+    None,
+    Some("'always'"),
     Some("'true'"),
     Some("'false'"),
     Some("'null'"),
+    None,
     None,
     None,
     None,
@@ -244,28 +338,32 @@ pub const _LITERAL_NAMES: [Option<&'static str>; 85] = [
     None,
     None,
     None,
-    None,
-    None,
+    Some("'else'"),
     None,
     Some("'endif'"),
     None,
     None,
     None,
     None,
+    Some("'return'"),
+    None,
+    None,
+    Some("'endenum'"),
+    Some("'once'"),
+    Some("'endonce'"),
+    Some("'local'"),
     None,
     None,
     None,
     None,
     None,
     None,
-    Some("'{'"),
-    None,
-    None,
+    Some("'\\:'"),
     Some("'string'"),
     Some("'number'"),
     Some("'bool'"),
 ];
-pub const _SYMBOLIC_NAMES: [Option<&'static str>; 85] = [
+pub const _SYMBOLIC_NAMES: [Option<&'static str>; 95] = [
     None,
     Some("INDENT"),
     Some("DEDENT"),
@@ -273,14 +371,18 @@ pub const _SYMBOLIC_NAMES: [Option<&'static str>; 85] = [
     Some("WS"),
     Some("COMMENT"),
     Some("NEWLINE"),
+    Some("HEADER_WHEN"),
+    Some("HEADER_TITLE"),
     Some("ID"),
     Some("BODY_START"),
     Some("HEADER_DELIMITER"),
     Some("HASHTAG"),
-    Some("REST_OF_LINE"),
+    Some("HEADER_WHEN_UNKNOWN"),
+    Some("HEADER_TEXT"),
     Some("BODY_WS"),
     Some("BODY_END"),
     Some("SHORTCUT_ARROW"),
+    Some("LINE_GROUP_ARROW"),
     Some("COMMAND_START"),
     Some("EXPRESSION_START"),
     Some("ESCAPED_ANY"),
@@ -294,9 +396,11 @@ pub const _SYMBOLIC_NAMES: [Option<&'static str>; 85] = [
     Some("HASHTAG_WS"),
     Some("HASHTAG_TEXT"),
     Some("EXPR_WS"),
+    Some("EXPRESSION_WHEN_ALWAYS"),
     Some("KEYWORD_TRUE"),
     Some("KEYWORD_FALSE"),
     Some("KEYWORD_NULL"),
+    Some("NUMBER"),
     Some("OPERATOR_ASSIGNMENT"),
     Some("OPERATOR_LOGICAL_LESS_THAN_EQUALS"),
     Some("OPERATOR_LOGICAL_GREATER_THAN_EQUALS"),
@@ -327,7 +431,6 @@ pub const _SYMBOLIC_NAMES: [Option<&'static str>; 85] = [
     Some("EXPRESSION_END"),
     Some("VAR_ID"),
     Some("DOT"),
-    Some("NUMBER"),
     Some("COMMAND_NEWLINE"),
     Some("COMMAND_WS"),
     Some("COMMAND_IF"),
@@ -338,88 +441,67 @@ pub const _SYMBOLIC_NAMES: [Option<&'static str>; 85] = [
     Some("COMMAND_CALL"),
     Some("COMMAND_DECLARE"),
     Some("COMMAND_JUMP"),
+    Some("COMMAND_DETOUR"),
+    Some("COMMAND_RETURN"),
     Some("COMMAND_ENUM"),
     Some("COMMAND_CASE"),
     Some("COMMAND_ENDENUM"),
+    Some("COMMAND_ONCE"),
+    Some("COMMAND_ENDONCE"),
     Some("COMMAND_LOCAL"),
     Some("COMMAND_END"),
     Some("COMMAND_TEXT_NEWLINE"),
-    Some("COMMAND_TEXT_END"),
-    Some("COMMAND_EXPRESSION_START"),
     Some("COMMAND_TEXT"),
+    Some("COMMAND_ID_WS"),
     Some("COMMAND_ID_NEWLINE"),
+    Some("COMMAND_ID_OR_EXPRESSION_WS"),
+    Some("TEXT_ESCAPED_SPEAKER"),
     Some("TYPE_STRING"),
     Some("TYPE_NUMBER"),
     Some("TYPE_BOOL"),
 ];
 lazy_static! {
-    static ref _shared_context_cache: Arc<PredictionContextCache> =
-        Arc::new(PredictionContextCache::new());
-    static ref VOCABULARY: Box<dyn Vocabulary> = Box::new(VocabularyImpl::new(
-        _LITERAL_NAMES.iter(),
-        _SYMBOLIC_NAMES.iter(),
-        None
-    ));
+    static ref _shared_context_cache: Arc<PredictionContextCache> = Arc::new(PredictionContextCache::new());
+    static ref VOCABULARY: Box<dyn Vocabulary> = Box::new(VocabularyImpl::new(_LITERAL_NAMES.iter(), _SYMBOLIC_NAMES.iter(), None));
 }
 
-type BaseParserType<'input, I> = BaseParser<
-    'input,
-    YarnSpinnerParserExt<'input>,
-    I,
-    YarnSpinnerParserContextType,
-    dyn YarnSpinnerParserListener<'input> + 'input,
->;
+type BaseParserType<'input, I> =
+    BaseParser<'input, YarnSpinnerParserExt<'input>, I, YarnSpinnerParserContextType, dyn YarnSpinnerParserListener<'input> + 'input>;
 
 type TokenType<'input> = <LocalTokenFactory<'input> as TokenFactory<'input>>::Tok;
 pub type LocalTokenFactory<'input> = CommonTokenFactory;
 
-pub type YarnSpinnerParserTreeWalker<'input, 'a> = ParseTreeWalker<
-    'input,
-    'a,
-    YarnSpinnerParserContextType,
-    dyn YarnSpinnerParserListener<'input> + 'a,
->;
+pub type YarnSpinnerParserTreeWalker<'input, 'a> =
+    ParseTreeWalker<'input, 'a, YarnSpinnerParserContextType, dyn YarnSpinnerParserListener<'input> + 'a>;
 
 /// Parser for YarnSpinnerParser grammar
-pub struct YarnSpinnerParser<'input, I, H>
+pub struct YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     base: BaseParserType<'input, I>,
     interpreter: Arc<ParserATNSimulator>,
     _shared_context_cache: Box<PredictionContextCache>,
-    pub err_handler: H,
+    pub err_handler: Box<dyn ErrorStrategy<'input, BaseParserType<'input, I>>>,
 }
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
-    pub fn get_serialized_atn() -> &'static str {
-        _serializedATN
-    }
-
-    pub fn set_error_strategy(&mut self, strategy: H) {
+    pub fn set_error_strategy(&mut self, strategy: Box<dyn ErrorStrategy<'input, BaseParserType<'input, I>>>) {
         self.err_handler = strategy
     }
 
-    pub fn with_strategy(input: I, strategy: H) -> Self {
-        antlr_rust::recognizer::check_version("0", "3");
+    pub fn with_strategy(input: I, strategy: Box<dyn ErrorStrategy<'input, BaseParserType<'input, I>>>) -> Self {
+        antlr4rust::recognizer::check_version("0", "5");
         let interpreter = Arc::new(ParserATNSimulator::new(
             _ATN.clone(),
             _decision_to_DFA.clone(),
             _shared_context_cache.clone(),
         ));
         Self {
-            base: BaseParser::new_base_parser(
-                input,
-                Arc::clone(&interpreter),
-                YarnSpinnerParserExt {
-                    _pd: Default::default(),
-                },
-            ),
+            base: BaseParser::new_base_parser(input, Arc::clone(&interpreter), YarnSpinnerParserExt { _pd: Default::default() }),
             interpreter,
             _shared_context_cache: Box::new(PredictionContextCache::new()),
             err_handler: strategy,
@@ -429,7 +511,7 @@ where
 
 type DynStrategy<'input, I> = Box<dyn ErrorStrategy<'input, BaseParserType<'input, I>> + 'input>;
 
-impl<'input, I> YarnSpinnerParser<'input, I, DynStrategy<'input, I>>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
 {
@@ -438,13 +520,12 @@ where
     }
 }
 
-impl<'input, I>
-    YarnSpinnerParser<'input, I, DefaultErrorStrategy<'input, YarnSpinnerParserContextType>>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
 {
     pub fn new(input: I) -> Self {
-        Self::with_strategy(input, DefaultErrorStrategy::new())
+        Self::with_strategy(input, Box::new(DefaultErrorStrategy::new()))
     }
 }
 
@@ -456,7 +537,7 @@ pub trait YarnSpinnerParserContext<'input>:
 {
 }
 
-antlr_rust::coerce_from! { 'input : YarnSpinnerParserContext<'input> }
+antlr4rust::coerce_from! { 'input : YarnSpinnerParserContext<'input> }
 
 impl<'input, 'x, T> VisitableDyn<T> for dyn YarnSpinnerParserContext<'input> + 'input
 where
@@ -467,28 +548,24 @@ where
     }
 }
 
-impl<'input> YarnSpinnerParserContext<'input>
-    for TerminalNode<'input, YarnSpinnerParserContextType>
-{
-}
+impl<'input> YarnSpinnerParserContext<'input> for TerminalNode<'input, YarnSpinnerParserContextType> {}
 impl<'input> YarnSpinnerParserContext<'input> for ErrorNode<'input, YarnSpinnerParserContextType> {}
 
-antlr_rust::tid! { impl<'input> TidAble<'input> for dyn YarnSpinnerParserContext<'input> + 'input }
+antlr4rust::tid! { impl<'input> TidAble<'input> for dyn YarnSpinnerParserContext<'input> + 'input }
 
-antlr_rust::tid! { impl<'input> TidAble<'input> for dyn YarnSpinnerParserListener<'input> + 'input }
+antlr4rust::tid! { impl<'input> TidAble<'input> for dyn YarnSpinnerParserListener<'input> + 'input }
 
 pub struct YarnSpinnerParserContextType;
-antlr_rust::tid! {YarnSpinnerParserContextType}
+antlr4rust::tid! {YarnSpinnerParserContextType}
 
 impl<'input> ParserNodeType<'input> for YarnSpinnerParserContextType {
     type TF = LocalTokenFactory<'input>;
     type Type = dyn YarnSpinnerParserContext<'input> + 'input;
 }
 
-impl<'input, I, H> Deref for YarnSpinnerParser<'input, I, H>
+impl<'input, I> Deref for YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     type Target = BaseParserType<'input, I>;
 
@@ -497,10 +574,9 @@ where
     }
 }
 
-impl<'input, I, H> DerefMut for YarnSpinnerParser<'input, I, H>
+impl<'input, I> DerefMut for YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.base
@@ -512,19 +588,19 @@ pub struct YarnSpinnerParserExt<'input> {
 }
 
 impl<'input> YarnSpinnerParserExt<'input> {}
-antlr_rust::tid! { YarnSpinnerParserExt<'a> }
+antlr4rust::tid! { YarnSpinnerParserExt<'a> }
 
 impl<'input> TokenAware<'input> for YarnSpinnerParserExt<'input> {
     type TF = LocalTokenFactory<'input>;
 }
 
-impl<'input, I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>>
-    ParserRecog<'input, BaseParserType<'input, I>> for YarnSpinnerParserExt<'input>
+impl<'input, I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>> ParserRecog<'input, BaseParserType<'input, I>>
+    for YarnSpinnerParserExt<'input>
 {
 }
 
-impl<'input, I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>>
-    Actions<'input, BaseParserType<'input, I>> for YarnSpinnerParserExt<'input>
+impl<'input, I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>> Actions<'input, BaseParserType<'input, I>>
+    for YarnSpinnerParserExt<'input>
 {
     fn get_grammar_file_name(&self) -> &str {
         "YarnSpinnerParser.g4"
@@ -539,31 +615,22 @@ impl<'input, I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'i
     }
     fn sempred(
         _localctx: Option<&(dyn YarnSpinnerParserContext<'input> + 'input)>,
-        rule_index: isize,
-        pred_index: isize,
+        rule_index: i32,
+        pred_index: i32,
         recog: &mut BaseParserType<'input, I>,
     ) -> bool {
         match rule_index {
-            10 => YarnSpinnerParser::<'input, I, _>::expression_sempred(
-                _localctx.and_then(|x| x.downcast_ref()),
-                pred_index,
-                recog,
-            ),
+            13 => YarnSpinnerParser::<'input, I>::expression_sempred(_localctx.and_then(|x| x.downcast_ref()), pred_index, recog),
             _ => true,
         }
     }
 }
 
-impl<'input, I>
-    YarnSpinnerParser<'input, I, DefaultErrorStrategy<'input, YarnSpinnerParserContextType>>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
 {
-    fn expression_sempred(
-        _localctx: Option<&ExpressionContext<'input>>,
-        pred_index: isize,
-        recog: &mut <Self as Deref>::Target,
-    ) -> bool {
+    fn expression_sempred(_localctx: Option<&ExpressionContext<'input>>, pred_index: i32, recog: &mut <Self as Deref>::Target) -> bool {
         match pred_index {
             0 => recog.precpred(None, 6),
             1 => recog.precpred(None, 5),
@@ -586,16 +653,16 @@ pub struct DialogueContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for DialogueContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for DialogueContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for DialogueContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_dialogue(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_dialogue(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -613,13 +680,10 @@ impl<'input> CustomRuleContext<'input> for DialogueContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_dialogue }
 }
-antlr_rust::tid! {DialogueContextExt<'a>}
+antlr4rust::tid! {DialogueContextExt<'a>}
 
 impl<'input> DialogueContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<DialogueContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<DialogueContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -628,9 +692,7 @@ impl<'input> DialogueContextExt<'input> {
     }
 }
 
-pub trait DialogueContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<DialogueContextExt<'input>>
-{
+pub trait DialogueContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<DialogueContextExt<'input>> {
     fn node_all(&self) -> Vec<Rc<NodeContextAll<'input>>>
     where
         Self: Sized,
@@ -659,10 +721,9 @@ pub trait DialogueContextAttrs<'input>:
 
 impl<'input> DialogueContextAttrs<'input> for DialogueContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn dialogue(&mut self) -> Result<Rc<DialogueContextAll<'input>>, ANTLRError> {
         let mut recog = self;
@@ -670,43 +731,43 @@ where
         let mut _localctx = DialogueContextExt::new(_parentctx.clone(), recog.base.get_state());
         recog.base.enter_rule(_localctx.clone(), 0, RULE_dialogue);
         let mut _localctx: Rc<DialogueContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
                 {
-                    recog.base.set_state(55);
+                    recog.base.set_state(83);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
-                    while _la == HASHTAG {
+                    while _la == YarnSpinnerParser_HASHTAG {
                         {
                             {
                                 /*InvokeRule file_hashtag*/
-                                recog.base.set_state(52);
+                                recog.base.set_state(80);
                                 recog.file_hashtag()?;
                             }
                         }
-                        recog.base.set_state(57);
+                        recog.base.set_state(85);
                         recog.err_handler.sync(&mut recog.base)?;
                         _la = recog.base.input.la(1);
                     }
                 }
-                recog.base.set_state(59);
+                recog.base.set_state(87);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
                 loop {
                     {
                         {
                             /*InvokeRule node*/
-                            recog.base.set_state(58);
+                            recog.base.set_state(86);
                             recog.node()?;
                         }
                     }
-                    recog.base.set_state(61);
+                    recog.base.set_state(89);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
-                    if !(_la == ID) {
+                    if !(((_la) & !0x3f) == 0 && ((1usize << _la) & 896) != 0) {
                         break;
                     }
                 }
@@ -722,7 +783,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -730,8 +791,7 @@ where
 //------------------- file_hashtag ----------------
 pub type File_hashtagContextAll<'input> = File_hashtagContext<'input>;
 
-pub type File_hashtagContext<'input> =
-    BaseParserRuleContext<'input, File_hashtagContextExt<'input>>;
+pub type File_hashtagContext<'input> = BaseParserRuleContext<'input, File_hashtagContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct File_hashtagContextExt<'input> {
@@ -741,22 +801,20 @@ pub struct File_hashtagContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for File_hashtagContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for File_hashtagContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for File_hashtagContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_file_hashtag(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_file_hashtag(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for File_hashtagContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for File_hashtagContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_file_hashtag(self);
     }
@@ -770,34 +828,26 @@ impl<'input> CustomRuleContext<'input> for File_hashtagContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_file_hashtag }
 }
-antlr_rust::tid! {File_hashtagContextExt<'a>}
+antlr4rust::tid! {File_hashtagContextExt<'a>}
 
 impl<'input> File_hashtagContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<File_hashtagContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<File_hashtagContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
-            File_hashtagContextExt {
-                text: None,
-                ph: PhantomData,
-            },
+            File_hashtagContextExt { text: None, ph: PhantomData },
         ))
     }
 }
 
-pub trait File_hashtagContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<File_hashtagContextExt<'input>>
-{
+pub trait File_hashtagContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<File_hashtagContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token HASHTAG
     /// Returns `None` if there is no child corresponding to token HASHTAG
     fn HASHTAG(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(HASHTAG, 0)
+        self.get_token(YarnSpinnerParser_HASHTAG, 0)
     }
     /// Retrieves first TerminalNode corresponding to token HASHTAG_TEXT
     /// Returns `None` if there is no child corresponding to token HASHTAG_TEXT
@@ -805,36 +855,31 @@ pub trait File_hashtagContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(HASHTAG_TEXT, 0)
+        self.get_token(YarnSpinnerParser_HASHTAG_TEXT, 0)
     }
 }
 
 impl<'input> File_hashtagContextAttrs<'input> for File_hashtagContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn file_hashtag(&mut self) -> Result<Rc<File_hashtagContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = File_hashtagContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 2, RULE_file_hashtag);
+        recog.base.enter_rule(_localctx.clone(), 2, RULE_file_hashtag);
         let mut _localctx: Rc<File_hashtagContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(63);
-                recog.base.match_token(HASHTAG, &mut recog.err_handler)?;
+                recog.base.set_state(91);
+                recog.base.match_token(YarnSpinnerParser_HASHTAG, &mut recog.err_handler)?;
 
-                recog.base.set_state(64);
-                let tmp = recog
-                    .base
-                    .match_token(HASHTAG_TEXT, &mut recog.err_handler)?;
+                recog.base.set_state(92);
+                let tmp = recog.base.match_token(YarnSpinnerParser_HASHTAG_TEXT, &mut recog.err_handler)?;
                 cast_mut::<_, File_hashtagContext>(&mut _localctx).text = Some(tmp.clone());
             }
             Ok(())
@@ -848,7 +893,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -866,13 +911,15 @@ pub struct NodeContextExt<'input> {
 impl<'input> YarnSpinnerParserContext<'input> for NodeContext<'input> {}
 
 impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for NodeContext<'input> {
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_node(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_node(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -890,13 +937,10 @@ impl<'input> CustomRuleContext<'input> for NodeContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_node }
 }
-antlr_rust::tid! {NodeContextExt<'a>}
+antlr4rust::tid! {NodeContextExt<'a>}
 
 impl<'input> NodeContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<NodeContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<NodeContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -905,16 +949,14 @@ impl<'input> NodeContextExt<'input> {
     }
 }
 
-pub trait NodeContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<NodeContextExt<'input>>
-{
+pub trait NodeContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<NodeContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token BODY_START
     /// Returns `None` if there is no child corresponding to token BODY_START
     fn BODY_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(BODY_START, 0)
+        self.get_token(YarnSpinnerParser_BODY_START, 0)
     }
     fn body(&self) -> Option<Rc<BodyContextAll<'input>>>
     where
@@ -928,7 +970,7 @@ pub trait NodeContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(BODY_END, 0)
+        self.get_token(YarnSpinnerParser_BODY_END, 0)
     }
     fn header_all(&self) -> Vec<Rc<HeaderContextAll<'input>>>
     where
@@ -942,14 +984,37 @@ pub trait NodeContextAttrs<'input>:
     {
         self.child_of_type(i)
     }
+    fn when_header_all(&self) -> Vec<Rc<When_headerContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn when_header(&self, i: usize) -> Option<Rc<When_headerContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+    fn title_header_all(&self) -> Vec<Rc<Title_headerContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn title_header(&self, i: usize) -> Option<Rc<Title_headerContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
 }
 
 impl<'input> NodeContextAttrs<'input> for NodeContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn node(&mut self) -> Result<Rc<NodeContextAll<'input>>, ANTLRError> {
         let mut recog = self;
@@ -957,38 +1022,62 @@ where
         let mut _localctx = NodeContextExt::new(_parentctx.clone(), recog.base.get_state());
         recog.base.enter_rule(_localctx.clone(), 4, RULE_node);
         let mut _localctx: Rc<NodeContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(67);
+                recog.base.set_state(97);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
                 loop {
                     {
-                        {
-                            /*InvokeRule header*/
-                            recog.base.set_state(66);
-                            recog.header()?;
+                        recog.base.set_state(97);
+                        recog.err_handler.sync(&mut recog.base)?;
+                        match recog.base.input.la(1) {
+                            YarnSpinnerParser_ID => {
+                                {
+                                    /*InvokeRule header*/
+                                    recog.base.set_state(94);
+                                    recog.header()?;
+                                }
+                            }
+
+                            YarnSpinnerParser_HEADER_WHEN => {
+                                {
+                                    /*InvokeRule when_header*/
+                                    recog.base.set_state(95);
+                                    recog.when_header()?;
+                                }
+                            }
+
+                            YarnSpinnerParser_HEADER_TITLE => {
+                                {
+                                    /*InvokeRule title_header*/
+                                    recog.base.set_state(96);
+                                    recog.title_header()?;
+                                }
+                            }
+
+                            _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
                         }
                     }
-                    recog.base.set_state(69);
+                    recog.base.set_state(99);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
-                    if !(_la == ID) {
+                    if !(((_la) & !0x3f) == 0 && ((1usize << _la) & 896) != 0) {
                         break;
                     }
                 }
-                recog.base.set_state(71);
-                recog.base.match_token(BODY_START, &mut recog.err_handler)?;
+                recog.base.set_state(101);
+                recog.base.match_token(YarnSpinnerParser_BODY_START, &mut recog.err_handler)?;
 
                 /*InvokeRule body*/
-                recog.base.set_state(72);
+                recog.base.set_state(102);
                 recog.body()?;
 
-                recog.base.set_state(73);
-                recog.base.match_token(BODY_END, &mut recog.err_handler)?;
+                recog.base.set_state(103);
+                recog.base.match_token(YarnSpinnerParser_BODY_END, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -1001,7 +1090,278 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- title_header ----------------
+pub type Title_headerContextAll<'input> = Title_headerContext<'input>;
+
+pub type Title_headerContext<'input> = BaseParserRuleContext<'input, Title_headerContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Title_headerContextExt<'input> {
+    pub title: Option<TokenType<'input>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Title_headerContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Title_headerContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_title_header(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_title_header(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Title_headerContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_title_header(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Title_headerContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_title_header
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_title_header }
+}
+antlr4rust::tid! {Title_headerContextExt<'a>}
+
+impl<'input> Title_headerContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Title_headerContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Title_headerContextExt {
+                title: None,
+
+                ph: PhantomData,
+            },
+        ))
+    }
+}
+
+pub trait Title_headerContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Title_headerContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token HEADER_TITLE
+    /// Returns `None` if there is no child corresponding to token HEADER_TITLE
+    fn HEADER_TITLE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_HEADER_TITLE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token HEADER_DELIMITER
+    /// Returns `None` if there is no child corresponding to token HEADER_DELIMITER
+    fn HEADER_DELIMITER(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_HEADER_DELIMITER, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token NEWLINE
+    /// Returns `None` if there is no child corresponding to token NEWLINE
+    fn NEWLINE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_NEWLINE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token ID
+    /// Returns `None` if there is no child corresponding to token ID
+    fn ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_ID, 0)
+    }
+}
+
+impl<'input> Title_headerContextAttrs<'input> for Title_headerContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn title_header(&mut self) -> Result<Rc<Title_headerContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Title_headerContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 6, RULE_title_header);
+        let mut _localctx: Rc<Title_headerContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(105);
+                recog.base.match_token(YarnSpinnerParser_HEADER_TITLE, &mut recog.err_handler)?;
+
+                recog.base.set_state(106);
+                recog.base.match_token(YarnSpinnerParser_HEADER_DELIMITER, &mut recog.err_handler)?;
+
+                recog.base.set_state(107);
+                let tmp = recog.base.match_token(YarnSpinnerParser_ID, &mut recog.err_handler)?;
+                cast_mut::<_, Title_headerContext>(&mut _localctx).title = Some(tmp.clone());
+
+                recog.base.set_state(108);
+                recog.base.match_token(YarnSpinnerParser_NEWLINE, &mut recog.err_handler)?;
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- when_header ----------------
+pub type When_headerContextAll<'input> = When_headerContext<'input>;
+
+pub type When_headerContext<'input> = BaseParserRuleContext<'input, When_headerContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct When_headerContextExt<'input> {
+    pub header_expression: Option<Rc<Header_when_expressionContextAll<'input>>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for When_headerContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for When_headerContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_when_header(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_when_header(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for When_headerContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_when_header(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for When_headerContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_when_header
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_when_header }
+}
+antlr4rust::tid! {When_headerContextExt<'a>}
+
+impl<'input> When_headerContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<When_headerContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            When_headerContextExt {
+                header_expression: None,
+
+                ph: PhantomData,
+            },
+        ))
+    }
+}
+
+pub trait When_headerContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<When_headerContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token HEADER_WHEN
+    /// Returns `None` if there is no child corresponding to token HEADER_WHEN
+    fn HEADER_WHEN(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_HEADER_WHEN, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token HEADER_DELIMITER
+    /// Returns `None` if there is no child corresponding to token HEADER_DELIMITER
+    fn HEADER_DELIMITER(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_HEADER_DELIMITER, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token NEWLINE
+    /// Returns `None` if there is no child corresponding to token NEWLINE
+    fn NEWLINE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_NEWLINE, 0)
+    }
+    fn header_when_expression(&self) -> Option<Rc<Header_when_expressionContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> When_headerContextAttrs<'input> for When_headerContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn when_header(&mut self) -> Result<Rc<When_headerContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = When_headerContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 8, RULE_when_header);
+        let mut _localctx: Rc<When_headerContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(110);
+                recog.base.match_token(YarnSpinnerParser_HEADER_WHEN, &mut recog.err_handler)?;
+
+                recog.base.set_state(111);
+                recog.base.match_token(YarnSpinnerParser_HEADER_DELIMITER, &mut recog.err_handler)?;
+
+                /*InvokeRule header_when_expression*/
+                recog.base.set_state(112);
+                let tmp = recog.header_when_expression()?;
+                cast_mut::<_, When_headerContext>(&mut _localctx).header_expression = Some(tmp.clone());
+
+                recog.base.set_state(113);
+                recog.base.match_token(YarnSpinnerParser_NEWLINE, &mut recog.err_handler)?;
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -1021,13 +1381,15 @@ pub struct HeaderContextExt<'input> {
 impl<'input> YarnSpinnerParserContext<'input> for HeaderContext<'input> {}
 
 impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for HeaderContext<'input> {
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_header(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_header(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -1045,35 +1407,31 @@ impl<'input> CustomRuleContext<'input> for HeaderContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_header }
 }
-antlr_rust::tid! {HeaderContextExt<'a>}
+antlr4rust::tid! {HeaderContextExt<'a>}
 
 impl<'input> HeaderContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<HeaderContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<HeaderContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
             HeaderContextExt {
                 header_key: None,
                 header_value: None,
+
                 ph: PhantomData,
             },
         ))
     }
 }
 
-pub trait HeaderContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<HeaderContextExt<'input>>
-{
+pub trait HeaderContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<HeaderContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token HEADER_DELIMITER
     /// Returns `None` if there is no child corresponding to token HEADER_DELIMITER
     fn HEADER_DELIMITER(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(HEADER_DELIMITER, 0)
+        self.get_token(YarnSpinnerParser_HEADER_DELIMITER, 0)
     }
     /// Retrieves first TerminalNode corresponding to token ID
     /// Returns `None` if there is no child corresponding to token ID
@@ -1081,56 +1439,50 @@ pub trait HeaderContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(ID, 0)
+        self.get_token(YarnSpinnerParser_ID, 0)
     }
-    /// Retrieves first TerminalNode corresponding to token REST_OF_LINE
-    /// Returns `None` if there is no child corresponding to token REST_OF_LINE
-    fn REST_OF_LINE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    /// Retrieves first TerminalNode corresponding to token HEADER_TEXT
+    /// Returns `None` if there is no child corresponding to token HEADER_TEXT
+    fn HEADER_TEXT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(REST_OF_LINE, 0)
+        self.get_token(YarnSpinnerParser_HEADER_TEXT, 0)
     }
 }
 
 impl<'input> HeaderContextAttrs<'input> for HeaderContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn header(&mut self) -> Result<Rc<HeaderContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = HeaderContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 6, RULE_header);
+        recog.base.enter_rule(_localctx.clone(), 10, RULE_header);
         let mut _localctx: Rc<HeaderContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(75);
-                let tmp = recog.base.match_token(ID, &mut recog.err_handler)?;
+                recog.base.set_state(115);
+                let tmp = recog.base.match_token(YarnSpinnerParser_ID, &mut recog.err_handler)?;
                 cast_mut::<_, HeaderContext>(&mut _localctx).header_key = Some(tmp.clone());
 
-                recog.base.set_state(76);
-                recog
-                    .base
-                    .match_token(HEADER_DELIMITER, &mut recog.err_handler)?;
+                recog.base.set_state(116);
+                recog.base.match_token(YarnSpinnerParser_HEADER_DELIMITER, &mut recog.err_handler)?;
 
-                recog.base.set_state(78);
+                recog.base.set_state(118);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                if _la == REST_OF_LINE {
+                if _la == YarnSpinnerParser_HEADER_TEXT {
                     {
-                        recog.base.set_state(77);
-                        let tmp = recog
-                            .base
-                            .match_token(REST_OF_LINE, &mut recog.err_handler)?;
-                        cast_mut::<_, HeaderContext>(&mut _localctx).header_value =
-                            Some(tmp.clone());
+                        recog.base.set_state(117);
+                        let tmp = recog.base.match_token(YarnSpinnerParser_HEADER_TEXT, &mut recog.err_handler)?;
+                        cast_mut::<_, HeaderContext>(&mut _localctx).header_value = Some(tmp.clone());
                     }
                 }
             }
@@ -1145,7 +1497,188 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- header_when_expression ----------------
+pub type Header_when_expressionContextAll<'input> = Header_when_expressionContext<'input>;
+
+pub type Header_when_expressionContext<'input> = BaseParserRuleContext<'input, Header_when_expressionContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Header_when_expressionContextExt<'input> {
+    pub always: Option<TokenType<'input>>,
+    pub once: Option<TokenType<'input>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Header_when_expressionContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Header_when_expressionContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_header_when_expression(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_header_when_expression(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Header_when_expressionContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_header_when_expression(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Header_when_expressionContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_header_when_expression
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_header_when_expression }
+}
+antlr4rust::tid! {Header_when_expressionContextExt<'a>}
+
+impl<'input> Header_when_expressionContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Header_when_expressionContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Header_when_expressionContextExt {
+                always: None,
+                once: None,
+
+                ph: PhantomData,
+            },
+        ))
+    }
+}
+
+pub trait Header_when_expressionContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Header_when_expressionContextExt<'input>> {
+    fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    /// Retrieves first TerminalNode corresponding to token EXPRESSION_WHEN_ALWAYS
+    /// Returns `None` if there is no child corresponding to token EXPRESSION_WHEN_ALWAYS
+    fn EXPRESSION_WHEN_ALWAYS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_EXPRESSION_WHEN_ALWAYS, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ONCE
+    /// Returns `None` if there is no child corresponding to token COMMAND_ONCE
+    fn COMMAND_ONCE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ONCE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_IF
+    /// Returns `None` if there is no child corresponding to token COMMAND_IF
+    fn COMMAND_IF(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_IF, 0)
+    }
+}
+
+impl<'input> Header_when_expressionContextAttrs<'input> for Header_when_expressionContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn header_when_expression(&mut self) -> Result<Rc<Header_when_expressionContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Header_when_expressionContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 12, RULE_header_when_expression);
+        let mut _localctx: Rc<Header_when_expressionContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            recog.base.set_state(127);
+            recog.err_handler.sync(&mut recog.base)?;
+            match recog.base.input.la(1) {
+                YarnSpinnerParser_KEYWORD_TRUE
+                | YarnSpinnerParser_KEYWORD_FALSE
+                | YarnSpinnerParser_NUMBER
+                | YarnSpinnerParser_OPERATOR_LOGICAL_NOT
+                | YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION
+                | YarnSpinnerParser_LPAREN
+                | YarnSpinnerParser_STRING
+                | YarnSpinnerParser_FUNC_ID
+                | YarnSpinnerParser_VAR_ID
+                | YarnSpinnerParser_DOT => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+                    recog.base.enter_outer_alt(None, 1)?;
+                    {
+                        /*InvokeRule expression*/
+                        recog.base.set_state(120);
+                        recog.expression_rec(0)?;
+                    }
+                }
+
+                YarnSpinnerParser_EXPRESSION_WHEN_ALWAYS => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 2)?;
+                    recog.base.enter_outer_alt(None, 2)?;
+                    {
+                        {
+                            recog.base.set_state(121);
+                            let tmp = recog.base.match_token(YarnSpinnerParser_EXPRESSION_WHEN_ALWAYS, &mut recog.err_handler)?;
+                            cast_mut::<_, Header_when_expressionContext>(&mut _localctx).always = Some(tmp.clone());
+                        }
+                    }
+                }
+
+                YarnSpinnerParser_COMMAND_ONCE => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 3)?;
+                    recog.base.enter_outer_alt(None, 3)?;
+                    {
+                        recog.base.set_state(122);
+                        let tmp = recog.base.match_token(YarnSpinnerParser_COMMAND_ONCE, &mut recog.err_handler)?;
+                        cast_mut::<_, Header_when_expressionContext>(&mut _localctx).once = Some(tmp.clone());
+
+                        recog.base.set_state(125);
+                        recog.err_handler.sync(&mut recog.base)?;
+                        _la = recog.base.input.la(1);
+                        if _la == YarnSpinnerParser_COMMAND_IF {
+                            {
+                                recog.base.set_state(123);
+                                recog.base.match_token(YarnSpinnerParser_COMMAND_IF, &mut recog.err_handler)?;
+
+                                /*InvokeRule expression*/
+                                recog.base.set_state(124);
+                                recog.expression_rec(0)?;
+                            }
+                        }
+                    }
+                }
+
+                _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -1163,13 +1696,15 @@ pub struct BodyContextExt<'input> {
 impl<'input> YarnSpinnerParserContext<'input> for BodyContext<'input> {}
 
 impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for BodyContext<'input> {
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_body(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_body(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -1187,13 +1722,10 @@ impl<'input> CustomRuleContext<'input> for BodyContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_body }
 }
-antlr_rust::tid! {BodyContextExt<'a>}
+antlr4rust::tid! {BodyContextExt<'a>}
 
 impl<'input> BodyContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<BodyContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<BodyContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -1202,9 +1734,7 @@ impl<'input> BodyContextExt<'input> {
     }
 }
 
-pub trait BodyContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<BodyContextExt<'input>>
-{
+pub trait BodyContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<BodyContextExt<'input>> {
     fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
     where
         Self: Sized,
@@ -1221,42 +1751,33 @@ pub trait BodyContextAttrs<'input>:
 
 impl<'input> BodyContextAttrs<'input> for BodyContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn body(&mut self) -> Result<Rc<BodyContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = BodyContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 8, RULE_body);
+        recog.base.enter_rule(_localctx.clone(), 14, RULE_body);
         let mut _localctx: Rc<BodyContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(83);
+                recog.base.set_state(132);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                while (((_la) & !0x3f) == 0
-                    && ((1usize << _la)
-                        & ((1usize << INDENT)
-                            | (1usize << SHORTCUT_ARROW)
-                            | (1usize << COMMAND_START)
-                            | (1usize << EXPRESSION_START)
-                            | (1usize << TEXT)))
-                        != 0)
-                {
+                while (((_la) & !0x3f) == 0 && ((1usize << _la) & 18743298) != 0) {
                     {
                         {
                             /*InvokeRule statement*/
-                            recog.base.set_state(80);
+                            recog.base.set_state(129);
                             recog.statement()?;
                         }
                     }
-                    recog.base.set_state(85);
+                    recog.base.set_state(134);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
                 }
@@ -1272,7 +1793,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -1289,16 +1810,16 @@ pub struct StatementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for StatementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for StatementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for StatementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -1316,13 +1837,10 @@ impl<'input> CustomRuleContext<'input> for StatementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_statement }
 }
-antlr_rust::tid! {StatementContextExt<'a>}
+antlr4rust::tid! {StatementContextExt<'a>}
 
 impl<'input> StatementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<StatementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<StatementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -1331,9 +1849,7 @@ impl<'input> StatementContextExt<'input> {
     }
 }
 
-pub trait StatementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<StatementContextExt<'input>>
-{
+pub trait StatementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<StatementContextExt<'input>> {
     fn line_statement(&self) -> Option<Rc<Line_statementContextAll<'input>>>
     where
         Self: Sized,
@@ -1376,7 +1892,31 @@ pub trait StatementContextAttrs<'input>:
     {
         self.child_of_type(0)
     }
+    fn enum_statement(&self) -> Option<Rc<Enum_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
     fn jump_statement(&self) -> Option<Rc<Jump_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    fn return_statement(&self) -> Option<Rc<Return_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    fn line_group_statement(&self) -> Option<Rc<Line_group_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    fn once_statement(&self) -> Option<Rc<Once_statementContextAll<'input>>>
     where
         Self: Sized,
     {
@@ -1388,7 +1928,7 @@ pub trait StatementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(INDENT, 0)
+        self.get_token(YarnSpinnerParser_INDENT, 0)
     }
     /// Retrieves first TerminalNode corresponding to token DEDENT
     /// Returns `None` if there is no child corresponding to token DEDENT
@@ -1396,7 +1936,7 @@ pub trait StatementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(DEDENT, 0)
+        self.get_token(YarnSpinnerParser_DEDENT, 0)
     }
     fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
     where
@@ -1414,126 +1954,153 @@ pub trait StatementContextAttrs<'input>:
 
 impl<'input> StatementContextAttrs<'input> for StatementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn statement(&mut self) -> Result<Rc<StatementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = StatementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 10, RULE_statement);
+        recog.base.enter_rule(_localctx.clone(), 16, RULE_statement);
         let mut _localctx: Rc<StatementContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            recog.base.set_state(102);
+            recog.base.set_state(155);
             recog.err_handler.sync(&mut recog.base)?;
-            match recog.interpreter.adaptive_predict(6, &mut recog.base)? {
+            match recog.interpreter.adaptive_predict(9, &mut recog.base)? {
                 1 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 1);
-                    recog.base.enter_outer_alt(None, 1);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+                    recog.base.enter_outer_alt(None, 1)?;
                     {
                         /*InvokeRule line_statement*/
-                        recog.base.set_state(86);
+                        recog.base.set_state(135);
                         recog.line_statement()?;
                     }
                 }
                 2 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 2);
-                    recog.base.enter_outer_alt(None, 2);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 2)?;
+                    recog.base.enter_outer_alt(None, 2)?;
                     {
                         /*InvokeRule if_statement*/
-                        recog.base.set_state(87);
+                        recog.base.set_state(136);
                         recog.if_statement()?;
                     }
                 }
                 3 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 3);
-                    recog.base.enter_outer_alt(None, 3);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 3)?;
+                    recog.base.enter_outer_alt(None, 3)?;
                     {
                         /*InvokeRule set_statement*/
-                        recog.base.set_state(88);
+                        recog.base.set_state(137);
                         recog.set_statement()?;
                     }
                 }
                 4 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 4);
-                    recog.base.enter_outer_alt(None, 4);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 4)?;
+                    recog.base.enter_outer_alt(None, 4)?;
                     {
                         /*InvokeRule shortcut_option_statement*/
-                        recog.base.set_state(89);
+                        recog.base.set_state(138);
                         recog.shortcut_option_statement()?;
                     }
                 }
                 5 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 5);
-                    recog.base.enter_outer_alt(None, 5);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 5)?;
+                    recog.base.enter_outer_alt(None, 5)?;
                     {
                         /*InvokeRule call_statement*/
-                        recog.base.set_state(90);
+                        recog.base.set_state(139);
                         recog.call_statement()?;
                     }
                 }
                 6 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 6);
-                    recog.base.enter_outer_alt(None, 6);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 6)?;
+                    recog.base.enter_outer_alt(None, 6)?;
                     {
                         /*InvokeRule command_statement*/
-                        recog.base.set_state(91);
+                        recog.base.set_state(140);
                         recog.command_statement()?;
                     }
                 }
                 7 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 7);
-                    recog.base.enter_outer_alt(None, 7);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 7)?;
+                    recog.base.enter_outer_alt(None, 7)?;
                     {
                         /*InvokeRule declare_statement*/
-                        recog.base.set_state(92);
+                        recog.base.set_state(141);
                         recog.declare_statement()?;
                     }
                 }
                 8 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 8);
-                    recog.base.enter_outer_alt(None, 8);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 8)?;
+                    recog.base.enter_outer_alt(None, 8)?;
                     {
-                        /*InvokeRule jump_statement*/
-                        recog.base.set_state(93);
-                        recog.jump_statement()?;
+                        /*InvokeRule enum_statement*/
+                        recog.base.set_state(142);
+                        recog.enum_statement()?;
                     }
                 }
                 9 => {
-                    //recog.base.enter_outer_alt(_localctx.clone(), 9);
-                    recog.base.enter_outer_alt(None, 9);
+                    //recog.base.enter_outer_alt(_localctx.clone(), 9)?;
+                    recog.base.enter_outer_alt(None, 9)?;
                     {
-                        recog.base.set_state(94);
-                        recog.base.match_token(INDENT, &mut recog.err_handler)?;
+                        /*InvokeRule jump_statement*/
+                        recog.base.set_state(143);
+                        recog.jump_statement()?;
+                    }
+                }
+                10 => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 10)?;
+                    recog.base.enter_outer_alt(None, 10)?;
+                    {
+                        /*InvokeRule return_statement*/
+                        recog.base.set_state(144);
+                        recog.return_statement()?;
+                    }
+                }
+                11 => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 11)?;
+                    recog.base.enter_outer_alt(None, 11)?;
+                    {
+                        /*InvokeRule line_group_statement*/
+                        recog.base.set_state(145);
+                        recog.line_group_statement()?;
+                    }
+                }
+                12 => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 12)?;
+                    recog.base.enter_outer_alt(None, 12)?;
+                    {
+                        /*InvokeRule once_statement*/
+                        recog.base.set_state(146);
+                        recog.once_statement()?;
+                    }
+                }
+                13 => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 13)?;
+                    recog.base.enter_outer_alt(None, 13)?;
+                    {
+                        recog.base.set_state(147);
+                        recog.base.match_token(YarnSpinnerParser_INDENT, &mut recog.err_handler)?;
 
-                        recog.base.set_state(98);
+                        recog.base.set_state(151);
                         recog.err_handler.sync(&mut recog.base)?;
                         _la = recog.base.input.la(1);
-                        while (((_la) & !0x3f) == 0
-                            && ((1usize << _la)
-                                & ((1usize << INDENT)
-                                    | (1usize << SHORTCUT_ARROW)
-                                    | (1usize << COMMAND_START)
-                                    | (1usize << EXPRESSION_START)
-                                    | (1usize << TEXT)))
-                                != 0)
-                        {
+                        while (((_la) & !0x3f) == 0 && ((1usize << _la) & 18743298) != 0) {
                             {
                                 {
                                     /*InvokeRule statement*/
-                                    recog.base.set_state(95);
+                                    recog.base.set_state(148);
                                     recog.statement()?;
                                 }
                             }
-                            recog.base.set_state(100);
+                            recog.base.set_state(153);
                             recog.err_handler.sync(&mut recog.base)?;
                             _la = recog.base.input.la(1);
                         }
-                        recog.base.set_state(101);
-                        recog.base.match_token(DEDENT, &mut recog.err_handler)?;
+                        recog.base.set_state(154);
+                        recog.base.match_token(YarnSpinnerParser_DEDENT, &mut recog.err_handler)?;
                     }
                 }
 
@@ -1550,7 +2117,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -1558,8 +2125,7 @@ where
 //------------------- line_statement ----------------
 pub type Line_statementContextAll<'input> = Line_statementContext<'input>;
 
-pub type Line_statementContext<'input> =
-    BaseParserRuleContext<'input, Line_statementContextExt<'input>>;
+pub type Line_statementContext<'input> = BaseParserRuleContext<'input, Line_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Line_statementContextExt<'input> {
@@ -1568,22 +2134,20 @@ pub struct Line_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Line_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Line_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Line_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_line_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_line_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Line_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Line_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_line_statement(self);
     }
@@ -1597,13 +2161,10 @@ impl<'input> CustomRuleContext<'input> for Line_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_line_statement }
 }
-antlr_rust::tid! {Line_statementContextExt<'a>}
+antlr4rust::tid! {Line_statementContextExt<'a>}
 
 impl<'input> Line_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Line_statementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Line_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -1612,9 +2173,7 @@ impl<'input> Line_statementContextExt<'input> {
     }
 }
 
-pub trait Line_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Line_statementContextExt<'input>>
-{
+pub trait Line_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Line_statementContextExt<'input>> {
     fn line_formatted_text(&self) -> Option<Rc<Line_formatted_textContextAll<'input>>>
     where
         Self: Sized,
@@ -1627,7 +2186,7 @@ pub trait Line_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(NEWLINE, 0)
+        self.get_token(YarnSpinnerParser_NEWLINE, 0)
     }
     fn line_condition(&self) -> Option<Rc<Line_conditionContextAll<'input>>>
     where
@@ -1651,57 +2210,53 @@ pub trait Line_statementContextAttrs<'input>:
 
 impl<'input> Line_statementContextAttrs<'input> for Line_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn line_statement(&mut self) -> Result<Rc<Line_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Line_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 12, RULE_line_statement);
+        let mut _localctx = Line_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 18, RULE_line_statement);
         let mut _localctx: Rc<Line_statementContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
                 /*InvokeRule line_formatted_text*/
-                recog.base.set_state(104);
+                recog.base.set_state(157);
                 recog.line_formatted_text()?;
 
-                recog.base.set_state(106);
+                recog.base.set_state(159);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                if _la == COMMAND_START {
+                if _la == YarnSpinnerParser_COMMAND_START {
                     {
                         /*InvokeRule line_condition*/
-                        recog.base.set_state(105);
+                        recog.base.set_state(158);
                         recog.line_condition()?;
                     }
                 }
 
-                recog.base.set_state(111);
+                recog.base.set_state(164);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                while _la == HASHTAG {
+                while _la == YarnSpinnerParser_HASHTAG {
                     {
                         {
                             /*InvokeRule hashtag*/
-                            recog.base.set_state(108);
+                            recog.base.set_state(161);
                             recog.hashtag()?;
                         }
                     }
-                    recog.base.set_state(113);
+                    recog.base.set_state(166);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
                 }
-                recog.base.set_state(114);
-                recog.base.match_token(NEWLINE, &mut recog.err_handler)?;
+                recog.base.set_state(167);
+                recog.base.match_token(YarnSpinnerParser_NEWLINE, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -1714,7 +2269,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -1722,8 +2277,7 @@ where
 //------------------- line_formatted_text ----------------
 pub type Line_formatted_textContextAll<'input> = Line_formatted_textContext<'input>;
 
-pub type Line_formatted_textContext<'input> =
-    BaseParserRuleContext<'input, Line_formatted_textContextExt<'input>>;
+pub type Line_formatted_textContext<'input> = BaseParserRuleContext<'input, Line_formatted_textContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Line_formatted_textContextExt<'input> {
@@ -1732,22 +2286,20 @@ pub struct Line_formatted_textContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Line_formatted_textContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Line_formatted_textContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Line_formatted_textContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_line_formatted_text(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_line_formatted_text(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Line_formatted_textContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Line_formatted_textContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_line_formatted_text(self);
     }
@@ -1761,13 +2313,10 @@ impl<'input> CustomRuleContext<'input> for Line_formatted_textContextExt<'input>
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_line_formatted_text }
 }
-antlr_rust::tid! {Line_formatted_textContextExt<'a>}
+antlr4rust::tid! {Line_formatted_textContextExt<'a>}
 
 impl<'input> Line_formatted_textContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Line_formatted_textContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Line_formatted_textContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -1776,9 +2325,7 @@ impl<'input> Line_formatted_textContextExt<'input> {
     }
 }
 
-pub trait Line_formatted_textContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Line_formatted_textContextExt<'input>>
-{
+pub trait Line_formatted_textContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Line_formatted_textContextExt<'input>> {
     /// Retrieves all `TerminalNode`s corresponding to token EXPRESSION_START in current rule
     fn EXPRESSION_START_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
@@ -1788,14 +2335,11 @@ pub trait Line_formatted_textContextAttrs<'input>:
     }
     /// Retrieves 'i's TerminalNode corresponding to token EXPRESSION_START, starting from 0.
     /// Returns `None` if number of children corresponding to token EXPRESSION_START is less or equal than `i`.
-    fn EXPRESSION_START(
-        &self,
-        i: usize,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn EXPRESSION_START(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(EXPRESSION_START, i)
+        self.get_token(YarnSpinnerParser_EXPRESSION_START, i)
     }
     fn expression_all(&self) -> Vec<Rc<ExpressionContextAll<'input>>>
     where
@@ -1818,14 +2362,11 @@ pub trait Line_formatted_textContextAttrs<'input>:
     }
     /// Retrieves 'i's TerminalNode corresponding to token EXPRESSION_END, starting from 0.
     /// Returns `None` if number of children corresponding to token EXPRESSION_END is less or equal than `i`.
-    fn EXPRESSION_END(
-        &self,
-        i: usize,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn EXPRESSION_END(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(EXPRESSION_END, i)
+        self.get_token(YarnSpinnerParser_EXPRESSION_END, i)
     }
     /// Retrieves all `TerminalNode`s corresponding to token TEXT in current rule
     fn TEXT_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
@@ -1840,94 +2381,79 @@ pub trait Line_formatted_textContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(TEXT, i)
+        self.get_token(YarnSpinnerParser_TEXT, i)
     }
 }
 
 impl<'input> Line_formatted_textContextAttrs<'input> for Line_formatted_textContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
-    pub fn line_formatted_text(
-        &mut self,
-    ) -> Result<Rc<Line_formatted_textContextAll<'input>>, ANTLRError> {
+    pub fn line_formatted_text(&mut self) -> Result<Rc<Line_formatted_textContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Line_formatted_textContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 14, RULE_line_formatted_text);
+        let mut _localctx = Line_formatted_textContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 20, RULE_line_formatted_text);
         let mut _localctx: Rc<Line_formatted_textContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(125);
+                recog.base.set_state(178);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
                 loop {
                     {
-                        recog.base.set_state(125);
+                        recog.base.set_state(178);
                         recog.err_handler.sync(&mut recog.base)?;
                         match recog.base.input.la(1) {
-                            TEXT => {
-                                recog.base.set_state(117);
+                            YarnSpinnerParser_TEXT => {
+                                recog.base.set_state(170);
                                 recog.err_handler.sync(&mut recog.base)?;
                                 _alt = 1;
                                 loop {
                                     match _alt {
                                         x if x == 1 => {
-                                            recog.base.set_state(116);
-                                            recog.base.match_token(TEXT, &mut recog.err_handler)?;
+                                            recog.base.set_state(169);
+                                            recog.base.match_token(YarnSpinnerParser_TEXT, &mut recog.err_handler)?;
                                         }
 
-                                        _ => Err(ANTLRError::NoAltError(NoViableAltError::new(
-                                            &mut recog.base,
-                                        )))?,
+                                        _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
                                     }
-                                    recog.base.set_state(119);
+                                    recog.base.set_state(172);
                                     recog.err_handler.sync(&mut recog.base)?;
-                                    _alt =
-                                        recog.interpreter.adaptive_predict(9, &mut recog.base)?;
+                                    _alt = recog.interpreter.adaptive_predict(12, &mut recog.base)?;
                                     if _alt == 2 || _alt == INVALID_ALT {
                                         break;
                                     }
                                 }
                             }
 
-                            EXPRESSION_START => {
+                            YarnSpinnerParser_EXPRESSION_START => {
                                 {
-                                    recog.base.set_state(121);
-                                    recog
-                                        .base
-                                        .match_token(EXPRESSION_START, &mut recog.err_handler)?;
+                                    recog.base.set_state(174);
+                                    recog.base.match_token(YarnSpinnerParser_EXPRESSION_START, &mut recog.err_handler)?;
 
                                     /*InvokeRule expression*/
-                                    recog.base.set_state(122);
+                                    recog.base.set_state(175);
                                     recog.expression_rec(0)?;
 
-                                    recog.base.set_state(123);
-                                    recog
-                                        .base
-                                        .match_token(EXPRESSION_END, &mut recog.err_handler)?;
+                                    recog.base.set_state(176);
+                                    recog.base.match_token(YarnSpinnerParser_EXPRESSION_END, &mut recog.err_handler)?;
                                 }
                             }
 
-                            _ => Err(ANTLRError::NoAltError(NoViableAltError::new(
-                                &mut recog.base,
-                            )))?,
+                            _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
                         }
                     }
-                    recog.base.set_state(127);
+                    recog.base.set_state(180);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
-                    if !(_la == EXPRESSION_START || _la == TEXT) {
+                    if !(_la == YarnSpinnerParser_EXPRESSION_START || _la == YarnSpinnerParser_TEXT) {
                         break;
                     }
                 }
@@ -1943,7 +2469,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -1962,13 +2488,15 @@ pub struct HashtagContextExt<'input> {
 impl<'input> YarnSpinnerParserContext<'input> for HashtagContext<'input> {}
 
 impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for HashtagContext<'input> {
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_hashtag(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_hashtag(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -1986,49 +2514,40 @@ impl<'input> CustomRuleContext<'input> for HashtagContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_hashtag }
 }
-antlr_rust::tid! {HashtagContextExt<'a>}
+antlr4rust::tid! {HashtagContextExt<'a>}
 
 impl<'input> HashtagContextExt<'input> {
-    pub fn new_with_text(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-        text: impl Into<Option<TokenType<'input>>>,
-    ) -> Rc<HashtagContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<HashtagContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
-            HashtagContextExt {
-                text: text.into(),
-                ph: PhantomData,
-            },
+            HashtagContextExt { text: None, ph: PhantomData },
         ))
     }
-
-    fn new(
+    pub fn new_with_text(
         parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
+        invoking_state: i32,
+        text: TokenType<'input>,
     ) -> Rc<HashtagContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
             HashtagContextExt {
-                text: None,
+                text: Some(text),
                 ph: PhantomData,
             },
         ))
     }
 }
 
-pub trait HashtagContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<HashtagContextExt<'input>>
-{
+pub trait HashtagContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<HashtagContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token HASHTAG
     /// Returns `None` if there is no child corresponding to token HASHTAG
     fn HASHTAG(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(HASHTAG, 0)
+        self.get_token(YarnSpinnerParser_HASHTAG, 0)
     }
     /// Retrieves first TerminalNode corresponding to token HASHTAG_TEXT
     /// Returns `None` if there is no child corresponding to token HASHTAG_TEXT
@@ -2036,34 +2555,31 @@ pub trait HashtagContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(HASHTAG_TEXT, 0)
+        self.get_token(YarnSpinnerParser_HASHTAG_TEXT, 0)
     }
 }
 
 impl<'input> HashtagContextAttrs<'input> for HashtagContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn hashtag(&mut self) -> Result<Rc<HashtagContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = HashtagContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 16, RULE_hashtag);
+        recog.base.enter_rule(_localctx.clone(), 22, RULE_hashtag);
         let mut _localctx: Rc<HashtagContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(129);
-                recog.base.match_token(HASHTAG, &mut recog.err_handler)?;
+                recog.base.set_state(182);
+                recog.base.match_token(YarnSpinnerParser_HASHTAG, &mut recog.err_handler)?;
 
-                recog.base.set_state(130);
-                let tmp = recog
-                    .base
-                    .match_token(HASHTAG_TEXT, &mut recog.err_handler)?;
+                recog.base.set_state(183);
+                let tmp = recog.base.match_token(YarnSpinnerParser_HASHTAG_TEXT, &mut recog.err_handler)?;
                 cast_mut::<_, HashtagContext>(&mut _localctx).text = Some(tmp.clone());
             }
             Ok(())
@@ -2077,16 +2593,60 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
 }
 //------------------- line_condition ----------------
-pub type Line_conditionContextAll<'input> = Line_conditionContext<'input>;
+#[derive(Debug)]
+pub enum Line_conditionContextAll<'input> {
+    LineOnceConditionContext(LineOnceConditionContext<'input>),
+    LineConditionContext(LineConditionContext<'input>),
+    Error(Line_conditionContext<'input>),
+}
+antlr4rust::tid! {Line_conditionContextAll<'a>}
 
-pub type Line_conditionContext<'input> =
-    BaseParserRuleContext<'input, Line_conditionContextExt<'input>>;
+impl<'input> antlr4rust::parser_rule_context::DerefSeal for Line_conditionContextAll<'input> {}
+
+impl<'input> YarnSpinnerParserContext<'input> for Line_conditionContextAll<'input> {}
+
+impl<'input> Deref for Line_conditionContextAll<'input> {
+    type Target = dyn Line_conditionContextAttrs<'input> + 'input;
+    fn deref(&self) -> &Self::Target {
+        use Line_conditionContextAll::*;
+        match self {
+            LineOnceConditionContext(inner) => inner,
+            LineConditionContext(inner) => inner,
+            Error(inner) => inner,
+        }
+    }
+}
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Line_conditionContextAll<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        self.deref().accept(visitor)
+    }
+}
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Line_conditionContextAll<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        self.deref().enter(listener)
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        self.deref().exit(listener)
+    }
+}
+
+impl<'input> Line_conditionContextAll<'input> {
+    pub fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>> {
+        match self {
+            Line_conditionContextAll::LineConditionContext(ctx) => ctx.expression(),
+            Line_conditionContextAll::LineOnceConditionContext(ctx) => ctx.expression(),
+            Line_conditionContextAll::Error(_) => None,
+        }
+    }
+}
+
+pub type Line_conditionContext<'input> = BaseParserRuleContext<'input, Line_conditionContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Line_conditionContextExt<'input> {
@@ -2095,26 +2655,9 @@ pub struct Line_conditionContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Line_conditionContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Line_conditionContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
-        listener.enter_line_condition(self);
-    }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.exit_line_condition(self);
-        listener.exit_every_rule(self);
-    }
-}
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Line_conditionContext<'input> {}
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Line_conditionContext<'input>
-{
-    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
-        visitor.visit_line_condition(self);
-    }
-}
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Line_conditionContext<'input> {}
 
 impl<'input> CustomRuleContext<'input> for Line_conditionContextExt<'input> {
     type TF = LocalTokenFactory<'input>;
@@ -2124,31 +2667,48 @@ impl<'input> CustomRuleContext<'input> for Line_conditionContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_line_condition }
 }
-antlr_rust::tid! {Line_conditionContextExt<'a>}
+antlr4rust::tid! {Line_conditionContextExt<'a>}
 
 impl<'input> Line_conditionContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Line_conditionContextAll<'input>> {
-        Rc::new(BaseParserRuleContext::new_parser_ctx(
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Line_conditionContextAll<'input>> {
+        Rc::new(Line_conditionContextAll::Error(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
             Line_conditionContextExt { ph: PhantomData },
-        ))
+        )))
     }
 }
 
-pub trait Line_conditionContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Line_conditionContextExt<'input>>
-{
+pub trait Line_conditionContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Line_conditionContextExt<'input>> {}
+
+impl<'input> Line_conditionContextAttrs<'input> for Line_conditionContext<'input> {}
+
+pub type LineOnceConditionContext<'input> = BaseParserRuleContext<'input, LineOnceConditionContextExt<'input>>;
+
+pub trait LineOnceConditionContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ONCE
+    /// Returns `None` if there is no child corresponding to token COMMAND_ONCE
+    fn COMMAND_ONCE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ONCE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_IF
     /// Returns `None` if there is no child corresponding to token COMMAND_IF
@@ -2156,7 +2716,98 @@ pub trait Line_conditionContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_IF, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_IF, 0)
+    }
+    fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> LineOnceConditionContextAttrs<'input> for LineOnceConditionContext<'input> {}
+
+pub struct LineOnceConditionContextExt<'input> {
+    base: Line_conditionContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr4rust::tid! {LineOnceConditionContextExt<'a>}
+
+impl<'input> YarnSpinnerParserContext<'input> for LineOnceConditionContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for LineOnceConditionContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_lineOnceCondition(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_lineOnceCondition(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for LineOnceConditionContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_lineOnceCondition(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for LineOnceConditionContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_line_condition
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_line_condition }
+}
+
+impl<'input> Borrow<Line_conditionContextExt<'input>> for LineOnceConditionContext<'input> {
+    fn borrow(&self) -> &Line_conditionContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<Line_conditionContextExt<'input>> for LineOnceConditionContext<'input> {
+    fn borrow_mut(&mut self) -> &mut Line_conditionContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> Line_conditionContextAttrs<'input> for LineOnceConditionContext<'input> {}
+
+impl<'input> LineOnceConditionContextExt<'input> {
+    fn new(ctx: &dyn Line_conditionContextAttrs<'input>) -> Rc<Line_conditionContextAll<'input>> {
+        Rc::new(Line_conditionContextAll::LineOnceConditionContext(BaseParserRuleContext::copy_from(
+            ctx,
+            LineOnceConditionContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
+    }
+}
+
+pub type LineConditionContext<'input> = BaseParserRuleContext<'input, LineConditionContextExt<'input>>;
+
+pub trait LineConditionContextAttrs<'input>: YarnSpinnerParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_IF
+    /// Returns `None` if there is no child corresponding to token COMMAND_IF
+    fn COMMAND_IF(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_IF, 0)
     }
     fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
     where
@@ -2170,46 +2821,139 @@ pub trait Line_conditionContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
 }
 
-impl<'input> Line_conditionContextAttrs<'input> for Line_conditionContext<'input> {}
+impl<'input> LineConditionContextAttrs<'input> for LineConditionContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+pub struct LineConditionContextExt<'input> {
+    base: Line_conditionContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr4rust::tid! {LineConditionContextExt<'a>}
+
+impl<'input> YarnSpinnerParserContext<'input> for LineConditionContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for LineConditionContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_lineCondition(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_lineCondition(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for LineConditionContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_lineCondition(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for LineConditionContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_line_condition
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_line_condition }
+}
+
+impl<'input> Borrow<Line_conditionContextExt<'input>> for LineConditionContext<'input> {
+    fn borrow(&self) -> &Line_conditionContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<Line_conditionContextExt<'input>> for LineConditionContext<'input> {
+    fn borrow_mut(&mut self) -> &mut Line_conditionContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> Line_conditionContextAttrs<'input> for LineConditionContext<'input> {}
+
+impl<'input> LineConditionContextExt<'input> {
+    fn new(ctx: &dyn Line_conditionContextAttrs<'input>) -> Rc<Line_conditionContextAll<'input>> {
+        Rc::new(Line_conditionContextAll::LineConditionContext(BaseParserRuleContext::copy_from(
+            ctx,
+            LineConditionContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
+    }
+}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn line_condition(&mut self) -> Result<Rc<Line_conditionContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Line_conditionContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 18, RULE_line_condition);
+        let mut _localctx = Line_conditionContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 24, RULE_line_condition);
         let mut _localctx: Rc<Line_conditionContextAll> = _localctx;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
-            {
-                recog.base.set_state(132);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+            recog.base.set_state(197);
+            recog.err_handler.sync(&mut recog.base)?;
+            match recog.interpreter.adaptive_predict(16, &mut recog.base)? {
+                1 => {
+                    let tmp = LineConditionContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 1)?;
+                    _localctx = tmp;
+                    {
+                        recog.base.set_state(185);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(133);
-                recog.base.match_token(COMMAND_IF, &mut recog.err_handler)?;
+                        recog.base.set_state(186);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_IF, &mut recog.err_handler)?;
 
-                /*InvokeRule expression*/
-                recog.base.set_state(134);
-                recog.expression_rec(0)?;
+                        /*InvokeRule expression*/
+                        recog.base.set_state(187);
+                        recog.expression_rec(0)?;
 
-                recog.base.set_state(135);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                        recog.base.set_state(188);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+                    }
+                }
+                2 => {
+                    let tmp = LineOnceConditionContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 2)?;
+                    _localctx = tmp;
+                    {
+                        recog.base.set_state(190);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                        recog.base.set_state(191);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_ONCE, &mut recog.err_handler)?;
+
+                        recog.base.set_state(194);
+                        recog.err_handler.sync(&mut recog.base)?;
+                        _la = recog.base.input.la(1);
+                        if _la == YarnSpinnerParser_COMMAND_IF {
+                            {
+                                recog.base.set_state(192);
+                                recog.base.match_token(YarnSpinnerParser_COMMAND_IF, &mut recog.err_handler)?;
+
+                                /*InvokeRule expression*/
+                                recog.base.set_state(193);
+                                recog.expression_rec(0)?;
+                            }
+                        }
+
+                        recog.base.set_state(196);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+                    }
+                }
+
+                _ => {}
             }
             Ok(())
         })();
@@ -2222,7 +2966,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -2241,9 +2985,9 @@ pub enum ExpressionContextAll<'input> {
     ExpEqualityContext(ExpEqualityContext<'input>),
     Error(ExpressionContext<'input>),
 }
-antlr_rust::tid! {ExpressionContextAll<'a>}
+antlr4rust::tid! {ExpressionContextAll<'a>}
 
-impl<'input> antlr_rust::parser_rule_context::DerefSeal for ExpressionContextAll<'input> {}
+impl<'input> antlr4rust::parser_rule_context::DerefSeal for ExpressionContextAll<'input> {}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpressionContextAll<'input> {}
 
@@ -2265,20 +3009,16 @@ impl<'input> Deref for ExpressionContextAll<'input> {
         }
     }
 }
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpressionContextAll<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpressionContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpressionContextAll<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpressionContextAll<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         self.deref().enter(listener)
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         self.deref().exit(listener)
     }
 }
@@ -2292,15 +3032,9 @@ pub struct ExpressionContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpressionContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpressionContext<'input>
-{
-}
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpressionContext<'input> {}
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpressionContext<'input>
-{
-}
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpressionContext<'input> {}
 
 impl<'input> CustomRuleContext<'input> for ExpressionContextExt<'input> {
     type TF = LocalTokenFactory<'input>;
@@ -2310,27 +3044,19 @@ impl<'input> CustomRuleContext<'input> for ExpressionContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_expression }
 }
-antlr_rust::tid! {ExpressionContextExt<'a>}
+antlr4rust::tid! {ExpressionContextExt<'a>}
 
 impl<'input> ExpressionContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::Error(
-            BaseParserRuleContext::new_parser_ctx(
-                parent,
-                invoking_state,
-                ExpressionContextExt { ph: PhantomData },
-            ),
-        ))
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<ExpressionContextAll<'input>> {
+        Rc::new(ExpressionContextAll::Error(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            ExpressionContextExt { ph: PhantomData },
+        )))
     }
 }
 
-pub trait ExpressionContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<ExpressionContextExt<'input>>
-{
-}
+pub trait ExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<ExpressionContextExt<'input>> {}
 
 impl<'input> ExpressionContextAttrs<'input> for ExpressionContext<'input> {}
 
@@ -2343,7 +3069,7 @@ pub trait ExpParensContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(LPAREN, 0)
+        self.get_token(YarnSpinnerParser_LPAREN, 0)
     }
     fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
     where
@@ -2357,7 +3083,7 @@ pub trait ExpParensContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(RPAREN, 0)
+        self.get_token(YarnSpinnerParser_RPAREN, 0)
     }
 }
 
@@ -2368,20 +3094,20 @@ pub struct ExpParensContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpParensContextExt<'a>}
+antlr4rust::tid! {ExpParensContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpParensContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpParensContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpParensContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expParens(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expParens(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -2415,20 +3141,17 @@ impl<'input> ExpressionContextAttrs<'input> for ExpParensContext<'input> {}
 
 impl<'input> ExpParensContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpParensContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpParensContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpParensContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpParensContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
-pub type ExpMultDivModContext<'input> =
-    BaseParserRuleContext<'input, ExpMultDivModContextExt<'input>>;
+pub type ExpMultDivModContext<'input> = BaseParserRuleContext<'input, ExpMultDivModContextExt<'input>>;
 
 pub trait ExpMultDivModContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     fn expression_all(&self) -> Vec<Rc<ExpressionContextAll<'input>>>
@@ -2445,33 +3168,27 @@ pub trait ExpMultDivModContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_MULTIPLICATION
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_MULTIPLICATION
-    fn OPERATOR_MATHS_MULTIPLICATION(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_MULTIPLICATION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_MULTIPLICATION, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_MULTIPLICATION, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_DIVISION
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_DIVISION
-    fn OPERATOR_MATHS_DIVISION(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_DIVISION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_DIVISION, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_DIVISION, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_MODULUS
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_MODULUS
-    fn OPERATOR_MATHS_MODULUS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_MODULUS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_MODULUS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_MODULUS, 0)
     }
 }
 
@@ -2483,26 +3200,24 @@ pub struct ExpMultDivModContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpMultDivModContextExt<'a>}
+antlr4rust::tid! {ExpMultDivModContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpMultDivModContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpMultDivModContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpMultDivModContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expMultDivMod(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expMultDivMod(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpMultDivModContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpMultDivModContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_expMultDivMod(self);
     }
@@ -2532,21 +3247,18 @@ impl<'input> ExpressionContextAttrs<'input> for ExpMultDivModContext<'input> {}
 
 impl<'input> ExpMultDivModContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpMultDivModContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpMultDivModContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpMultDivModContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpMultDivModContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
-pub type ExpComparisonContext<'input> =
-    BaseParserRuleContext<'input, ExpComparisonContextExt<'input>>;
+pub type ExpComparisonContext<'input> = BaseParserRuleContext<'input, ExpComparisonContextExt<'input>>;
 
 pub trait ExpComparisonContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     fn expression_all(&self) -> Vec<Rc<ExpressionContextAll<'input>>>
@@ -2563,43 +3275,35 @@ pub trait ExpComparisonContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_LESS_THAN_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_LESS_THAN_EQUALS
-    fn OPERATOR_LOGICAL_LESS_THAN_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_LOGICAL_LESS_THAN_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_LESS_THAN_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_LESS_THAN_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_GREATER_THAN_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_GREATER_THAN_EQUALS
-    fn OPERATOR_LOGICAL_GREATER_THAN_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_LOGICAL_GREATER_THAN_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_GREATER_THAN_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_GREATER_THAN_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_LESS
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_LESS
-    fn OPERATOR_LOGICAL_LESS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_LOGICAL_LESS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_LESS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_LESS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_GREATER
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_GREATER
-    fn OPERATOR_LOGICAL_GREATER(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_LOGICAL_GREATER(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_GREATER, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_GREATER, 0)
     }
 }
 
@@ -2611,26 +3315,24 @@ pub struct ExpComparisonContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpComparisonContextExt<'a>}
+antlr4rust::tid! {ExpComparisonContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpComparisonContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpComparisonContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpComparisonContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expComparison(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expComparison(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpComparisonContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpComparisonContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_expComparison(self);
     }
@@ -2660,16 +3362,14 @@ impl<'input> ExpressionContextAttrs<'input> for ExpComparisonContext<'input> {}
 
 impl<'input> ExpComparisonContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpComparisonContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpComparisonContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpComparisonContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpComparisonContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -2684,13 +3384,11 @@ pub trait ExpNegativeContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_SUBTRACTION
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_SUBTRACTION
-    fn OPERATOR_MATHS_SUBTRACTION(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_SUBTRACTION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_SUBTRACTION, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION, 0)
     }
 }
 
@@ -2702,26 +3400,24 @@ pub struct ExpNegativeContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpNegativeContextExt<'a>}
+antlr4rust::tid! {ExpNegativeContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpNegativeContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpNegativeContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpNegativeContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expNegative(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expNegative(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpNegativeContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpNegativeContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_expNegative(self);
     }
@@ -2751,16 +3447,14 @@ impl<'input> ExpressionContextAttrs<'input> for ExpNegativeContext<'input> {}
 
 impl<'input> ExpNegativeContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpNegativeContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpNegativeContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpNegativeContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpNegativeContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -2785,7 +3479,7 @@ pub trait ExpAndOrXorContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_AND, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_AND, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_OR
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_OR
@@ -2793,7 +3487,7 @@ pub trait ExpAndOrXorContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_OR, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_OR, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_XOR
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_XOR
@@ -2801,7 +3495,7 @@ pub trait ExpAndOrXorContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_XOR, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_XOR, 0)
     }
 }
 
@@ -2813,26 +3507,24 @@ pub struct ExpAndOrXorContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpAndOrXorContextExt<'a>}
+antlr4rust::tid! {ExpAndOrXorContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpAndOrXorContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpAndOrXorContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpAndOrXorContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expAndOrXor(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expAndOrXor(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpAndOrXorContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpAndOrXorContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_expAndOrXor(self);
     }
@@ -2862,16 +3554,14 @@ impl<'input> ExpressionContextAttrs<'input> for ExpAndOrXorContext<'input> {}
 
 impl<'input> ExpAndOrXorContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpAndOrXorContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpAndOrXorContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpAndOrXorContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpAndOrXorContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -2892,23 +3582,19 @@ pub trait ExpAddSubContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_ADDITION
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_ADDITION
-    fn OPERATOR_MATHS_ADDITION(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_ADDITION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_ADDITION, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_ADDITION, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_SUBTRACTION
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_SUBTRACTION
-    fn OPERATOR_MATHS_SUBTRACTION(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_SUBTRACTION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_SUBTRACTION, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION, 0)
     }
 }
 
@@ -2920,20 +3606,20 @@ pub struct ExpAddSubContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpAddSubContextExt<'a>}
+antlr4rust::tid! {ExpAddSubContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpAddSubContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpAddSubContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpAddSubContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expAddSub(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expAddSub(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -2967,16 +3653,14 @@ impl<'input> ExpressionContextAttrs<'input> for ExpAddSubContext<'input> {}
 
 impl<'input> ExpAddSubContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpAddSubContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpAddSubContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpAddSubContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpAddSubContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -2995,7 +3679,7 @@ pub trait ExpNotContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_NOT, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_NOT, 0)
     }
 }
 
@@ -3007,18 +3691,20 @@ pub struct ExpNotContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpNotContextExt<'a>}
+antlr4rust::tid! {ExpNotContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpNotContext<'input> {}
 
 impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpNotContext<'input> {
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expNot(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expNot(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -3052,16 +3738,14 @@ impl<'input> ExpressionContextAttrs<'input> for ExpNotContext<'input> {}
 
 impl<'input> ExpNotContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpNotContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpNotContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpNotContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpNotContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -3083,20 +3767,20 @@ pub struct ExpValueContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpValueContextExt<'a>}
+antlr4rust::tid! {ExpValueContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpValueContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpValueContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpValueContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expValue(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expValue(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -3130,15 +3814,13 @@ impl<'input> ExpressionContextAttrs<'input> for ExpValueContext<'input> {}
 
 impl<'input> ExpValueContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpValueContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpValueContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpValueContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpValueContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -3159,23 +3841,19 @@ pub trait ExpEqualityContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_EQUALS
-    fn OPERATOR_LOGICAL_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_LOGICAL_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_LOGICAL_NOT_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_LOGICAL_NOT_EQUALS
-    fn OPERATOR_LOGICAL_NOT_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_LOGICAL_NOT_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_LOGICAL_NOT_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_LOGICAL_NOT_EQUALS, 0)
     }
 }
 
@@ -3187,26 +3865,24 @@ pub struct ExpEqualityContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ExpEqualityContextExt<'a>}
+antlr4rust::tid! {ExpEqualityContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ExpEqualityContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ExpEqualityContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ExpEqualityContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_expEquality(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_expEquality(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ExpEqualityContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ExpEqualityContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_expEquality(self);
     }
@@ -3236,195 +3912,163 @@ impl<'input> ExpressionContextAttrs<'input> for ExpEqualityContext<'input> {}
 
 impl<'input> ExpEqualityContextExt<'input> {
     fn new(ctx: &dyn ExpressionContextAttrs<'input>) -> Rc<ExpressionContextAll<'input>> {
-        Rc::new(ExpressionContextAll::ExpEqualityContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ExpEqualityContextExt {
-                    op: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ExpressionContextAll::ExpEqualityContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ExpEqualityContextExt {
+                op: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn expression(&mut self) -> Result<Rc<ExpressionContextAll<'input>>, ANTLRError> {
         self.expression_rec(0)
     }
 
-    fn expression_rec(
-        &mut self,
-        _p: isize,
-    ) -> Result<Rc<ExpressionContextAll<'input>>, ANTLRError> {
+    fn expression_rec(&mut self, _p: i32) -> Result<Rc<ExpressionContextAll<'input>>, ANTLRError> {
         let recog = self;
         let _parentctx = recog.ctx.take();
         let _parentState = recog.base.get_state();
         let mut _localctx = ExpressionContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_recursion_rule(_localctx.clone(), 20, RULE_expression, _p);
+        recog.base.enter_recursion_rule(_localctx.clone(), 26, RULE_expression, _p);
         let mut _localctx: Rc<ExpressionContextAll> = _localctx;
         let mut _prevctx = _localctx.clone();
-        let _startState = 20;
-        let mut _la: isize = -1;
+        let _startState = 26;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(147);
+                recog.base.set_state(209);
                 recog.err_handler.sync(&mut recog.base)?;
                 match recog.base.input.la(1) {
-                    LPAREN => {
+                    YarnSpinnerParser_LPAREN => {
                         {
                             let mut tmp = ExpParensContextExt::new(&**_localctx);
                             recog.ctx = Some(tmp.clone());
                             _localctx = tmp;
                             _prevctx = _localctx.clone();
 
-                            recog.base.set_state(138);
-                            recog.base.match_token(LPAREN, &mut recog.err_handler)?;
+                            recog.base.set_state(200);
+                            recog.base.match_token(YarnSpinnerParser_LPAREN, &mut recog.err_handler)?;
 
                             /*InvokeRule expression*/
-                            recog.base.set_state(139);
+                            recog.base.set_state(201);
                             recog.expression_rec(0)?;
 
-                            recog.base.set_state(140);
-                            recog.base.match_token(RPAREN, &mut recog.err_handler)?;
+                            recog.base.set_state(202);
+                            recog.base.match_token(YarnSpinnerParser_RPAREN, &mut recog.err_handler)?;
                         }
                     }
 
-                    OPERATOR_MATHS_SUBTRACTION => {
+                    YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION => {
                         {
                             let mut tmp = ExpNegativeContextExt::new(&**_localctx);
                             recog.ctx = Some(tmp.clone());
                             _localctx = tmp;
                             _prevctx = _localctx.clone();
-                            recog.base.set_state(142);
+                            recog.base.set_state(204);
                             let tmp = recog
                                 .base
-                                .match_token(OPERATOR_MATHS_SUBTRACTION, &mut recog.err_handler)?;
-                            if let ExpressionContextAll::ExpNegativeContext(ctx) =
-                                cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                            {
+                                .match_token(YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION, &mut recog.err_handler)?;
+                            if let ExpressionContextAll::ExpNegativeContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                 ctx.op = Some(tmp.clone());
                             } else {
                                 unreachable!("cant cast");
                             }
 
                             /*InvokeRule expression*/
-                            recog.base.set_state(143);
+                            recog.base.set_state(205);
                             recog.expression_rec(8)?;
                         }
                     }
 
-                    OPERATOR_LOGICAL_NOT => {
+                    YarnSpinnerParser_OPERATOR_LOGICAL_NOT => {
                         {
                             let mut tmp = ExpNotContextExt::new(&**_localctx);
                             recog.ctx = Some(tmp.clone());
                             _localctx = tmp;
                             _prevctx = _localctx.clone();
-                            recog.base.set_state(144);
-                            let tmp = recog
-                                .base
-                                .match_token(OPERATOR_LOGICAL_NOT, &mut recog.err_handler)?;
-                            if let ExpressionContextAll::ExpNotContext(ctx) =
-                                cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                            {
+                            recog.base.set_state(206);
+                            let tmp = recog.base.match_token(YarnSpinnerParser_OPERATOR_LOGICAL_NOT, &mut recog.err_handler)?;
+                            if let ExpressionContextAll::ExpNotContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                 ctx.op = Some(tmp.clone());
                             } else {
                                 unreachable!("cant cast");
                             }
 
                             /*InvokeRule expression*/
-                            recog.base.set_state(145);
+                            recog.base.set_state(207);
                             recog.expression_rec(7)?;
                         }
                     }
 
-                    KEYWORD_TRUE | KEYWORD_FALSE | KEYWORD_NULL | STRING | FUNC_ID | VAR_ID
-                    | NUMBER => {
+                    YarnSpinnerParser_KEYWORD_TRUE
+                    | YarnSpinnerParser_KEYWORD_FALSE
+                    | YarnSpinnerParser_NUMBER
+                    | YarnSpinnerParser_STRING
+                    | YarnSpinnerParser_FUNC_ID
+                    | YarnSpinnerParser_VAR_ID
+                    | YarnSpinnerParser_DOT => {
                         {
                             let mut tmp = ExpValueContextExt::new(&**_localctx);
                             recog.ctx = Some(tmp.clone());
                             _localctx = tmp;
                             _prevctx = _localctx.clone();
                             /*InvokeRule value*/
-                            recog.base.set_state(146);
+                            recog.base.set_state(208);
                             recog.value()?;
                         }
                     }
 
-                    _ => Err(ANTLRError::NoAltError(NoViableAltError::new(
-                        &mut recog.base,
-                    )))?,
+                    _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
                 }
-
                 let tmp = recog.input.lt(-1).cloned();
                 recog.ctx.as_ref().unwrap().set_stop(tmp);
-                recog.base.set_state(166);
+                recog.base.set_state(228);
                 recog.err_handler.sync(&mut recog.base)?;
-                _alt = recog.interpreter.adaptive_predict(14, &mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(19, &mut recog.base)?;
                 while { _alt != 2 && _alt != INVALID_ALT } {
                     if _alt == 1 {
-                        recog.trigger_exit_rule_event();
+                        recog.trigger_exit_rule_event()?;
                         _prevctx = _localctx.clone();
                         {
-                            recog.base.set_state(164);
+                            recog.base.set_state(226);
                             recog.err_handler.sync(&mut recog.base)?;
-                            match recog.interpreter.adaptive_predict(13, &mut recog.base)? {
+                            match recog.interpreter.adaptive_predict(18, &mut recog.base)? {
                                 1 => {
                                     {
                                         /*recRuleLabeledAltStartAction*/
-                                        let mut tmp = ExpMultDivModContextExt::new(
-                                            &**ExpressionContextExt::new(
-                                                _parentctx.clone(),
-                                                _parentState,
-                                            ),
-                                        );
-                                        recog.push_new_recursion_context(
-                                            tmp.clone(),
-                                            _startState,
-                                            RULE_expression,
-                                        );
+                                        let mut tmp = ExpMultDivModContextExt::new(&**ExpressionContextExt::new(_parentctx.clone(), _parentState));
+                                        recog.push_new_recursion_context(tmp.clone(), _startState, RULE_expression)?;
                                         _localctx = tmp;
-                                        recog.base.set_state(149);
-                                        if !({ recog.precpred(None, 6) }) {
+                                        recog.base.set_state(211);
+                                        if !({
+                                            let _localctx = Some(_localctx.clone());
+                                            recog.precpred(None, 6)
+                                        }) {
                                             Err(FailedPredicateError::new(
                                                 &mut recog.base,
                                                 Some("recog.precpred(None, 6)".to_owned()),
                                                 None,
                                             ))?;
                                         }
-                                        recog.base.set_state(150);
-                                        if let ExpressionContextAll::ExpMultDivModContext(ctx) =
-                                            cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                                        {
+                                        recog.base.set_state(212);
+                                        if let ExpressionContextAll::ExpMultDivModContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                             ctx.op = recog.base.input.lt(1).cloned();
                                         } else {
                                             unreachable!("cant cast");
                                         }
                                         _la = recog.base.input.la(1);
-                                        if {
-                                            !(((_la - 49) & !0x3f) == 0
-                                                && ((1usize << (_la - 49))
-                                                    & ((1usize
-                                                        << (OPERATOR_MATHS_MULTIPLICATION - 49))
-                                                        | (1usize
-                                                            << (OPERATOR_MATHS_DIVISION - 49))
-                                                        | (1usize
-                                                            << (OPERATOR_MATHS_MODULUS - 49))))
-                                                    != 0)
-                                        } {
-                                            let tmp = recog
-                                                .err_handler
-                                                .recover_inline(&mut recog.base)?;
+                                        if { !(((_la - 55) & !0x3f) == 0 && ((1usize << (_la - 55)) & 7) != 0) } {
+                                            let tmp = recog.err_handler.recover_inline(&mut recog.base)?;
                                             if let ExpressionContextAll::ExpMultDivModContext(ctx) =
                                                 cast_mut::<_, ExpressionContextAll>(&mut _localctx)
                                             {
@@ -3440,51 +4084,39 @@ where
                                             recog.base.consume(&mut recog.err_handler);
                                         }
                                         /*InvokeRule expression*/
-                                        recog.base.set_state(151);
+                                        recog.base.set_state(213);
                                         recog.expression_rec(7)?;
                                     }
                                 }
                                 2 => {
                                     {
                                         /*recRuleLabeledAltStartAction*/
-                                        let mut tmp =
-                                            ExpAddSubContextExt::new(&**ExpressionContextExt::new(
-                                                _parentctx.clone(),
-                                                _parentState,
-                                            ));
-                                        recog.push_new_recursion_context(
-                                            tmp.clone(),
-                                            _startState,
-                                            RULE_expression,
-                                        );
+                                        let mut tmp = ExpAddSubContextExt::new(&**ExpressionContextExt::new(_parentctx.clone(), _parentState));
+                                        recog.push_new_recursion_context(tmp.clone(), _startState, RULE_expression)?;
                                         _localctx = tmp;
-                                        recog.base.set_state(152);
-                                        if !({ recog.precpred(None, 5) }) {
+                                        recog.base.set_state(214);
+                                        if !({
+                                            let _localctx = Some(_localctx.clone());
+                                            recog.precpred(None, 5)
+                                        }) {
                                             Err(FailedPredicateError::new(
                                                 &mut recog.base,
                                                 Some("recog.precpred(None, 5)".to_owned()),
                                                 None,
                                             ))?;
                                         }
-                                        recog.base.set_state(153);
-                                        if let ExpressionContextAll::ExpAddSubContext(ctx) =
-                                            cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                                        {
+                                        recog.base.set_state(215);
+                                        if let ExpressionContextAll::ExpAddSubContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                             ctx.op = recog.base.input.lt(1).cloned();
                                         } else {
                                             unreachable!("cant cast");
                                         }
                                         _la = recog.base.input.la(1);
                                         if {
-                                            !(_la == OPERATOR_MATHS_ADDITION
-                                                || _la == OPERATOR_MATHS_SUBTRACTION)
+                                            !(_la == YarnSpinnerParser_OPERATOR_MATHS_ADDITION || _la == YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION)
                                         } {
-                                            let tmp = recog
-                                                .err_handler
-                                                .recover_inline(&mut recog.base)?;
-                                            if let ExpressionContextAll::ExpAddSubContext(ctx) =
-                                                cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                                            {
+                                            let tmp = recog.err_handler.recover_inline(&mut recog.base)?;
+                                            if let ExpressionContextAll::ExpAddSubContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                                 ctx.op = Some(tmp.clone());
                                             } else {
                                                 unreachable!("cant cast");
@@ -3497,60 +4129,36 @@ where
                                             recog.base.consume(&mut recog.err_handler);
                                         }
                                         /*InvokeRule expression*/
-                                        recog.base.set_state(154);
+                                        recog.base.set_state(216);
                                         recog.expression_rec(6)?;
                                     }
                                 }
                                 3 => {
                                     {
                                         /*recRuleLabeledAltStartAction*/
-                                        let mut tmp = ExpComparisonContextExt::new(
-                                            &**ExpressionContextExt::new(
-                                                _parentctx.clone(),
-                                                _parentState,
-                                            ),
-                                        );
-                                        recog.push_new_recursion_context(
-                                            tmp.clone(),
-                                            _startState,
-                                            RULE_expression,
-                                        );
+                                        let mut tmp = ExpComparisonContextExt::new(&**ExpressionContextExt::new(_parentctx.clone(), _parentState));
+                                        recog.push_new_recursion_context(tmp.clone(), _startState, RULE_expression)?;
                                         _localctx = tmp;
-                                        recog.base.set_state(155);
-                                        if !({ recog.precpred(None, 4) }) {
+                                        recog.base.set_state(217);
+                                        if !({
+                                            let _localctx = Some(_localctx.clone());
+                                            recog.precpred(None, 4)
+                                        }) {
                                             Err(FailedPredicateError::new(
                                                 &mut recog.base,
                                                 Some("recog.precpred(None, 4)".to_owned()),
                                                 None,
                                             ))?;
                                         }
-                                        recog.base.set_state(156);
-                                        if let ExpressionContextAll::ExpComparisonContext(ctx) =
-                                            cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                                        {
+                                        recog.base.set_state(218);
+                                        if let ExpressionContextAll::ExpComparisonContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                             ctx.op = recog.base.input.lt(1).cloned();
                                         } else {
                                             unreachable!("cant cast");
                                         }
                                         _la = recog.base.input.la(1);
-                                        if {
-                                            !(((_la - 32) & !0x3f) == 0
-                                                && ((1usize << (_la - 32))
-                                                    & ((1usize
-                                                        << (OPERATOR_LOGICAL_LESS_THAN_EQUALS
-                                                            - 32))
-                                                        | (1usize
-                                                            << (OPERATOR_LOGICAL_GREATER_THAN_EQUALS
-                                                                - 32))
-                                                        | (1usize
-                                                            << (OPERATOR_LOGICAL_LESS - 32))
-                                                        | (1usize
-                                                            << (OPERATOR_LOGICAL_GREATER - 32))))
-                                                    != 0)
-                                        } {
-                                            let tmp = recog
-                                                .err_handler
-                                                .recover_inline(&mut recog.base)?;
+                                        if { !(((_la - 38) & !0x3f) == 0 && ((1usize << (_la - 38)) & 27) != 0) } {
+                                            let tmp = recog.err_handler.recover_inline(&mut recog.base)?;
                                             if let ExpressionContextAll::ExpComparisonContext(ctx) =
                                                 cast_mut::<_, ExpressionContextAll>(&mut _localctx)
                                             {
@@ -3566,51 +4174,40 @@ where
                                             recog.base.consume(&mut recog.err_handler);
                                         }
                                         /*InvokeRule expression*/
-                                        recog.base.set_state(157);
+                                        recog.base.set_state(219);
                                         recog.expression_rec(5)?;
                                     }
                                 }
                                 4 => {
                                     {
                                         /*recRuleLabeledAltStartAction*/
-                                        let mut tmp = ExpEqualityContextExt::new(
-                                            &**ExpressionContextExt::new(
-                                                _parentctx.clone(),
-                                                _parentState,
-                                            ),
-                                        );
-                                        recog.push_new_recursion_context(
-                                            tmp.clone(),
-                                            _startState,
-                                            RULE_expression,
-                                        );
+                                        let mut tmp = ExpEqualityContextExt::new(&**ExpressionContextExt::new(_parentctx.clone(), _parentState));
+                                        recog.push_new_recursion_context(tmp.clone(), _startState, RULE_expression)?;
                                         _localctx = tmp;
-                                        recog.base.set_state(158);
-                                        if !({ recog.precpred(None, 3) }) {
+                                        recog.base.set_state(220);
+                                        if !({
+                                            let _localctx = Some(_localctx.clone());
+                                            recog.precpred(None, 3)
+                                        }) {
                                             Err(FailedPredicateError::new(
                                                 &mut recog.base,
                                                 Some("recog.precpred(None, 3)".to_owned()),
                                                 None,
                                             ))?;
                                         }
-                                        recog.base.set_state(159);
-                                        if let ExpressionContextAll::ExpEqualityContext(ctx) =
-                                            cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                                        {
+                                        recog.base.set_state(221);
+                                        if let ExpressionContextAll::ExpEqualityContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                             ctx.op = recog.base.input.lt(1).cloned();
                                         } else {
                                             unreachable!("cant cast");
                                         }
                                         _la = recog.base.input.la(1);
                                         if {
-                                            !(_la == OPERATOR_LOGICAL_EQUALS
-                                                || _la == OPERATOR_LOGICAL_NOT_EQUALS)
+                                            !(_la == YarnSpinnerParser_OPERATOR_LOGICAL_EQUALS
+                                                || _la == YarnSpinnerParser_OPERATOR_LOGICAL_NOT_EQUALS)
                                         } {
-                                            let tmp = recog
-                                                .err_handler
-                                                .recover_inline(&mut recog.base)?;
-                                            if let ExpressionContextAll::ExpEqualityContext(ctx) =
-                                                cast_mut::<_, ExpressionContextAll>(&mut _localctx)
+                                            let tmp = recog.err_handler.recover_inline(&mut recog.base)?;
+                                            if let ExpressionContextAll::ExpEqualityContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx)
                                             {
                                                 ctx.op = Some(tmp.clone());
                                             } else {
@@ -3624,55 +4221,37 @@ where
                                             recog.base.consume(&mut recog.err_handler);
                                         }
                                         /*InvokeRule expression*/
-                                        recog.base.set_state(160);
+                                        recog.base.set_state(222);
                                         recog.expression_rec(4)?;
                                     }
                                 }
                                 5 => {
                                     {
                                         /*recRuleLabeledAltStartAction*/
-                                        let mut tmp = ExpAndOrXorContextExt::new(
-                                            &**ExpressionContextExt::new(
-                                                _parentctx.clone(),
-                                                _parentState,
-                                            ),
-                                        );
-                                        recog.push_new_recursion_context(
-                                            tmp.clone(),
-                                            _startState,
-                                            RULE_expression,
-                                        );
+                                        let mut tmp = ExpAndOrXorContextExt::new(&**ExpressionContextExt::new(_parentctx.clone(), _parentState));
+                                        recog.push_new_recursion_context(tmp.clone(), _startState, RULE_expression)?;
                                         _localctx = tmp;
-                                        recog.base.set_state(161);
-                                        if !({ recog.precpred(None, 2) }) {
+                                        recog.base.set_state(223);
+                                        if !({
+                                            let _localctx = Some(_localctx.clone());
+                                            recog.precpred(None, 2)
+                                        }) {
                                             Err(FailedPredicateError::new(
                                                 &mut recog.base,
                                                 Some("recog.precpred(None, 2)".to_owned()),
                                                 None,
                                             ))?;
                                         }
-                                        recog.base.set_state(162);
-                                        if let ExpressionContextAll::ExpAndOrXorContext(ctx) =
-                                            cast_mut::<_, ExpressionContextAll>(&mut _localctx)
-                                        {
+                                        recog.base.set_state(224);
+                                        if let ExpressionContextAll::ExpAndOrXorContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx) {
                                             ctx.op = recog.base.input.lt(1).cloned();
                                         } else {
                                             unreachable!("cant cast");
                                         }
                                         _la = recog.base.input.la(1);
-                                        if {
-                                            !(((_la - 38) & !0x3f) == 0
-                                                && ((1usize << (_la - 38))
-                                                    & ((1usize << (OPERATOR_LOGICAL_AND - 38))
-                                                        | (1usize << (OPERATOR_LOGICAL_OR - 38))
-                                                        | (1usize << (OPERATOR_LOGICAL_XOR - 38))))
-                                                    != 0)
-                                        } {
-                                            let tmp = recog
-                                                .err_handler
-                                                .recover_inline(&mut recog.base)?;
-                                            if let ExpressionContextAll::ExpAndOrXorContext(ctx) =
-                                                cast_mut::<_, ExpressionContextAll>(&mut _localctx)
+                                        if { !(((_la - 44) & !0x3f) == 0 && ((1usize << (_la - 44)) & 7) != 0) } {
+                                            let tmp = recog.err_handler.recover_inline(&mut recog.base)?;
+                                            if let ExpressionContextAll::ExpAndOrXorContext(ctx) = cast_mut::<_, ExpressionContextAll>(&mut _localctx)
                                             {
                                                 ctx.op = Some(tmp.clone());
                                             } else {
@@ -3686,7 +4265,7 @@ where
                                             recog.base.consume(&mut recog.err_handler);
                                         }
                                         /*InvokeRule expression*/
-                                        recog.base.set_state(163);
+                                        recog.base.set_state(225);
                                         recog.expression_rec(3)?;
                                     }
                                 }
@@ -3695,9 +4274,9 @@ where
                             }
                         }
                     }
-                    recog.base.set_state(168);
+                    recog.base.set_state(230);
                     recog.err_handler.sync(&mut recog.base)?;
-                    _alt = recog.interpreter.adaptive_predict(14, &mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(19, &mut recog.base)?;
                 }
             }
             Ok(())
@@ -3711,7 +4290,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.unroll_recursion_context(_parentctx);
+        recog.base.unroll_recursion_context(_parentctx)?;
 
         Ok(_localctx)
     }
@@ -3719,18 +4298,18 @@ where
 //------------------- value ----------------
 #[derive(Debug)]
 pub enum ValueContextAll<'input> {
-    ValueNullContext(ValueNullContext<'input>),
     ValueNumberContext(ValueNumberContext<'input>),
     ValueTrueContext(ValueTrueContext<'input>),
     ValueFalseContext(ValueFalseContext<'input>),
     ValueFuncContext(ValueFuncContext<'input>),
     ValueVarContext(ValueVarContext<'input>),
     ValueStringContext(ValueStringContext<'input>),
+    ValueTypeMemberReferenceContext(ValueTypeMemberReferenceContext<'input>),
     Error(ValueContext<'input>),
 }
-antlr_rust::tid! {ValueContextAll<'a>}
+antlr4rust::tid! {ValueContextAll<'a>}
 
-impl<'input> antlr_rust::parser_rule_context::DerefSeal for ValueContextAll<'input> {}
+impl<'input> antlr4rust::parser_rule_context::DerefSeal for ValueContextAll<'input> {}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueContextAll<'input> {}
 
@@ -3739,13 +4318,13 @@ impl<'input> Deref for ValueContextAll<'input> {
     fn deref(&self) -> &Self::Target {
         use ValueContextAll::*;
         match self {
-            ValueNullContext(inner) => inner,
             ValueNumberContext(inner) => inner,
             ValueTrueContext(inner) => inner,
             ValueFalseContext(inner) => inner,
             ValueFuncContext(inner) => inner,
             ValueVarContext(inner) => inner,
             ValueStringContext(inner) => inner,
+            ValueTypeMemberReferenceContext(inner) => inner,
             Error(inner) => inner,
         }
     }
@@ -3755,13 +4334,11 @@ impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ValueC
         self.deref().accept(visitor)
     }
 }
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueContextAll<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueContextAll<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         self.deref().enter(listener)
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         self.deref().exit(listener)
     }
 }
@@ -3787,108 +4364,21 @@ impl<'input> CustomRuleContext<'input> for ValueContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_value }
 }
-antlr_rust::tid! {ValueContextExt<'a>}
+antlr4rust::tid! {ValueContextExt<'a>}
 
 impl<'input> ValueContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::Error(
-            BaseParserRuleContext::new_parser_ctx(
-                parent,
-                invoking_state,
-                ValueContextExt { ph: PhantomData },
-            ),
-        ))
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<ValueContextAll<'input>> {
+        Rc::new(ValueContextAll::Error(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            ValueContextExt { ph: PhantomData },
+        )))
     }
 }
 
-pub trait ValueContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<ValueContextExt<'input>>
-{
-}
+pub trait ValueContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<ValueContextExt<'input>> {}
 
 impl<'input> ValueContextAttrs<'input> for ValueContext<'input> {}
-
-pub type ValueNullContext<'input> = BaseParserRuleContext<'input, ValueNullContextExt<'input>>;
-
-pub trait ValueNullContextAttrs<'input>: YarnSpinnerParserContext<'input> {
-    /// Retrieves first TerminalNode corresponding to token KEYWORD_NULL
-    /// Returns `None` if there is no child corresponding to token KEYWORD_NULL
-    fn KEYWORD_NULL(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
-    where
-        Self: Sized,
-    {
-        self.get_token(KEYWORD_NULL, 0)
-    }
-}
-
-impl<'input> ValueNullContextAttrs<'input> for ValueNullContext<'input> {}
-
-pub struct ValueNullContextExt<'input> {
-    base: ValueContextExt<'input>,
-    ph: PhantomData<&'input str>,
-}
-
-antlr_rust::tid! {ValueNullContextExt<'a>}
-
-impl<'input> YarnSpinnerParserContext<'input> for ValueNullContext<'input> {}
-
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueNullContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
-        listener.enter_valueNull(self);
-    }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.exit_valueNull(self);
-        listener.exit_every_rule(self);
-    }
-}
-
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ValueNullContext<'input> {
-    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
-        visitor.visit_valueNull(self);
-    }
-}
-
-impl<'input> CustomRuleContext<'input> for ValueNullContextExt<'input> {
-    type TF = LocalTokenFactory<'input>;
-    type Ctx = YarnSpinnerParserContextType;
-    fn get_rule_index(&self) -> usize {
-        RULE_value
-    }
-    //fn type_rule_index() -> usize where Self: Sized { RULE_value }
-}
-
-impl<'input> Borrow<ValueContextExt<'input>> for ValueNullContext<'input> {
-    fn borrow(&self) -> &ValueContextExt<'input> {
-        &self.base
-    }
-}
-impl<'input> BorrowMut<ValueContextExt<'input>> for ValueNullContext<'input> {
-    fn borrow_mut(&mut self) -> &mut ValueContextExt<'input> {
-        &mut self.base
-    }
-}
-
-impl<'input> ValueContextAttrs<'input> for ValueNullContext<'input> {}
-
-impl<'input> ValueNullContextExt<'input> {
-    fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueNullContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueNullContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
-    }
-}
 
 pub type ValueNumberContext<'input> = BaseParserRuleContext<'input, ValueNumberContextExt<'input>>;
 
@@ -3899,7 +4389,7 @@ pub trait ValueNumberContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(NUMBER, 0)
+        self.get_token(YarnSpinnerParser_NUMBER, 0)
     }
 }
 
@@ -3910,26 +4400,24 @@ pub struct ValueNumberContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ValueNumberContextExt<'a>}
+antlr4rust::tid! {ValueNumberContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueNumberContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueNumberContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueNumberContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_valueNumber(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_valueNumber(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ValueNumberContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ValueNumberContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_valueNumber(self);
     }
@@ -3959,15 +4447,13 @@ impl<'input> ValueContextAttrs<'input> for ValueNumberContext<'input> {}
 
 impl<'input> ValueNumberContextExt<'input> {
     fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueNumberContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueNumberContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ValueContextAll::ValueNumberContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueNumberContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -3980,7 +4466,7 @@ pub trait ValueTrueContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(KEYWORD_TRUE, 0)
+        self.get_token(YarnSpinnerParser_KEYWORD_TRUE, 0)
     }
 }
 
@@ -3991,20 +4477,20 @@ pub struct ValueTrueContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ValueTrueContextExt<'a>}
+antlr4rust::tid! {ValueTrueContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueTrueContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueTrueContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueTrueContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_valueTrue(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_valueTrue(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -4038,15 +4524,13 @@ impl<'input> ValueContextAttrs<'input> for ValueTrueContext<'input> {}
 
 impl<'input> ValueTrueContextExt<'input> {
     fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueTrueContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueTrueContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ValueContextAll::ValueTrueContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueTrueContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -4059,7 +4543,7 @@ pub trait ValueFalseContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(KEYWORD_FALSE, 0)
+        self.get_token(YarnSpinnerParser_KEYWORD_FALSE, 0)
     }
 }
 
@@ -4070,26 +4554,24 @@ pub struct ValueFalseContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ValueFalseContextExt<'a>}
+antlr4rust::tid! {ValueFalseContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueFalseContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueFalseContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueFalseContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_valueFalse(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_valueFalse(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ValueFalseContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ValueFalseContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_valueFalse(self);
     }
@@ -4119,15 +4601,13 @@ impl<'input> ValueContextAttrs<'input> for ValueFalseContext<'input> {}
 
 impl<'input> ValueFalseContextExt<'input> {
     fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueFalseContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueFalseContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ValueContextAll::ValueFalseContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueFalseContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -4149,20 +4629,20 @@ pub struct ValueFuncContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ValueFuncContextExt<'a>}
+antlr4rust::tid! {ValueFuncContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueFuncContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueFuncContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueFuncContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_valueFunc(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_valueFunc(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -4196,15 +4676,13 @@ impl<'input> ValueContextAttrs<'input> for ValueFuncContext<'input> {}
 
 impl<'input> ValueFuncContextExt<'input> {
     fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueFuncContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueFuncContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ValueContextAll::ValueFuncContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueFuncContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -4226,20 +4704,20 @@ pub struct ValueVarContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ValueVarContextExt<'a>}
+antlr4rust::tid! {ValueVarContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueVarContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueVarContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueVarContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_valueVar(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_valueVar(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -4273,15 +4751,13 @@ impl<'input> ValueContextAttrs<'input> for ValueVarContext<'input> {}
 
 impl<'input> ValueVarContextExt<'input> {
     fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueVarContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueVarContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ValueContextAll::ValueVarContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueVarContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
@@ -4294,7 +4770,7 @@ pub trait ValueStringContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(STRING, 0)
+        self.get_token(YarnSpinnerParser_STRING, 0)
     }
 }
 
@@ -4305,26 +4781,24 @@ pub struct ValueStringContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {ValueStringContextExt<'a>}
+antlr4rust::tid! {ValueStringContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for ValueStringContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for ValueStringContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueStringContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_valueString(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_valueString(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for ValueStringContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ValueStringContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_valueString(self);
     }
@@ -4354,114 +4828,173 @@ impl<'input> ValueContextAttrs<'input> for ValueStringContext<'input> {}
 
 impl<'input> ValueStringContextExt<'input> {
     fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
-        Rc::new(ValueContextAll::ValueStringContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                ValueStringContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(ValueContextAll::ValueStringContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueStringContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+pub type ValueTypeMemberReferenceContext<'input> = BaseParserRuleContext<'input, ValueTypeMemberReferenceContextExt<'input>>;
+
+pub trait ValueTypeMemberReferenceContextAttrs<'input>: YarnSpinnerParserContext<'input> {
+    fn typeMemberReference(&self) -> Option<Rc<TypeMemberReferenceContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> ValueTypeMemberReferenceContextAttrs<'input> for ValueTypeMemberReferenceContext<'input> {}
+
+pub struct ValueTypeMemberReferenceContextExt<'input> {
+    base: ValueContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr4rust::tid! {ValueTypeMemberReferenceContextExt<'a>}
+
+impl<'input> YarnSpinnerParserContext<'input> for ValueTypeMemberReferenceContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for ValueTypeMemberReferenceContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_valueTypeMemberReference(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_valueTypeMemberReference(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for ValueTypeMemberReferenceContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_valueTypeMemberReference(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for ValueTypeMemberReferenceContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_value
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_value }
+}
+
+impl<'input> Borrow<ValueContextExt<'input>> for ValueTypeMemberReferenceContext<'input> {
+    fn borrow(&self) -> &ValueContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<ValueContextExt<'input>> for ValueTypeMemberReferenceContext<'input> {
+    fn borrow_mut(&mut self) -> &mut ValueContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> ValueContextAttrs<'input> for ValueTypeMemberReferenceContext<'input> {}
+
+impl<'input> ValueTypeMemberReferenceContextExt<'input> {
+    fn new(ctx: &dyn ValueContextAttrs<'input>) -> Rc<ValueContextAll<'input>> {
+        Rc::new(ValueContextAll::ValueTypeMemberReferenceContext(BaseParserRuleContext::copy_from(
+            ctx,
+            ValueTypeMemberReferenceContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
+    }
+}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn value(&mut self) -> Result<Rc<ValueContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = ValueContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 22, RULE_value);
+        recog.base.enter_rule(_localctx.clone(), 28, RULE_value);
         let mut _localctx: Rc<ValueContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            recog.base.set_state(176);
+            recog.base.set_state(238);
             recog.err_handler.sync(&mut recog.base)?;
-            match recog.base.input.la(1) {
-                NUMBER => {
+            match recog.interpreter.adaptive_predict(20, &mut recog.base)? {
+                1 => {
                     let tmp = ValueNumberContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 1);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 1)?;
                     _localctx = tmp;
                     {
-                        recog.base.set_state(169);
-                        recog.base.match_token(NUMBER, &mut recog.err_handler)?;
+                        recog.base.set_state(231);
+                        recog.base.match_token(YarnSpinnerParser_NUMBER, &mut recog.err_handler)?;
                     }
                 }
-
-                KEYWORD_TRUE => {
+                2 => {
                     let tmp = ValueTrueContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 2);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 2)?;
                     _localctx = tmp;
                     {
-                        recog.base.set_state(170);
-                        recog
-                            .base
-                            .match_token(KEYWORD_TRUE, &mut recog.err_handler)?;
+                        recog.base.set_state(232);
+                        recog.base.match_token(YarnSpinnerParser_KEYWORD_TRUE, &mut recog.err_handler)?;
                     }
                 }
-
-                KEYWORD_FALSE => {
+                3 => {
                     let tmp = ValueFalseContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 3);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 3)?;
                     _localctx = tmp;
                     {
-                        recog.base.set_state(171);
-                        recog
-                            .base
-                            .match_token(KEYWORD_FALSE, &mut recog.err_handler)?;
+                        recog.base.set_state(233);
+                        recog.base.match_token(YarnSpinnerParser_KEYWORD_FALSE, &mut recog.err_handler)?;
                     }
                 }
-
-                VAR_ID => {
+                4 => {
                     let tmp = ValueVarContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 4);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 4)?;
                     _localctx = tmp;
                     {
                         /*InvokeRule variable*/
-                        recog.base.set_state(172);
+                        recog.base.set_state(234);
                         recog.variable()?;
                     }
                 }
-
-                STRING => {
+                5 => {
                     let tmp = ValueStringContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 5);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 5)?;
                     _localctx = tmp;
                     {
-                        recog.base.set_state(173);
-                        recog.base.match_token(STRING, &mut recog.err_handler)?;
+                        recog.base.set_state(235);
+                        recog.base.match_token(YarnSpinnerParser_STRING, &mut recog.err_handler)?;
                     }
                 }
-
-                KEYWORD_NULL => {
-                    let tmp = ValueNullContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 6);
-                    _localctx = tmp;
-                    {
-                        recog.base.set_state(174);
-                        recog
-                            .base
-                            .match_token(KEYWORD_NULL, &mut recog.err_handler)?;
-                    }
-                }
-
-                FUNC_ID => {
+                6 => {
                     let tmp = ValueFuncContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 7);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 6)?;
                     _localctx = tmp;
                     {
                         /*InvokeRule function_call*/
-                        recog.base.set_state(175);
+                        recog.base.set_state(236);
                         recog.function_call()?;
                     }
                 }
+                7 => {
+                    let tmp = ValueTypeMemberReferenceContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 7)?;
+                    _localctx = tmp;
+                    {
+                        /*InvokeRule typeMemberReference*/
+                        recog.base.set_state(237);
+                        recog.typeMemberReference()?;
+                    }
+                }
 
-                _ => Err(ANTLRError::NoAltError(NoViableAltError::new(
-                    &mut recog.base,
-                )))?,
+                _ => {}
             }
             Ok(())
         })();
@@ -4474,7 +5007,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -4491,16 +5024,16 @@ pub struct VariableContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for VariableContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for VariableContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for VariableContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_variable(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_variable(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -4518,13 +5051,10 @@ impl<'input> CustomRuleContext<'input> for VariableContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_variable }
 }
-antlr_rust::tid! {VariableContextExt<'a>}
+antlr4rust::tid! {VariableContextExt<'a>}
 
 impl<'input> VariableContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<VariableContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<VariableContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -4533,38 +5063,35 @@ impl<'input> VariableContextExt<'input> {
     }
 }
 
-pub trait VariableContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<VariableContextExt<'input>>
-{
+pub trait VariableContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<VariableContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token VAR_ID
     /// Returns `None` if there is no child corresponding to token VAR_ID
     fn VAR_ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(VAR_ID, 0)
+        self.get_token(YarnSpinnerParser_VAR_ID, 0)
     }
 }
 
 impl<'input> VariableContextAttrs<'input> for VariableContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn variable(&mut self) -> Result<Rc<VariableContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = VariableContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 24, RULE_variable);
+        recog.base.enter_rule(_localctx.clone(), 30, RULE_variable);
         let mut _localctx: Rc<VariableContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(178);
-                recog.base.match_token(VAR_ID, &mut recog.err_handler)?;
+                recog.base.set_state(240);
+                recog.base.match_token(YarnSpinnerParser_VAR_ID, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -4577,7 +5104,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -4585,8 +5112,7 @@ where
 //------------------- function_call ----------------
 pub type Function_callContextAll<'input> = Function_callContext<'input>;
 
-pub type Function_callContext<'input> =
-    BaseParserRuleContext<'input, Function_callContextExt<'input>>;
+pub type Function_callContext<'input> = BaseParserRuleContext<'input, Function_callContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Function_callContextExt<'input> {
@@ -4595,22 +5121,20 @@ pub struct Function_callContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Function_callContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Function_callContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Function_callContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_function_call(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_function_call(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Function_callContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Function_callContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_function_call(self);
     }
@@ -4624,13 +5148,10 @@ impl<'input> CustomRuleContext<'input> for Function_callContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_function_call }
 }
-antlr_rust::tid! {Function_callContextExt<'a>}
+antlr4rust::tid! {Function_callContextExt<'a>}
 
 impl<'input> Function_callContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Function_callContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Function_callContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -4639,16 +5160,14 @@ impl<'input> Function_callContextExt<'input> {
     }
 }
 
-pub trait Function_callContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Function_callContextExt<'input>>
-{
+pub trait Function_callContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Function_callContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token FUNC_ID
     /// Returns `None` if there is no child corresponding to token FUNC_ID
     fn FUNC_ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(FUNC_ID, 0)
+        self.get_token(YarnSpinnerParser_FUNC_ID, 0)
     }
     /// Retrieves first TerminalNode corresponding to token LPAREN
     /// Returns `None` if there is no child corresponding to token LPAREN
@@ -4656,7 +5175,7 @@ pub trait Function_callContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(LPAREN, 0)
+        self.get_token(YarnSpinnerParser_LPAREN, 0)
     }
     /// Retrieves first TerminalNode corresponding to token RPAREN
     /// Returns `None` if there is no child corresponding to token RPAREN
@@ -4664,7 +5183,7 @@ pub trait Function_callContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(RPAREN, 0)
+        self.get_token(YarnSpinnerParser_RPAREN, 0)
     }
     fn expression_all(&self) -> Vec<Rc<ExpressionContextAll<'input>>>
     where
@@ -4691,84 +5210,67 @@ pub trait Function_callContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMA, i)
+        self.get_token(YarnSpinnerParser_COMMA, i)
     }
 }
 
 impl<'input> Function_callContextAttrs<'input> for Function_callContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn function_call(&mut self) -> Result<Rc<Function_callContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Function_callContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 26, RULE_function_call);
+        let mut _localctx = Function_callContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 32, RULE_function_call);
         let mut _localctx: Rc<Function_callContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(180);
-                recog.base.match_token(FUNC_ID, &mut recog.err_handler)?;
+                recog.base.set_state(242);
+                recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
 
-                recog.base.set_state(181);
-                recog.base.match_token(LPAREN, &mut recog.err_handler)?;
+                recog.base.set_state(243);
+                recog.base.match_token(YarnSpinnerParser_LPAREN, &mut recog.err_handler)?;
 
-                recog.base.set_state(183);
+                recog.base.set_state(245);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                if (((_la) & !0x3f) == 0
-                    && ((1usize << _la)
-                        & ((1usize << KEYWORD_TRUE)
-                            | (1usize << KEYWORD_FALSE)
-                            | (1usize << KEYWORD_NULL)))
-                        != 0)
-                    || (((_la - 41) & !0x3f) == 0
-                        && ((1usize << (_la - 41))
-                            & ((1usize << (OPERATOR_LOGICAL_NOT - 41))
-                                | (1usize << (OPERATOR_MATHS_SUBTRACTION - 41))
-                                | (1usize << (LPAREN - 41))
-                                | (1usize << (STRING - 41))
-                                | (1usize << (FUNC_ID - 41))
-                                | (1usize << (VAR_ID - 41))
-                                | (1usize << (NUMBER - 41))))
-                            != 0)
+                if (((_la - 33) & !0x3f) == 0 && ((1usize << (_la - 33)) & 1646280715) != 0)
+                    || _la == YarnSpinnerParser_VAR_ID
+                    || _la == YarnSpinnerParser_DOT
                 {
                     {
                         /*InvokeRule expression*/
-                        recog.base.set_state(182);
+                        recog.base.set_state(244);
                         recog.expression_rec(0)?;
                     }
                 }
 
-                recog.base.set_state(189);
+                recog.base.set_state(251);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                while _la == COMMA {
+                while _la == YarnSpinnerParser_COMMA {
                     {
                         {
-                            recog.base.set_state(185);
-                            recog.base.match_token(COMMA, &mut recog.err_handler)?;
+                            recog.base.set_state(247);
+                            recog.base.match_token(YarnSpinnerParser_COMMA, &mut recog.err_handler)?;
 
                             /*InvokeRule expression*/
-                            recog.base.set_state(186);
+                            recog.base.set_state(248);
                             recog.expression_rec(0)?;
                         }
                     }
-                    recog.base.set_state(191);
+                    recog.base.set_state(253);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
                 }
-                recog.base.set_state(192);
-                recog.base.match_token(RPAREN, &mut recog.err_handler)?;
+                recog.base.set_state(254);
+                recog.base.match_token(YarnSpinnerParser_RPAREN, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -4781,7 +5283,142 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- typeMemberReference ----------------
+pub type TypeMemberReferenceContextAll<'input> = TypeMemberReferenceContext<'input>;
+
+pub type TypeMemberReferenceContext<'input> = BaseParserRuleContext<'input, TypeMemberReferenceContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct TypeMemberReferenceContextExt<'input> {
+    pub typeName: Option<TokenType<'input>>,
+    pub memberName: Option<TokenType<'input>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for TypeMemberReferenceContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for TypeMemberReferenceContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_typeMemberReference(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_typeMemberReference(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for TypeMemberReferenceContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_typeMemberReference(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for TypeMemberReferenceContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_typeMemberReference
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_typeMemberReference }
+}
+antlr4rust::tid! {TypeMemberReferenceContextExt<'a>}
+
+impl<'input> TypeMemberReferenceContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<TypeMemberReferenceContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            TypeMemberReferenceContextExt {
+                typeName: None,
+                memberName: None,
+
+                ph: PhantomData,
+            },
+        ))
+    }
+}
+
+pub trait TypeMemberReferenceContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<TypeMemberReferenceContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token DOT
+    /// Returns `None` if there is no child corresponding to token DOT
+    fn DOT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_DOT, 0)
+    }
+    /// Retrieves all `TerminalNode`s corresponding to token FUNC_ID in current rule
+    fn FUNC_ID_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    /// Retrieves 'i's TerminalNode corresponding to token FUNC_ID, starting from 0.
+    /// Returns `None` if number of children corresponding to token FUNC_ID is less or equal than `i`.
+    fn FUNC_ID(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_FUNC_ID, i)
+    }
+}
+
+impl<'input> TypeMemberReferenceContextAttrs<'input> for TypeMemberReferenceContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn typeMemberReference(&mut self) -> Result<Rc<TypeMemberReferenceContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = TypeMemberReferenceContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 34, RULE_typeMemberReference);
+        let mut _localctx: Rc<TypeMemberReferenceContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(257);
+                recog.err_handler.sync(&mut recog.base)?;
+                _la = recog.base.input.la(1);
+                if _la == YarnSpinnerParser_FUNC_ID {
+                    {
+                        recog.base.set_state(256);
+                        let tmp = recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
+                        cast_mut::<_, TypeMemberReferenceContext>(&mut _localctx).typeName = Some(tmp.clone());
+                    }
+                }
+
+                recog.base.set_state(259);
+                recog.base.match_token(YarnSpinnerParser_DOT, &mut recog.err_handler)?;
+
+                recog.base.set_state(260);
+                let tmp = recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
+                cast_mut::<_, TypeMemberReferenceContext>(&mut _localctx).memberName = Some(tmp.clone());
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -4789,8 +5426,7 @@ where
 //------------------- if_statement ----------------
 pub type If_statementContextAll<'input> = If_statementContext<'input>;
 
-pub type If_statementContext<'input> =
-    BaseParserRuleContext<'input, If_statementContextExt<'input>>;
+pub type If_statementContext<'input> = BaseParserRuleContext<'input, If_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct If_statementContextExt<'input> {
@@ -4799,22 +5435,20 @@ pub struct If_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for If_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for If_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for If_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_if_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_if_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for If_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for If_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_if_statement(self);
     }
@@ -4828,13 +5462,10 @@ impl<'input> CustomRuleContext<'input> for If_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_if_statement }
 }
-antlr_rust::tid! {If_statementContextExt<'a>}
+antlr4rust::tid! {If_statementContextExt<'a>}
 
 impl<'input> If_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<If_statementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<If_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -4843,9 +5474,7 @@ impl<'input> If_statementContextExt<'input> {
     }
 }
 
-pub trait If_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<If_statementContextExt<'input>>
-{
+pub trait If_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<If_statementContextExt<'input>> {
     fn if_clause(&self) -> Option<Rc<If_clauseContextAll<'input>>>
     where
         Self: Sized,
@@ -4858,7 +5487,7 @@ pub trait If_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_ENDIF
     /// Returns `None` if there is no child corresponding to token COMMAND_ENDIF
@@ -4866,7 +5495,7 @@ pub trait If_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_ENDIF, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_ENDIF, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_END
     /// Returns `None` if there is no child corresponding to token COMMAND_END
@@ -4874,7 +5503,7 @@ pub trait If_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     fn else_if_clause_all(&self) -> Vec<Rc<Else_if_clauseContextAll<'input>>>
     where
@@ -4898,72 +5527,63 @@ pub trait If_statementContextAttrs<'input>:
 
 impl<'input> If_statementContextAttrs<'input> for If_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn if_statement(&mut self) -> Result<Rc<If_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = If_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 28, RULE_if_statement);
+        recog.base.enter_rule(_localctx.clone(), 36, RULE_if_statement);
         let mut _localctx: Rc<If_statementContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
                 /*InvokeRule if_clause*/
-                recog.base.set_state(194);
+                recog.base.set_state(262);
                 recog.if_clause()?;
 
-                recog.base.set_state(198);
+                recog.base.set_state(266);
                 recog.err_handler.sync(&mut recog.base)?;
-                _alt = recog.interpreter.adaptive_predict(18, &mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(24, &mut recog.base)?;
                 while { _alt != 2 && _alt != INVALID_ALT } {
                     if _alt == 1 {
                         {
                             {
                                 /*InvokeRule else_if_clause*/
-                                recog.base.set_state(195);
+                                recog.base.set_state(263);
                                 recog.else_if_clause()?;
                             }
                         }
                     }
-                    recog.base.set_state(200);
+                    recog.base.set_state(268);
                     recog.err_handler.sync(&mut recog.base)?;
-                    _alt = recog.interpreter.adaptive_predict(18, &mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(24, &mut recog.base)?;
                 }
-                recog.base.set_state(202);
+                recog.base.set_state(270);
                 recog.err_handler.sync(&mut recog.base)?;
-                match recog.interpreter.adaptive_predict(19, &mut recog.base)? {
+                match recog.interpreter.adaptive_predict(25, &mut recog.base)? {
                     x if x == 1 => {
                         {
                             /*InvokeRule else_clause*/
-                            recog.base.set_state(201);
+                            recog.base.set_state(269);
                             recog.else_clause()?;
                         }
                     }
 
                     _ => {}
                 }
-                recog.base.set_state(204);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(272);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(205);
-                recog
-                    .base
-                    .match_token(COMMAND_ENDIF, &mut recog.err_handler)?;
+                recog.base.set_state(273);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ENDIF, &mut recog.err_handler)?;
 
-                recog.base.set_state(206);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(274);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -4976,7 +5596,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -4993,16 +5613,16 @@ pub struct If_clauseContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for If_clauseContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for If_clauseContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for If_clauseContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_if_clause(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_if_clause(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
@@ -5020,13 +5640,10 @@ impl<'input> CustomRuleContext<'input> for If_clauseContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_if_clause }
 }
-antlr_rust::tid! {If_clauseContextExt<'a>}
+antlr4rust::tid! {If_clauseContextExt<'a>}
 
 impl<'input> If_clauseContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<If_clauseContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<If_clauseContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -5035,16 +5652,14 @@ impl<'input> If_clauseContextExt<'input> {
     }
 }
 
-pub trait If_clauseContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<If_clauseContextExt<'input>>
-{
+pub trait If_clauseContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<If_clauseContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_IF
     /// Returns `None` if there is no child corresponding to token COMMAND_IF
@@ -5052,7 +5667,7 @@ pub trait If_clauseContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_IF, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_IF, 0)
     }
     fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
     where
@@ -5066,7 +5681,7 @@ pub trait If_clauseContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
     where
@@ -5084,55 +5699,50 @@ pub trait If_clauseContextAttrs<'input>:
 
 impl<'input> If_clauseContextAttrs<'input> for If_clauseContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn if_clause(&mut self) -> Result<Rc<If_clauseContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = If_clauseContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog.base.enter_rule(_localctx.clone(), 30, RULE_if_clause);
+        recog.base.enter_rule(_localctx.clone(), 38, RULE_if_clause);
         let mut _localctx: Rc<If_clauseContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(208);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(276);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(209);
-                recog.base.match_token(COMMAND_IF, &mut recog.err_handler)?;
+                recog.base.set_state(277);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_IF, &mut recog.err_handler)?;
 
                 /*InvokeRule expression*/
-                recog.base.set_state(210);
+                recog.base.set_state(278);
                 recog.expression_rec(0)?;
 
-                recog.base.set_state(211);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(279);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
 
-                recog.base.set_state(215);
+                recog.base.set_state(283);
                 recog.err_handler.sync(&mut recog.base)?;
-                _alt = recog.interpreter.adaptive_predict(20, &mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(26, &mut recog.base)?;
                 while { _alt != 2 && _alt != INVALID_ALT } {
                     if _alt == 1 {
                         {
                             {
                                 /*InvokeRule statement*/
-                                recog.base.set_state(212);
+                                recog.base.set_state(280);
                                 recog.statement()?;
                             }
                         }
                     }
-                    recog.base.set_state(217);
+                    recog.base.set_state(285);
                     recog.err_handler.sync(&mut recog.base)?;
-                    _alt = recog.interpreter.adaptive_predict(20, &mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(26, &mut recog.base)?;
                 }
             }
             Ok(())
@@ -5146,7 +5756,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -5154,8 +5764,7 @@ where
 //------------------- else_if_clause ----------------
 pub type Else_if_clauseContextAll<'input> = Else_if_clauseContext<'input>;
 
-pub type Else_if_clauseContext<'input> =
-    BaseParserRuleContext<'input, Else_if_clauseContextExt<'input>>;
+pub type Else_if_clauseContext<'input> = BaseParserRuleContext<'input, Else_if_clauseContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Else_if_clauseContextExt<'input> {
@@ -5164,22 +5773,20 @@ pub struct Else_if_clauseContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Else_if_clauseContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Else_if_clauseContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Else_if_clauseContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_else_if_clause(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_else_if_clause(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Else_if_clauseContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Else_if_clauseContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_else_if_clause(self);
     }
@@ -5193,13 +5800,10 @@ impl<'input> CustomRuleContext<'input> for Else_if_clauseContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_else_if_clause }
 }
-antlr_rust::tid! {Else_if_clauseContextExt<'a>}
+antlr4rust::tid! {Else_if_clauseContextExt<'a>}
 
 impl<'input> Else_if_clauseContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Else_if_clauseContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Else_if_clauseContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -5208,16 +5812,14 @@ impl<'input> Else_if_clauseContextExt<'input> {
     }
 }
 
-pub trait Else_if_clauseContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Else_if_clauseContextExt<'input>>
-{
+pub trait Else_if_clauseContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Else_if_clauseContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_ELSEIF
     /// Returns `None` if there is no child corresponding to token COMMAND_ELSEIF
@@ -5225,7 +5827,7 @@ pub trait Else_if_clauseContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_ELSEIF, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_ELSEIF, 0)
     }
     fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
     where
@@ -5239,7 +5841,7 @@ pub trait Else_if_clauseContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
     where
@@ -5257,60 +5859,50 @@ pub trait Else_if_clauseContextAttrs<'input>:
 
 impl<'input> Else_if_clauseContextAttrs<'input> for Else_if_clauseContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn else_if_clause(&mut self) -> Result<Rc<Else_if_clauseContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Else_if_clauseContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 32, RULE_else_if_clause);
+        let mut _localctx = Else_if_clauseContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 40, RULE_else_if_clause);
         let mut _localctx: Rc<Else_if_clauseContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(218);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(286);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(219);
-                recog
-                    .base
-                    .match_token(COMMAND_ELSEIF, &mut recog.err_handler)?;
+                recog.base.set_state(287);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ELSEIF, &mut recog.err_handler)?;
 
                 /*InvokeRule expression*/
-                recog.base.set_state(220);
+                recog.base.set_state(288);
                 recog.expression_rec(0)?;
 
-                recog.base.set_state(221);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(289);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
 
-                recog.base.set_state(225);
+                recog.base.set_state(293);
                 recog.err_handler.sync(&mut recog.base)?;
-                _alt = recog.interpreter.adaptive_predict(21, &mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(27, &mut recog.base)?;
                 while { _alt != 2 && _alt != INVALID_ALT } {
                     if _alt == 1 {
                         {
                             {
                                 /*InvokeRule statement*/
-                                recog.base.set_state(222);
+                                recog.base.set_state(290);
                                 recog.statement()?;
                             }
                         }
                     }
-                    recog.base.set_state(227);
+                    recog.base.set_state(295);
                     recog.err_handler.sync(&mut recog.base)?;
-                    _alt = recog.interpreter.adaptive_predict(21, &mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(27, &mut recog.base)?;
                 }
             }
             Ok(())
@@ -5324,7 +5916,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -5341,22 +5933,20 @@ pub struct Else_clauseContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Else_clauseContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Else_clauseContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Else_clauseContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_else_clause(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_else_clause(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Else_clauseContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Else_clauseContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_else_clause(self);
     }
@@ -5370,13 +5960,10 @@ impl<'input> CustomRuleContext<'input> for Else_clauseContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_else_clause }
 }
-antlr_rust::tid! {Else_clauseContextExt<'a>}
+antlr4rust::tid! {Else_clauseContextExt<'a>}
 
 impl<'input> Else_clauseContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Else_clauseContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Else_clauseContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -5385,16 +5972,14 @@ impl<'input> Else_clauseContextExt<'input> {
     }
 }
 
-pub trait Else_clauseContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Else_clauseContextExt<'input>>
-{
+pub trait Else_clauseContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Else_clauseContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_ELSE
     /// Returns `None` if there is no child corresponding to token COMMAND_ELSE
@@ -5402,7 +5987,7 @@ pub trait Else_clauseContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_ELSE, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_ELSE, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_END
     /// Returns `None` if there is no child corresponding to token COMMAND_END
@@ -5410,7 +5995,7 @@ pub trait Else_clauseContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
     where
@@ -5428,55 +6013,46 @@ pub trait Else_clauseContextAttrs<'input>:
 
 impl<'input> Else_clauseContextAttrs<'input> for Else_clauseContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn else_clause(&mut self) -> Result<Rc<Else_clauseContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
         let mut _localctx = Else_clauseContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 34, RULE_else_clause);
+        recog.base.enter_rule(_localctx.clone(), 42, RULE_else_clause);
         let mut _localctx: Rc<Else_clauseContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(228);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(296);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(229);
-                recog
-                    .base
-                    .match_token(COMMAND_ELSE, &mut recog.err_handler)?;
+                recog.base.set_state(297);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ELSE, &mut recog.err_handler)?;
 
-                recog.base.set_state(230);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(298);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
 
-                recog.base.set_state(234);
+                recog.base.set_state(302);
                 recog.err_handler.sync(&mut recog.base)?;
-                _alt = recog.interpreter.adaptive_predict(22, &mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(28, &mut recog.base)?;
                 while { _alt != 2 && _alt != INVALID_ALT } {
                     if _alt == 1 {
                         {
                             {
                                 /*InvokeRule statement*/
-                                recog.base.set_state(231);
+                                recog.base.set_state(299);
                                 recog.statement()?;
                             }
                         }
                     }
-                    recog.base.set_state(236);
+                    recog.base.set_state(304);
                     recog.err_handler.sync(&mut recog.base)?;
-                    _alt = recog.interpreter.adaptive_predict(22, &mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(28, &mut recog.base)?;
                 }
             }
             Ok(())
@@ -5490,7 +6066,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -5498,8 +6074,7 @@ where
 //------------------- set_statement ----------------
 pub type Set_statementContextAll<'input> = Set_statementContext<'input>;
 
-pub type Set_statementContext<'input> =
-    BaseParserRuleContext<'input, Set_statementContextExt<'input>>;
+pub type Set_statementContext<'input> = BaseParserRuleContext<'input, Set_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Set_statementContextExt<'input> {
@@ -5509,22 +6084,20 @@ pub struct Set_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Set_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Set_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Set_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_set_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_set_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Set_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Set_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_set_statement(self);
     }
@@ -5538,34 +6111,26 @@ impl<'input> CustomRuleContext<'input> for Set_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_set_statement }
 }
-antlr_rust::tid! {Set_statementContextExt<'a>}
+antlr4rust::tid! {Set_statementContextExt<'a>}
 
 impl<'input> Set_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Set_statementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Set_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
-            Set_statementContextExt {
-                op: None,
-                ph: PhantomData,
-            },
+            Set_statementContextExt { op: None, ph: PhantomData },
         ))
     }
 }
 
-pub trait Set_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Set_statementContextExt<'input>>
-{
+pub trait Set_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Set_statementContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_SET
     /// Returns `None` if there is no child corresponding to token COMMAND_SET
@@ -5573,7 +6138,7 @@ pub trait Set_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_SET, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_SET, 0)
     }
     fn variable(&self) -> Option<Rc<VariableContextAll<'input>>>
     where
@@ -5593,7 +6158,7 @@ pub trait Set_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_ASSIGNMENT
     /// Returns `None` if there is no child corresponding to token OPERATOR_ASSIGNMENT
@@ -5601,111 +6166,82 @@ pub trait Set_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_ASSIGNMENT, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_ASSIGNMENT, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_MULTIPLICATION_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_MULTIPLICATION_EQUALS
-    fn OPERATOR_MATHS_MULTIPLICATION_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_MULTIPLICATION_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_MULTIPLICATION_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_MULTIPLICATION_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_DIVISION_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_DIVISION_EQUALS
-    fn OPERATOR_MATHS_DIVISION_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_DIVISION_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_DIVISION_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_DIVISION_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_MODULUS_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_MODULUS_EQUALS
-    fn OPERATOR_MATHS_MODULUS_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_MODULUS_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_MODULUS_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_MODULUS_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_ADDITION_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_ADDITION_EQUALS
-    fn OPERATOR_MATHS_ADDITION_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_ADDITION_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_ADDITION_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_ADDITION_EQUALS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token OPERATOR_MATHS_SUBTRACTION_EQUALS
     /// Returns `None` if there is no child corresponding to token OPERATOR_MATHS_SUBTRACTION_EQUALS
-    fn OPERATOR_MATHS_SUBTRACTION_EQUALS(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn OPERATOR_MATHS_SUBTRACTION_EQUALS(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_MATHS_SUBTRACTION_EQUALS, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_MATHS_SUBTRACTION_EQUALS, 0)
     }
 }
 
 impl<'input> Set_statementContextAttrs<'input> for Set_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn set_statement(&mut self) -> Result<Rc<Set_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Set_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 36, RULE_set_statement);
+        let mut _localctx = Set_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 44, RULE_set_statement);
         let mut _localctx: Rc<Set_statementContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(237);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(305);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(238);
-                recog
-                    .base
-                    .match_token(COMMAND_SET, &mut recog.err_handler)?;
+                recog.base.set_state(306);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_SET, &mut recog.err_handler)?;
 
                 /*InvokeRule variable*/
-                recog.base.set_state(239);
+                recog.base.set_state(307);
                 recog.variable()?;
 
-                recog.base.set_state(240);
-                cast_mut::<_, Set_statementContext>(&mut _localctx).op =
-                    recog.base.input.lt(1).cloned();
+                recog.base.set_state(308);
+                cast_mut::<_, Set_statementContext>(&mut _localctx).op = recog.base.input.lt(1).cloned();
 
                 _la = recog.base.input.la(1);
-                if {
-                    !(((_la - 31) & !0x3f) == 0
-                        && ((1usize << (_la - 31))
-                            & ((1usize << (OPERATOR_ASSIGNMENT - 31))
-                                | (1usize << (OPERATOR_MATHS_ADDITION_EQUALS - 31))
-                                | (1usize << (OPERATOR_MATHS_SUBTRACTION_EQUALS - 31))
-                                | (1usize << (OPERATOR_MATHS_MULTIPLICATION_EQUALS - 31))
-                                | (1usize << (OPERATOR_MATHS_MODULUS_EQUALS - 31))
-                                | (1usize << (OPERATOR_MATHS_DIVISION_EQUALS - 31))))
-                            != 0)
-                } {
+                if { !(((_la - 37) & !0x3f) == 0 && ((1usize << (_la - 37)) & 63489) != 0) } {
                     let tmp = recog.err_handler.recover_inline(&mut recog.base)?;
                     cast_mut::<_, Set_statementContext>(&mut _localctx).op = Some(tmp.clone());
                 } else {
@@ -5716,13 +6252,11 @@ where
                     recog.base.consume(&mut recog.err_handler);
                 }
                 /*InvokeRule expression*/
-                recog.base.set_state(241);
+                recog.base.set_state(309);
                 recog.expression_rec(0)?;
 
-                recog.base.set_state(242);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(310);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -5735,7 +6269,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -5743,8 +6277,7 @@ where
 //------------------- call_statement ----------------
 pub type Call_statementContextAll<'input> = Call_statementContext<'input>;
 
-pub type Call_statementContext<'input> =
-    BaseParserRuleContext<'input, Call_statementContextExt<'input>>;
+pub type Call_statementContext<'input> = BaseParserRuleContext<'input, Call_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Call_statementContextExt<'input> {
@@ -5753,22 +6286,20 @@ pub struct Call_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Call_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Call_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Call_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_call_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_call_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Call_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Call_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_call_statement(self);
     }
@@ -5782,13 +6313,10 @@ impl<'input> CustomRuleContext<'input> for Call_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_call_statement }
 }
-antlr_rust::tid! {Call_statementContextExt<'a>}
+antlr4rust::tid! {Call_statementContextExt<'a>}
 
 impl<'input> Call_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Call_statementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Call_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -5797,16 +6325,14 @@ impl<'input> Call_statementContextExt<'input> {
     }
 }
 
-pub trait Call_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Call_statementContextExt<'input>>
-{
+pub trait Call_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Call_statementContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_CALL
     /// Returns `None` if there is no child corresponding to token COMMAND_CALL
@@ -5814,7 +6340,7 @@ pub trait Call_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_CALL, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_CALL, 0)
     }
     fn function_call(&self) -> Option<Rc<Function_callContextAll<'input>>>
     where
@@ -5828,48 +6354,38 @@ pub trait Call_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
 }
 
 impl<'input> Call_statementContextAttrs<'input> for Call_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn call_statement(&mut self) -> Result<Rc<Call_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Call_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 38, RULE_call_statement);
+        let mut _localctx = Call_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 46, RULE_call_statement);
         let mut _localctx: Rc<Call_statementContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(244);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(312);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(245);
-                recog
-                    .base
-                    .match_token(COMMAND_CALL, &mut recog.err_handler)?;
+                recog.base.set_state(313);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_CALL, &mut recog.err_handler)?;
 
                 /*InvokeRule function_call*/
-                recog.base.set_state(246);
+                recog.base.set_state(314);
                 recog.function_call()?;
 
-                recog.base.set_state(247);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(315);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -5882,7 +6398,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -5890,8 +6406,7 @@ where
 //------------------- command_statement ----------------
 pub type Command_statementContextAll<'input> = Command_statementContext<'input>;
 
-pub type Command_statementContext<'input> =
-    BaseParserRuleContext<'input, Command_statementContextExt<'input>>;
+pub type Command_statementContext<'input> = BaseParserRuleContext<'input, Command_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Command_statementContextExt<'input> {
@@ -5900,22 +6415,20 @@ pub struct Command_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Command_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Command_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Command_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_command_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_command_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Command_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Command_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_command_statement(self);
     }
@@ -5929,13 +6442,10 @@ impl<'input> CustomRuleContext<'input> for Command_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_command_statement }
 }
-antlr_rust::tid! {Command_statementContextExt<'a>}
+antlr4rust::tid! {Command_statementContextExt<'a>}
 
 impl<'input> Command_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Command_statementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Command_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -5944,16 +6454,14 @@ impl<'input> Command_statementContextExt<'input> {
     }
 }
 
-pub trait Command_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Command_statementContextExt<'input>>
-{
+pub trait Command_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Command_statementContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     fn command_formatted_text(&self) -> Option<Rc<Command_formatted_textContextAll<'input>>>
     where
@@ -5961,13 +6469,13 @@ pub trait Command_statementContextAttrs<'input>:
     {
         self.child_of_type(0)
     }
-    /// Retrieves first TerminalNode corresponding to token COMMAND_TEXT_END
-    /// Returns `None` if there is no child corresponding to token COMMAND_TEXT_END
-    fn COMMAND_TEXT_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_TEXT_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     fn hashtag_all(&self) -> Vec<Rc<HashtagContextAll<'input>>>
     where
@@ -5985,54 +6493,44 @@ pub trait Command_statementContextAttrs<'input>:
 
 impl<'input> Command_statementContextAttrs<'input> for Command_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
-    pub fn command_statement(
-        &mut self,
-    ) -> Result<Rc<Command_statementContextAll<'input>>, ANTLRError> {
+    pub fn command_statement(&mut self) -> Result<Rc<Command_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Command_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 40, RULE_command_statement);
+        let mut _localctx = Command_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 48, RULE_command_statement);
         let mut _localctx: Rc<Command_statementContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(249);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(317);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
                 /*InvokeRule command_formatted_text*/
-                recog.base.set_state(250);
+                recog.base.set_state(318);
                 recog.command_formatted_text()?;
 
-                recog.base.set_state(251);
-                recog
-                    .base
-                    .match_token(COMMAND_TEXT_END, &mut recog.err_handler)?;
+                recog.base.set_state(319);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
 
                 {
-                    recog.base.set_state(255);
+                    recog.base.set_state(323);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
-                    while _la == HASHTAG {
+                    while _la == YarnSpinnerParser_HASHTAG {
                         {
                             {
                                 /*InvokeRule hashtag*/
-                                recog.base.set_state(252);
+                                recog.base.set_state(320);
                                 recog.hashtag()?;
                             }
                         }
-                        recog.base.set_state(257);
+                        recog.base.set_state(325);
                         recog.err_handler.sync(&mut recog.base)?;
                         _la = recog.base.input.la(1);
                     }
@@ -6049,7 +6547,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -6057,8 +6555,7 @@ where
 //------------------- command_formatted_text ----------------
 pub type Command_formatted_textContextAll<'input> = Command_formatted_textContext<'input>;
 
-pub type Command_formatted_textContext<'input> =
-    BaseParserRuleContext<'input, Command_formatted_textContextExt<'input>>;
+pub type Command_formatted_textContext<'input> = BaseParserRuleContext<'input, Command_formatted_textContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Command_formatted_textContextExt<'input> {
@@ -6067,22 +6564,20 @@ pub struct Command_formatted_textContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Command_formatted_textContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Command_formatted_textContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Command_formatted_textContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_command_formatted_text(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_command_formatted_text(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Command_formatted_textContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Command_formatted_textContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_command_formatted_text(self);
     }
@@ -6096,13 +6591,10 @@ impl<'input> CustomRuleContext<'input> for Command_formatted_textContextExt<'inp
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_command_formatted_text }
 }
-antlr_rust::tid! {Command_formatted_textContextExt<'a>}
+antlr4rust::tid! {Command_formatted_textContextExt<'a>}
 
 impl<'input> Command_formatted_textContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Command_formatted_textContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Command_formatted_textContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -6111,9 +6603,7 @@ impl<'input> Command_formatted_textContextExt<'input> {
     }
 }
 
-pub trait Command_formatted_textContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Command_formatted_textContextExt<'input>>
-{
+pub trait Command_formatted_textContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Command_formatted_textContextExt<'input>> {
     /// Retrieves all `TerminalNode`s corresponding to token COMMAND_TEXT in current rule
     fn COMMAND_TEXT_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
@@ -6123,34 +6613,26 @@ pub trait Command_formatted_textContextAttrs<'input>:
     }
     /// Retrieves 'i's TerminalNode corresponding to token COMMAND_TEXT, starting from 0.
     /// Returns `None` if number of children corresponding to token COMMAND_TEXT is less or equal than `i`.
-    fn COMMAND_TEXT(
-        &self,
-        i: usize,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn COMMAND_TEXT(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_TEXT, i)
+        self.get_token(YarnSpinnerParser_COMMAND_TEXT, i)
     }
-    /// Retrieves all `TerminalNode`s corresponding to token COMMAND_EXPRESSION_START in current rule
-    fn COMMAND_EXPRESSION_START_all(
-        &self,
-    ) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    /// Retrieves all `TerminalNode`s corresponding to token EXPRESSION_START in current rule
+    fn EXPRESSION_START_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
         self.children_of_type()
     }
-    /// Retrieves 'i's TerminalNode corresponding to token COMMAND_EXPRESSION_START, starting from 0.
-    /// Returns `None` if number of children corresponding to token COMMAND_EXPRESSION_START is less or equal than `i`.
-    fn COMMAND_EXPRESSION_START(
-        &self,
-        i: usize,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    /// Retrieves 'i's TerminalNode corresponding to token EXPRESSION_START, starting from 0.
+    /// Returns `None` if number of children corresponding to token EXPRESSION_START is less or equal than `i`.
+    fn EXPRESSION_START(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_EXPRESSION_START, i)
+        self.get_token(YarnSpinnerParser_EXPRESSION_START, i)
     }
     fn expression_all(&self) -> Vec<Rc<ExpressionContextAll<'input>>>
     where
@@ -6173,82 +6655,67 @@ pub trait Command_formatted_textContextAttrs<'input>:
     }
     /// Retrieves 'i's TerminalNode corresponding to token EXPRESSION_END, starting from 0.
     /// Returns `None` if number of children corresponding to token EXPRESSION_END is less or equal than `i`.
-    fn EXPRESSION_END(
-        &self,
-        i: usize,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn EXPRESSION_END(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(EXPRESSION_END, i)
+        self.get_token(YarnSpinnerParser_EXPRESSION_END, i)
     }
 }
 
 impl<'input> Command_formatted_textContextAttrs<'input> for Command_formatted_textContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
-    pub fn command_formatted_text(
-        &mut self,
-    ) -> Result<Rc<Command_formatted_textContextAll<'input>>, ANTLRError> {
+    pub fn command_formatted_text(&mut self) -> Result<Rc<Command_formatted_textContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Command_formatted_textContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 42, RULE_command_formatted_text);
+        let mut _localctx = Command_formatted_textContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 50, RULE_command_formatted_text);
         let mut _localctx: Rc<Command_formatted_textContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(265);
+                recog.base.set_state(331);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                while _la == COMMAND_EXPRESSION_START || _la == COMMAND_TEXT {
+                loop {
                     {
-                        recog.base.set_state(263);
+                        recog.base.set_state(331);
                         recog.err_handler.sync(&mut recog.base)?;
                         match recog.base.input.la(1) {
-                            COMMAND_TEXT => {
-                                recog.base.set_state(258);
-                                recog
-                                    .base
-                                    .match_token(COMMAND_TEXT, &mut recog.err_handler)?;
+                            YarnSpinnerParser_COMMAND_TEXT => {
+                                recog.base.set_state(326);
+                                recog.base.match_token(YarnSpinnerParser_COMMAND_TEXT, &mut recog.err_handler)?;
                             }
 
-                            COMMAND_EXPRESSION_START => {
+                            YarnSpinnerParser_EXPRESSION_START => {
                                 {
-                                    recog.base.set_state(259);
-                                    recog.base.match_token(
-                                        COMMAND_EXPRESSION_START,
-                                        &mut recog.err_handler,
-                                    )?;
+                                    recog.base.set_state(327);
+                                    recog.base.match_token(YarnSpinnerParser_EXPRESSION_START, &mut recog.err_handler)?;
 
                                     /*InvokeRule expression*/
-                                    recog.base.set_state(260);
+                                    recog.base.set_state(328);
                                     recog.expression_rec(0)?;
 
-                                    recog.base.set_state(261);
-                                    recog
-                                        .base
-                                        .match_token(EXPRESSION_END, &mut recog.err_handler)?;
+                                    recog.base.set_state(329);
+                                    recog.base.match_token(YarnSpinnerParser_EXPRESSION_END, &mut recog.err_handler)?;
                                 }
                             }
 
-                            _ => Err(ANTLRError::NoAltError(NoViableAltError::new(
-                                &mut recog.base,
-                            )))?,
+                            _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
                         }
                     }
-                    recog.base.set_state(267);
+                    recog.base.set_state(333);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
+                    if !(_la == YarnSpinnerParser_EXPRESSION_START || _la == YarnSpinnerParser_COMMAND_TEXT) {
+                        break;
+                    }
                 }
             }
             Ok(())
@@ -6262,7 +6729,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -6270,8 +6737,7 @@ where
 //------------------- shortcut_option_statement ----------------
 pub type Shortcut_option_statementContextAll<'input> = Shortcut_option_statementContext<'input>;
 
-pub type Shortcut_option_statementContext<'input> =
-    BaseParserRuleContext<'input, Shortcut_option_statementContextExt<'input>>;
+pub type Shortcut_option_statementContext<'input> = BaseParserRuleContext<'input, Shortcut_option_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Shortcut_option_statementContextExt<'input> {
@@ -6280,22 +6746,20 @@ pub struct Shortcut_option_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Shortcut_option_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Shortcut_option_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Shortcut_option_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_shortcut_option_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_shortcut_option_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Shortcut_option_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Shortcut_option_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_shortcut_option_statement(self);
     }
@@ -6309,12 +6773,12 @@ impl<'input> CustomRuleContext<'input> for Shortcut_option_statementContextExt<'
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_shortcut_option_statement }
 }
-antlr_rust::tid! {Shortcut_option_statementContextExt<'a>}
+antlr4rust::tid! {Shortcut_option_statementContextExt<'a>}
 
 impl<'input> Shortcut_option_statementContextExt<'input> {
     fn new(
         parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
+        invoking_state: i32,
     ) -> Rc<Shortcut_option_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
@@ -6341,74 +6805,63 @@ pub trait Shortcut_option_statementContextAttrs<'input>:
     }
     /// Retrieves first TerminalNode corresponding to token BLANK_LINE_FOLLOWING_OPTION
     /// Returns `None` if there is no child corresponding to token BLANK_LINE_FOLLOWING_OPTION
-    fn BLANK_LINE_FOLLOWING_OPTION(
-        &self,
-    ) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    fn BLANK_LINE_FOLLOWING_OPTION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(BLANK_LINE_FOLLOWING_OPTION, 0)
+        self.get_token(YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION, 0)
     }
 }
 
-impl<'input> Shortcut_option_statementContextAttrs<'input>
-    for Shortcut_option_statementContext<'input>
-{
-}
+impl<'input> Shortcut_option_statementContextAttrs<'input> for Shortcut_option_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
-    pub fn shortcut_option_statement(
-        &mut self,
-    ) -> Result<Rc<Shortcut_option_statementContextAll<'input>>, ANTLRError> {
+    pub fn shortcut_option_statement(&mut self) -> Result<Rc<Shortcut_option_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Shortcut_option_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 44, RULE_shortcut_option_statement);
+        let mut _localctx = Shortcut_option_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 52, RULE_shortcut_option_statement);
         let mut _localctx: Rc<Shortcut_option_statementContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            let mut _alt: isize;
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(271);
+                recog.base.set_state(338);
                 recog.err_handler.sync(&mut recog.base)?;
-                _alt = recog.interpreter.adaptive_predict(26, &mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(32, &mut recog.base)?;
                 while { _alt != 2 && _alt != INVALID_ALT } {
                     if _alt == 1 {
                         {
                             {
                                 /*InvokeRule shortcut_option*/
-                                recog.base.set_state(268);
+                                recog.base.set_state(335);
                                 recog.shortcut_option()?;
                             }
                         }
                     }
-                    recog.base.set_state(273);
+                    recog.base.set_state(340);
                     recog.err_handler.sync(&mut recog.base)?;
-                    _alt = recog.interpreter.adaptive_predict(26, &mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(32, &mut recog.base)?;
                 }
                 {
                     /*InvokeRule shortcut_option*/
-                    recog.base.set_state(274);
+                    recog.base.set_state(341);
                     recog.shortcut_option()?;
 
-                    recog.base.set_state(276);
+                    recog.base.set_state(343);
                     recog.err_handler.sync(&mut recog.base)?;
                     _la = recog.base.input.la(1);
-                    if _la == BLANK_LINE_FOLLOWING_OPTION {
+                    if _la == YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION {
                         {
-                            recog.base.set_state(275);
+                            recog.base.set_state(342);
                             recog
                                 .base
-                                .match_token(BLANK_LINE_FOLLOWING_OPTION, &mut recog.err_handler)?;
+                                .match_token(YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION, &mut recog.err_handler)?;
                         }
                     }
                 }
@@ -6424,7 +6877,7 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -6432,8 +6885,7 @@ where
 //------------------- shortcut_option ----------------
 pub type Shortcut_optionContextAll<'input> = Shortcut_optionContext<'input>;
 
-pub type Shortcut_optionContext<'input> =
-    BaseParserRuleContext<'input, Shortcut_optionContextExt<'input>>;
+pub type Shortcut_optionContext<'input> = BaseParserRuleContext<'input, Shortcut_optionContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Shortcut_optionContextExt<'input> {
@@ -6442,22 +6894,20 @@ pub struct Shortcut_optionContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Shortcut_optionContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Shortcut_optionContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Shortcut_optionContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_shortcut_option(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_shortcut_option(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Shortcut_optionContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Shortcut_optionContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_shortcut_option(self);
     }
@@ -6471,13 +6921,10 @@ impl<'input> CustomRuleContext<'input> for Shortcut_optionContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_shortcut_option }
 }
-antlr_rust::tid! {Shortcut_optionContextExt<'a>}
+antlr4rust::tid! {Shortcut_optionContextExt<'a>}
 
 impl<'input> Shortcut_optionContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Shortcut_optionContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Shortcut_optionContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
@@ -6486,16 +6933,14 @@ impl<'input> Shortcut_optionContextExt<'input> {
     }
 }
 
-pub trait Shortcut_optionContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Shortcut_optionContextExt<'input>>
-{
+pub trait Shortcut_optionContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Shortcut_optionContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token SHORTCUT_ARROW
     /// Returns `None` if there is no child corresponding to token SHORTCUT_ARROW
     fn SHORTCUT_ARROW(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(SHORTCUT_ARROW, 0)
+        self.get_token(YarnSpinnerParser_SHORTCUT_ARROW, 0)
     }
     fn line_statement(&self) -> Option<Rc<Line_statementContextAll<'input>>>
     where
@@ -6509,7 +6954,7 @@ pub trait Shortcut_optionContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(INDENT, 0)
+        self.get_token(YarnSpinnerParser_INDENT, 0)
     }
     /// Retrieves first TerminalNode corresponding to token DEDENT
     /// Returns `None` if there is no child corresponding to token DEDENT
@@ -6517,7 +6962,7 @@ pub trait Shortcut_optionContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(DEDENT, 0)
+        self.get_token(YarnSpinnerParser_DEDENT, 0)
     }
     fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
     where
@@ -6535,67 +6980,53 @@ pub trait Shortcut_optionContextAttrs<'input>:
 
 impl<'input> Shortcut_optionContextAttrs<'input> for Shortcut_optionContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn shortcut_option(&mut self) -> Result<Rc<Shortcut_optionContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Shortcut_optionContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 46, RULE_shortcut_option);
+        let mut _localctx = Shortcut_optionContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 54, RULE_shortcut_option);
         let mut _localctx: Rc<Shortcut_optionContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(278);
-                recog
-                    .base
-                    .match_token(SHORTCUT_ARROW, &mut recog.err_handler)?;
+                recog.base.set_state(345);
+                recog.base.match_token(YarnSpinnerParser_SHORTCUT_ARROW, &mut recog.err_handler)?;
 
                 /*InvokeRule line_statement*/
-                recog.base.set_state(279);
+                recog.base.set_state(346);
                 recog.line_statement()?;
 
-                recog.base.set_state(288);
+                recog.base.set_state(355);
                 recog.err_handler.sync(&mut recog.base)?;
-                match recog.interpreter.adaptive_predict(29, &mut recog.base)? {
+                match recog.interpreter.adaptive_predict(35, &mut recog.base)? {
                     x if x == 1 => {
                         {
-                            recog.base.set_state(280);
-                            recog.base.match_token(INDENT, &mut recog.err_handler)?;
+                            recog.base.set_state(347);
+                            recog.base.match_token(YarnSpinnerParser_INDENT, &mut recog.err_handler)?;
 
-                            recog.base.set_state(284);
+                            recog.base.set_state(351);
                             recog.err_handler.sync(&mut recog.base)?;
                             _la = recog.base.input.la(1);
-                            while (((_la) & !0x3f) == 0
-                                && ((1usize << _la)
-                                    & ((1usize << INDENT)
-                                        | (1usize << SHORTCUT_ARROW)
-                                        | (1usize << COMMAND_START)
-                                        | (1usize << EXPRESSION_START)
-                                        | (1usize << TEXT)))
-                                    != 0)
-                            {
+                            while (((_la) & !0x3f) == 0 && ((1usize << _la) & 18743298) != 0) {
                                 {
                                     {
                                         /*InvokeRule statement*/
-                                        recog.base.set_state(281);
+                                        recog.base.set_state(348);
                                         recog.statement()?;
                                     }
                                 }
-                                recog.base.set_state(286);
+                                recog.base.set_state(353);
                                 recog.err_handler.sync(&mut recog.base)?;
                                 _la = recog.base.input.la(1);
                             }
-                            recog.base.set_state(287);
-                            recog.base.match_token(DEDENT, &mut recog.err_handler)?;
+                            recog.base.set_state(354);
+                            recog.base.match_token(YarnSpinnerParser_DEDENT, &mut recog.err_handler)?;
                         }
                     }
 
@@ -6613,7 +7044,317 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- line_group_statement ----------------
+pub type Line_group_statementContextAll<'input> = Line_group_statementContext<'input>;
+
+pub type Line_group_statementContext<'input> = BaseParserRuleContext<'input, Line_group_statementContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Line_group_statementContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Line_group_statementContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Line_group_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_line_group_statement(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_line_group_statement(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Line_group_statementContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_line_group_statement(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Line_group_statementContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_line_group_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_line_group_statement }
+}
+antlr4rust::tid! {Line_group_statementContextExt<'a>}
+
+impl<'input> Line_group_statementContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Line_group_statementContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Line_group_statementContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Line_group_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Line_group_statementContextExt<'input>> {
+    fn line_group_item_all(&self) -> Vec<Rc<Line_group_itemContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn line_group_item(&self, i: usize) -> Option<Rc<Line_group_itemContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+    /// Retrieves first TerminalNode corresponding to token BLANK_LINE_FOLLOWING_OPTION
+    /// Returns `None` if there is no child corresponding to token BLANK_LINE_FOLLOWING_OPTION
+    fn BLANK_LINE_FOLLOWING_OPTION(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION, 0)
+    }
+}
+
+impl<'input> Line_group_statementContextAttrs<'input> for Line_group_statementContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn line_group_statement(&mut self) -> Result<Rc<Line_group_statementContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Line_group_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 56, RULE_line_group_statement);
+        let mut _localctx: Rc<Line_group_statementContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(360);
+                recog.err_handler.sync(&mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(36, &mut recog.base)?;
+                while { _alt != 2 && _alt != INVALID_ALT } {
+                    if _alt == 1 {
+                        {
+                            {
+                                /*InvokeRule line_group_item*/
+                                recog.base.set_state(357);
+                                recog.line_group_item()?;
+                            }
+                        }
+                    }
+                    recog.base.set_state(362);
+                    recog.err_handler.sync(&mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(36, &mut recog.base)?;
+                }
+                {
+                    /*InvokeRule line_group_item*/
+                    recog.base.set_state(363);
+                    recog.line_group_item()?;
+
+                    recog.base.set_state(365);
+                    recog.err_handler.sync(&mut recog.base)?;
+                    _la = recog.base.input.la(1);
+                    if _la == YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION {
+                        {
+                            recog.base.set_state(364);
+                            recog
+                                .base
+                                .match_token(YarnSpinnerParser_BLANK_LINE_FOLLOWING_OPTION, &mut recog.err_handler)?;
+                        }
+                    }
+                }
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- line_group_item ----------------
+pub type Line_group_itemContextAll<'input> = Line_group_itemContext<'input>;
+
+pub type Line_group_itemContext<'input> = BaseParserRuleContext<'input, Line_group_itemContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Line_group_itemContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Line_group_itemContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Line_group_itemContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_line_group_item(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_line_group_item(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Line_group_itemContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_line_group_item(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Line_group_itemContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_line_group_item
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_line_group_item }
+}
+antlr4rust::tid! {Line_group_itemContextExt<'a>}
+
+impl<'input> Line_group_itemContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Line_group_itemContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Line_group_itemContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Line_group_itemContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Line_group_itemContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token LINE_GROUP_ARROW
+    /// Returns `None` if there is no child corresponding to token LINE_GROUP_ARROW
+    fn LINE_GROUP_ARROW(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_LINE_GROUP_ARROW, 0)
+    }
+    fn line_statement(&self) -> Option<Rc<Line_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    /// Retrieves first TerminalNode corresponding to token INDENT
+    /// Returns `None` if there is no child corresponding to token INDENT
+    fn INDENT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_INDENT, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token DEDENT
+    /// Returns `None` if there is no child corresponding to token DEDENT
+    fn DEDENT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_DEDENT, 0)
+    }
+    fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn statement(&self, i: usize) -> Option<Rc<StatementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+}
+
+impl<'input> Line_group_itemContextAttrs<'input> for Line_group_itemContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn line_group_item(&mut self) -> Result<Rc<Line_group_itemContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Line_group_itemContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 58, RULE_line_group_item);
+        let mut _localctx: Rc<Line_group_itemContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(367);
+                recog.base.match_token(YarnSpinnerParser_LINE_GROUP_ARROW, &mut recog.err_handler)?;
+
+                /*InvokeRule line_statement*/
+                recog.base.set_state(368);
+                recog.line_statement()?;
+
+                recog.base.set_state(377);
+                recog.err_handler.sync(&mut recog.base)?;
+                match recog.interpreter.adaptive_predict(39, &mut recog.base)? {
+                    x if x == 1 => {
+                        {
+                            recog.base.set_state(369);
+                            recog.base.match_token(YarnSpinnerParser_INDENT, &mut recog.err_handler)?;
+
+                            recog.base.set_state(373);
+                            recog.err_handler.sync(&mut recog.base)?;
+                            _la = recog.base.input.la(1);
+                            while (((_la) & !0x3f) == 0 && ((1usize << _la) & 18743298) != 0) {
+                                {
+                                    {
+                                        /*InvokeRule statement*/
+                                        recog.base.set_state(370);
+                                        recog.statement()?;
+                                    }
+                                }
+                                recog.base.set_state(375);
+                                recog.err_handler.sync(&mut recog.base)?;
+                                _la = recog.base.input.la(1);
+                            }
+                            recog.base.set_state(376);
+                            recog.base.match_token(YarnSpinnerParser_DEDENT, &mut recog.err_handler)?;
+                        }
+                    }
+
+                    _ => {}
+                }
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -6621,33 +7362,30 @@ where
 //------------------- declare_statement ----------------
 pub type Declare_statementContextAll<'input> = Declare_statementContext<'input>;
 
-pub type Declare_statementContext<'input> =
-    BaseParserRuleContext<'input, Declare_statementContextExt<'input>>;
+pub type Declare_statementContext<'input> = BaseParserRuleContext<'input, Declare_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Declare_statementContextExt<'input> {
-    pub declaration_type: Option<TokenType<'input>>,
+    pub type_: Option<TokenType<'input>>,
     ph: PhantomData<&'input str>,
 }
 
 impl<'input> YarnSpinnerParserContext<'input> for Declare_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Declare_statementContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Declare_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_declare_statement(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_declare_statement(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Declare_statementContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Declare_statementContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_declare_statement(self);
     }
@@ -6661,34 +7399,30 @@ impl<'input> CustomRuleContext<'input> for Declare_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_declare_statement }
 }
-antlr_rust::tid! {Declare_statementContextExt<'a>}
+antlr4rust::tid! {Declare_statementContextExt<'a>}
 
 impl<'input> Declare_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Declare_statementContextAll<'input>> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Declare_statementContextAll<'input>> {
         Rc::new(BaseParserRuleContext::new_parser_ctx(
             parent,
             invoking_state,
             Declare_statementContextExt {
-                declaration_type: None,
+                type_: None,
+
                 ph: PhantomData,
             },
         ))
     }
 }
 
-pub trait Declare_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Declare_statementContextExt<'input>>
-{
+pub trait Declare_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Declare_statementContextExt<'input>> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
     /// Returns `None` if there is no child corresponding to token COMMAND_START
     fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_DECLARE
     /// Returns `None` if there is no child corresponding to token COMMAND_DECLARE
@@ -6696,7 +7430,7 @@ pub trait Declare_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_DECLARE, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_DECLARE, 0)
     }
     fn variable(&self) -> Option<Rc<VariableContextAll<'input>>>
     where
@@ -6710,9 +7444,9 @@ pub trait Declare_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(OPERATOR_ASSIGNMENT, 0)
+        self.get_token(YarnSpinnerParser_OPERATOR_ASSIGNMENT, 0)
     }
-    fn value(&self) -> Option<Rc<ValueContextAll<'input>>>
+    fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
     where
         Self: Sized,
     {
@@ -6724,7 +7458,7 @@ pub trait Declare_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     /// Retrieves first TerminalNode corresponding to token EXPRESSION_AS
     /// Returns `None` if there is no child corresponding to token EXPRESSION_AS
@@ -6732,7 +7466,7 @@ pub trait Declare_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(EXPRESSION_AS, 0)
+        self.get_token(YarnSpinnerParser_EXPRESSION_AS, 0)
     }
     /// Retrieves first TerminalNode corresponding to token FUNC_ID
     /// Returns `None` if there is no child corresponding to token FUNC_ID
@@ -6740,77 +7474,60 @@ pub trait Declare_statementContextAttrs<'input>:
     where
         Self: Sized,
     {
-        self.get_token(FUNC_ID, 0)
+        self.get_token(YarnSpinnerParser_FUNC_ID, 0)
     }
 }
 
 impl<'input> Declare_statementContextAttrs<'input> for Declare_statementContext<'input> {}
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
-    pub fn declare_statement(
-        &mut self,
-    ) -> Result<Rc<Declare_statementContextAll<'input>>, ANTLRError> {
+    pub fn declare_statement(&mut self) -> Result<Rc<Declare_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Declare_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 48, RULE_declare_statement);
+        let mut _localctx = Declare_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 60, RULE_declare_statement);
         let mut _localctx: Rc<Declare_statementContextAll> = _localctx;
-        let mut _la: isize = -1;
+        let mut _la: i32 = -1;
         let result: Result<(), ANTLRError> = (|| {
-            //recog.base.enter_outer_alt(_localctx.clone(), 1);
-            recog.base.enter_outer_alt(None, 1);
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
             {
-                recog.base.set_state(290);
-                recog
-                    .base
-                    .match_token(COMMAND_START, &mut recog.err_handler)?;
+                recog.base.set_state(379);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                recog.base.set_state(291);
-                recog
-                    .base
-                    .match_token(COMMAND_DECLARE, &mut recog.err_handler)?;
+                recog.base.set_state(380);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_DECLARE, &mut recog.err_handler)?;
 
                 /*InvokeRule variable*/
-                recog.base.set_state(292);
+                recog.base.set_state(381);
                 recog.variable()?;
 
-                recog.base.set_state(293);
-                recog
-                    .base
-                    .match_token(OPERATOR_ASSIGNMENT, &mut recog.err_handler)?;
+                recog.base.set_state(382);
+                recog.base.match_token(YarnSpinnerParser_OPERATOR_ASSIGNMENT, &mut recog.err_handler)?;
 
-                /*InvokeRule value*/
-                recog.base.set_state(294);
-                recog.value()?;
+                /*InvokeRule expression*/
+                recog.base.set_state(383);
+                recog.expression_rec(0)?;
 
-                recog.base.set_state(297);
+                recog.base.set_state(386);
                 recog.err_handler.sync(&mut recog.base)?;
                 _la = recog.base.input.la(1);
-                if _la == EXPRESSION_AS {
+                if _la == YarnSpinnerParser_EXPRESSION_AS {
                     {
-                        recog.base.set_state(295);
-                        recog
-                            .base
-                            .match_token(EXPRESSION_AS, &mut recog.err_handler)?;
+                        recog.base.set_state(384);
+                        recog.base.match_token(YarnSpinnerParser_EXPRESSION_AS, &mut recog.err_handler)?;
 
-                        recog.base.set_state(296);
-                        let tmp = recog.base.match_token(FUNC_ID, &mut recog.err_handler)?;
-                        cast_mut::<_, Declare_statementContext>(&mut _localctx).declaration_type =
-                            Some(tmp.clone());
+                        recog.base.set_state(385);
+                        let tmp = recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
+                        cast_mut::<_, Declare_statementContext>(&mut _localctx).type_ = Some(tmp.clone());
                     }
                 }
 
-                recog.base.set_state(299);
-                recog
-                    .base
-                    .match_token(COMMAND_END, &mut recog.err_handler)?;
+                recog.base.set_state(388);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
             }
             Ok(())
         })();
@@ -6823,7 +7540,409 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- enum_statement ----------------
+pub type Enum_statementContextAll<'input> = Enum_statementContext<'input>;
+
+pub type Enum_statementContext<'input> = BaseParserRuleContext<'input, Enum_statementContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Enum_statementContextExt<'input> {
+    pub name: Option<TokenType<'input>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Enum_statementContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Enum_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_enum_statement(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_enum_statement(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Enum_statementContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_enum_statement(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Enum_statementContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_enum_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_enum_statement }
+}
+antlr4rust::tid! {Enum_statementContextExt<'a>}
+
+impl<'input> Enum_statementContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Enum_statementContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Enum_statementContextExt { name: None, ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Enum_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Enum_statementContextExt<'input>> {
+    /// Retrieves all `TerminalNode`s corresponding to token COMMAND_START in current rule
+    fn COMMAND_START_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    /// Retrieves 'i's TerminalNode corresponding to token COMMAND_START, starting from 0.
+    /// Returns `None` if number of children corresponding to token COMMAND_START is less or equal than `i`.
+    fn COMMAND_START(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, i)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ENUM
+    /// Returns `None` if there is no child corresponding to token COMMAND_ENUM
+    fn COMMAND_ENUM(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ENUM, 0)
+    }
+    /// Retrieves all `TerminalNode`s corresponding to token COMMAND_END in current rule
+    fn COMMAND_END_all(&self) -> Vec<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    /// Retrieves 'i's TerminalNode corresponding to token COMMAND_END, starting from 0.
+    /// Returns `None` if number of children corresponding to token COMMAND_END is less or equal than `i`.
+    fn COMMAND_END(&self, i: usize) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, i)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ENDENUM
+    /// Returns `None` if there is no child corresponding to token COMMAND_ENDENUM
+    fn COMMAND_ENDENUM(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ENDENUM, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token ID
+    /// Returns `None` if there is no child corresponding to token ID
+    fn ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_ID, 0)
+    }
+    fn enum_case_statement_all(&self) -> Vec<Rc<Enum_case_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn enum_case_statement(&self, i: usize) -> Option<Rc<Enum_case_statementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+}
+
+impl<'input> Enum_statementContextAttrs<'input> for Enum_statementContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn enum_statement(&mut self) -> Result<Rc<Enum_statementContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Enum_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 62, RULE_enum_statement);
+        let mut _localctx: Rc<Enum_statementContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(390);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(391);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ENUM, &mut recog.err_handler)?;
+
+                recog.base.set_state(392);
+                let tmp = recog.base.match_token(YarnSpinnerParser_ID, &mut recog.err_handler)?;
+                cast_mut::<_, Enum_statementContext>(&mut _localctx).name = Some(tmp.clone());
+
+                recog.base.set_state(393);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+
+                recog.base.set_state(395);
+                recog.err_handler.sync(&mut recog.base)?;
+                _alt = 1;
+                loop {
+                    match _alt {
+                        x if x == 1 => {
+                            {
+                                /*InvokeRule enum_case_statement*/
+                                recog.base.set_state(394);
+                                recog.enum_case_statement()?;
+                            }
+                        }
+
+                        _ => Err(ANTLRError::NoAltError(NoViableAltError::new(&mut recog.base)))?,
+                    }
+                    recog.base.set_state(397);
+                    recog.err_handler.sync(&mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(41, &mut recog.base)?;
+                    if _alt == 2 || _alt == INVALID_ALT {
+                        break;
+                    }
+                }
+                recog.base.set_state(399);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(400);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ENDENUM, &mut recog.err_handler)?;
+
+                recog.base.set_state(401);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- enum_case_statement ----------------
+pub type Enum_case_statementContextAll<'input> = Enum_case_statementContext<'input>;
+
+pub type Enum_case_statementContext<'input> = BaseParserRuleContext<'input, Enum_case_statementContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Enum_case_statementContextExt<'input> {
+    pub name: Option<TokenType<'input>>,
+    pub rawValue: Option<Rc<ValueContextAll<'input>>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Enum_case_statementContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Enum_case_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_enum_case_statement(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_enum_case_statement(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Enum_case_statementContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_enum_case_statement(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Enum_case_statementContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_enum_case_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_enum_case_statement }
+}
+antlr4rust::tid! {Enum_case_statementContextExt<'a>}
+
+impl<'input> Enum_case_statementContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Enum_case_statementContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Enum_case_statementContextExt {
+                name: None,
+                rawValue: None,
+
+                ph: PhantomData,
+            },
+        ))
+    }
+}
+
+pub trait Enum_case_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Enum_case_statementContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_CASE
+    /// Returns `None` if there is no child corresponding to token COMMAND_CASE
+    fn COMMAND_CASE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_CASE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token FUNC_ID
+    /// Returns `None` if there is no child corresponding to token FUNC_ID
+    fn FUNC_ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_FUNC_ID, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token INDENT
+    /// Returns `None` if there is no child corresponding to token INDENT
+    fn INDENT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_INDENT, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token OPERATOR_ASSIGNMENT
+    /// Returns `None` if there is no child corresponding to token OPERATOR_ASSIGNMENT
+    fn OPERATOR_ASSIGNMENT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_OPERATOR_ASSIGNMENT, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token DEDENT
+    /// Returns `None` if there is no child corresponding to token DEDENT
+    fn DEDENT(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_DEDENT, 0)
+    }
+    fn value(&self) -> Option<Rc<ValueContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> Enum_case_statementContextAttrs<'input> for Enum_case_statementContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn enum_case_statement(&mut self) -> Result<Rc<Enum_case_statementContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Enum_case_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 64, RULE_enum_case_statement);
+        let mut _localctx: Rc<Enum_case_statementContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(404);
+                recog.err_handler.sync(&mut recog.base)?;
+                _la = recog.base.input.la(1);
+                if _la == YarnSpinnerParser_INDENT {
+                    {
+                        recog.base.set_state(403);
+                        recog.base.match_token(YarnSpinnerParser_INDENT, &mut recog.err_handler)?;
+                    }
+                }
+
+                recog.base.set_state(406);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(407);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_CASE, &mut recog.err_handler)?;
+
+                recog.base.set_state(408);
+                let tmp = recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
+                cast_mut::<_, Enum_case_statementContext>(&mut _localctx).name = Some(tmp.clone());
+
+                recog.base.set_state(411);
+                recog.err_handler.sync(&mut recog.base)?;
+                _la = recog.base.input.la(1);
+                if _la == YarnSpinnerParser_OPERATOR_ASSIGNMENT {
+                    {
+                        recog.base.set_state(409);
+                        recog.base.match_token(YarnSpinnerParser_OPERATOR_ASSIGNMENT, &mut recog.err_handler)?;
+
+                        /*InvokeRule value*/
+                        recog.base.set_state(410);
+                        let tmp = recog.value()?;
+                        cast_mut::<_, Enum_case_statementContext>(&mut _localctx).rawValue = Some(tmp.clone());
+                    }
+                }
+
+                recog.base.set_state(413);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+
+                recog.base.set_state(415);
+                recog.err_handler.sync(&mut recog.base)?;
+                _la = recog.base.input.la(1);
+                if _la == YarnSpinnerParser_DEDENT {
+                    {
+                        recog.base.set_state(414);
+                        recog.base.match_token(YarnSpinnerParser_DEDENT, &mut recog.err_handler)?;
+                    }
+                }
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
@@ -6833,11 +7952,13 @@ where
 pub enum Jump_statementContextAll<'input> {
     JumpToNodeNameContext(JumpToNodeNameContext<'input>),
     JumpToExpressionContext(JumpToExpressionContext<'input>),
+    DetourToNodeNameContext(DetourToNodeNameContext<'input>),
+    DetourToExpressionContext(DetourToExpressionContext<'input>),
     Error(Jump_statementContext<'input>),
 }
-antlr_rust::tid! {Jump_statementContextAll<'a>}
+antlr4rust::tid! {Jump_statementContextAll<'a>}
 
-impl<'input> antlr_rust::parser_rule_context::DerefSeal for Jump_statementContextAll<'input> {}
+impl<'input> antlr4rust::parser_rule_context::DerefSeal for Jump_statementContextAll<'input> {}
 
 impl<'input> YarnSpinnerParserContext<'input> for Jump_statementContextAll<'input> {}
 
@@ -6848,30 +7969,27 @@ impl<'input> Deref for Jump_statementContextAll<'input> {
         match self {
             JumpToNodeNameContext(inner) => inner,
             JumpToExpressionContext(inner) => inner,
+            DetourToNodeNameContext(inner) => inner,
+            DetourToExpressionContext(inner) => inner,
             Error(inner) => inner,
         }
     }
 }
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Jump_statementContextAll<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Jump_statementContextAll<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         self.deref().accept(visitor)
     }
 }
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Jump_statementContextAll<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Jump_statementContextAll<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         self.deref().enter(listener)
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         self.deref().exit(listener)
     }
 }
 
-pub type Jump_statementContext<'input> =
-    BaseParserRuleContext<'input, Jump_statementContextExt<'input>>;
+pub type Jump_statementContext<'input> = BaseParserRuleContext<'input, Jump_statementContextExt<'input>>;
 
 #[derive(Clone)]
 pub struct Jump_statementContextExt<'input> {
@@ -6880,15 +7998,9 @@ pub struct Jump_statementContextExt<'input> {
 
 impl<'input> YarnSpinnerParserContext<'input> for Jump_statementContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for Jump_statementContext<'input>
-{
-}
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Jump_statementContext<'input> {}
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for Jump_statementContext<'input>
-{
-}
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Jump_statementContext<'input> {}
 
 impl<'input> CustomRuleContext<'input> for Jump_statementContextExt<'input> {
     type TF = LocalTokenFactory<'input>;
@@ -6898,32 +8010,23 @@ impl<'input> CustomRuleContext<'input> for Jump_statementContextExt<'input> {
     }
     //fn type_rule_index() -> usize where Self: Sized { RULE_jump_statement }
 }
-antlr_rust::tid! {Jump_statementContextExt<'a>}
+antlr4rust::tid! {Jump_statementContextExt<'a>}
 
 impl<'input> Jump_statementContextExt<'input> {
-    fn new(
-        parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>,
-        invoking_state: isize,
-    ) -> Rc<Jump_statementContextAll<'input>> {
-        Rc::new(Jump_statementContextAll::Error(
-            BaseParserRuleContext::new_parser_ctx(
-                parent,
-                invoking_state,
-                Jump_statementContextExt { ph: PhantomData },
-            ),
-        ))
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Jump_statementContextAll<'input>> {
+        Rc::new(Jump_statementContextAll::Error(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Jump_statementContextExt { ph: PhantomData },
+        )))
     }
 }
 
-pub trait Jump_statementContextAttrs<'input>:
-    YarnSpinnerParserContext<'input> + BorrowMut<Jump_statementContextExt<'input>>
-{
-}
+pub trait Jump_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Jump_statementContextExt<'input>> {}
 
 impl<'input> Jump_statementContextAttrs<'input> for Jump_statementContext<'input> {}
 
-pub type JumpToNodeNameContext<'input> =
-    BaseParserRuleContext<'input, JumpToNodeNameContextExt<'input>>;
+pub type JumpToNodeNameContext<'input> = BaseParserRuleContext<'input, JumpToNodeNameContextExt<'input>>;
 
 pub trait JumpToNodeNameContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
@@ -6932,7 +8035,7 @@ pub trait JumpToNodeNameContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_JUMP
     /// Returns `None` if there is no child corresponding to token COMMAND_JUMP
@@ -6940,7 +8043,7 @@ pub trait JumpToNodeNameContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_JUMP, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_JUMP, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_END
     /// Returns `None` if there is no child corresponding to token COMMAND_END
@@ -6948,7 +8051,7 @@ pub trait JumpToNodeNameContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
     /// Retrieves first TerminalNode corresponding to token ID
     /// Returns `None` if there is no child corresponding to token ID
@@ -6956,7 +8059,7 @@ pub trait JumpToNodeNameContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     where
         Self: Sized,
     {
-        self.get_token(ID, 0)
+        self.get_token(YarnSpinnerParser_ID, 0)
     }
 }
 
@@ -6968,26 +8071,24 @@ pub struct JumpToNodeNameContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {JumpToNodeNameContextExt<'a>}
+antlr4rust::tid! {JumpToNodeNameContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for JumpToNodeNameContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for JumpToNodeNameContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for JumpToNodeNameContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_jumpToNodeName(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_jumpToNodeName(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for JumpToNodeNameContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for JumpToNodeNameContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_jumpToNodeName(self);
     }
@@ -7017,21 +8118,18 @@ impl<'input> Jump_statementContextAttrs<'input> for JumpToNodeNameContext<'input
 
 impl<'input> JumpToNodeNameContextExt<'input> {
     fn new(ctx: &dyn Jump_statementContextAttrs<'input>) -> Rc<Jump_statementContextAll<'input>> {
-        Rc::new(Jump_statementContextAll::JumpToNodeNameContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                JumpToNodeNameContextExt {
-                    destination: None,
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(Jump_statementContextAll::JumpToNodeNameContext(BaseParserRuleContext::copy_from(
+            ctx,
+            JumpToNodeNameContextExt {
+                destination: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
-pub type JumpToExpressionContext<'input> =
-    BaseParserRuleContext<'input, JumpToExpressionContextExt<'input>>;
+pub type JumpToExpressionContext<'input> = BaseParserRuleContext<'input, JumpToExpressionContextExt<'input>>;
 
 pub trait JumpToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input> {
     /// Retrieves first TerminalNode corresponding to token COMMAND_START
@@ -7040,7 +8138,7 @@ pub trait JumpToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_START, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_JUMP
     /// Returns `None` if there is no child corresponding to token COMMAND_JUMP
@@ -7048,7 +8146,7 @@ pub trait JumpToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_JUMP, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_JUMP, 0)
     }
     /// Retrieves first TerminalNode corresponding to token EXPRESSION_START
     /// Returns `None` if there is no child corresponding to token EXPRESSION_START
@@ -7056,7 +8154,7 @@ pub trait JumpToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input>
     where
         Self: Sized,
     {
-        self.get_token(EXPRESSION_START, 0)
+        self.get_token(YarnSpinnerParser_EXPRESSION_START, 0)
     }
     fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
     where
@@ -7070,7 +8168,7 @@ pub trait JumpToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input>
     where
         Self: Sized,
     {
-        self.get_token(EXPRESSION_END, 0)
+        self.get_token(YarnSpinnerParser_EXPRESSION_END, 0)
     }
     /// Retrieves first TerminalNode corresponding to token COMMAND_END
     /// Returns `None` if there is no child corresponding to token COMMAND_END
@@ -7078,7 +8176,7 @@ pub trait JumpToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input>
     where
         Self: Sized,
     {
-        self.get_token(COMMAND_END, 0)
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
     }
 }
 
@@ -7089,26 +8187,24 @@ pub struct JumpToExpressionContextExt<'input> {
     ph: PhantomData<&'input str>,
 }
 
-antlr_rust::tid! {JumpToExpressionContextExt<'a>}
+antlr4rust::tid! {JumpToExpressionContextExt<'a>}
 
 impl<'input> YarnSpinnerParserContext<'input> for JumpToExpressionContext<'input> {}
 
-impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a>
-    for JumpToExpressionContext<'input>
-{
-    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
-        listener.enter_every_rule(self);
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for JumpToExpressionContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
         listener.enter_jumpToExpression(self);
+        Ok(())
     }
-    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) {
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
         listener.exit_jumpToExpression(self);
-        listener.exit_every_rule(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
     }
 }
 
-impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a>
-    for JumpToExpressionContext<'input>
-{
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for JumpToExpressionContext<'input> {
     fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
         visitor.visit_jumpToExpression(self);
     }
@@ -7138,100 +8234,342 @@ impl<'input> Jump_statementContextAttrs<'input> for JumpToExpressionContext<'inp
 
 impl<'input> JumpToExpressionContextExt<'input> {
     fn new(ctx: &dyn Jump_statementContextAttrs<'input>) -> Rc<Jump_statementContextAll<'input>> {
-        Rc::new(Jump_statementContextAll::JumpToExpressionContext(
-            BaseParserRuleContext::copy_from(
-                ctx,
-                JumpToExpressionContextExt {
-                    base: ctx.borrow().clone(),
-                    ph: PhantomData,
-                },
-            ),
-        ))
+        Rc::new(Jump_statementContextAll::JumpToExpressionContext(BaseParserRuleContext::copy_from(
+            ctx,
+            JumpToExpressionContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
     }
 }
 
-impl<'input, I, H> YarnSpinnerParser<'input, I, H>
+pub type DetourToNodeNameContext<'input> = BaseParserRuleContext<'input, DetourToNodeNameContextExt<'input>>;
+
+pub trait DetourToNodeNameContextAttrs<'input>: YarnSpinnerParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_DETOUR
+    /// Returns `None` if there is no child corresponding to token COMMAND_DETOUR
+    fn COMMAND_DETOUR(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_DETOUR, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token ID
+    /// Returns `None` if there is no child corresponding to token ID
+    fn ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_ID, 0)
+    }
+}
+
+impl<'input> DetourToNodeNameContextAttrs<'input> for DetourToNodeNameContext<'input> {}
+
+pub struct DetourToNodeNameContextExt<'input> {
+    base: Jump_statementContextExt<'input>,
+    pub destination: Option<TokenType<'input>>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr4rust::tid! {DetourToNodeNameContextExt<'a>}
+
+impl<'input> YarnSpinnerParserContext<'input> for DetourToNodeNameContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for DetourToNodeNameContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_detourToNodeName(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_detourToNodeName(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for DetourToNodeNameContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_detourToNodeName(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for DetourToNodeNameContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_jump_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_jump_statement }
+}
+
+impl<'input> Borrow<Jump_statementContextExt<'input>> for DetourToNodeNameContext<'input> {
+    fn borrow(&self) -> &Jump_statementContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<Jump_statementContextExt<'input>> for DetourToNodeNameContext<'input> {
+    fn borrow_mut(&mut self) -> &mut Jump_statementContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> Jump_statementContextAttrs<'input> for DetourToNodeNameContext<'input> {}
+
+impl<'input> DetourToNodeNameContextExt<'input> {
+    fn new(ctx: &dyn Jump_statementContextAttrs<'input>) -> Rc<Jump_statementContextAll<'input>> {
+        Rc::new(Jump_statementContextAll::DetourToNodeNameContext(BaseParserRuleContext::copy_from(
+            ctx,
+            DetourToNodeNameContextExt {
+                destination: None,
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
+    }
+}
+
+pub type DetourToExpressionContext<'input> = BaseParserRuleContext<'input, DetourToExpressionContextExt<'input>>;
+
+pub trait DetourToExpressionContextAttrs<'input>: YarnSpinnerParserContext<'input> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_DETOUR
+    /// Returns `None` if there is no child corresponding to token COMMAND_DETOUR
+    fn COMMAND_DETOUR(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_DETOUR, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token EXPRESSION_START
+    /// Returns `None` if there is no child corresponding to token EXPRESSION_START
+    fn EXPRESSION_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_EXPRESSION_START, 0)
+    }
+    fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    /// Retrieves first TerminalNode corresponding to token EXPRESSION_END
+    /// Returns `None` if there is no child corresponding to token EXPRESSION_END
+    fn EXPRESSION_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_EXPRESSION_END, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+}
+
+impl<'input> DetourToExpressionContextAttrs<'input> for DetourToExpressionContext<'input> {}
+
+pub struct DetourToExpressionContextExt<'input> {
+    base: Jump_statementContextExt<'input>,
+    ph: PhantomData<&'input str>,
+}
+
+antlr4rust::tid! {DetourToExpressionContextExt<'a>}
+
+impl<'input> YarnSpinnerParserContext<'input> for DetourToExpressionContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for DetourToExpressionContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_detourToExpression(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_detourToExpression(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for DetourToExpressionContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_detourToExpression(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for DetourToExpressionContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_jump_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_jump_statement }
+}
+
+impl<'input> Borrow<Jump_statementContextExt<'input>> for DetourToExpressionContext<'input> {
+    fn borrow(&self) -> &Jump_statementContextExt<'input> {
+        &self.base
+    }
+}
+impl<'input> BorrowMut<Jump_statementContextExt<'input>> for DetourToExpressionContext<'input> {
+    fn borrow_mut(&mut self) -> &mut Jump_statementContextExt<'input> {
+        &mut self.base
+    }
+}
+
+impl<'input> Jump_statementContextAttrs<'input> for DetourToExpressionContext<'input> {}
+
+impl<'input> DetourToExpressionContextExt<'input> {
+    fn new(ctx: &dyn Jump_statementContextAttrs<'input>) -> Rc<Jump_statementContextAll<'input>> {
+        Rc::new(Jump_statementContextAll::DetourToExpressionContext(BaseParserRuleContext::copy_from(
+            ctx,
+            DetourToExpressionContextExt {
+                base: ctx.borrow().clone(),
+                ph: PhantomData,
+            },
+        )))
+    }
+}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
-    H: ErrorStrategy<'input, BaseParserType<'input, I>>,
 {
     pub fn jump_statement(&mut self) -> Result<Rc<Jump_statementContextAll<'input>>, ANTLRError> {
         let mut recog = self;
         let _parentctx = recog.ctx.take();
-        let mut _localctx =
-            Jump_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
-        recog
-            .base
-            .enter_rule(_localctx.clone(), 50, RULE_jump_statement);
+        let mut _localctx = Jump_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 66, RULE_jump_statement);
         let mut _localctx: Rc<Jump_statementContextAll> = _localctx;
         let result: Result<(), ANTLRError> = (|| {
-            recog.base.set_state(312);
+            recog.base.set_state(439);
             recog.err_handler.sync(&mut recog.base)?;
-            match recog.interpreter.adaptive_predict(31, &mut recog.base)? {
+            match recog.interpreter.adaptive_predict(45, &mut recog.base)? {
                 1 => {
                     let tmp = JumpToNodeNameContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 1);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 1)?;
                     _localctx = tmp;
                     {
-                        recog.base.set_state(301);
-                        recog
-                            .base
-                            .match_token(COMMAND_START, &mut recog.err_handler)?;
+                        recog.base.set_state(417);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                        recog.base.set_state(302);
-                        recog
-                            .base
-                            .match_token(COMMAND_JUMP, &mut recog.err_handler)?;
+                        recog.base.set_state(418);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_JUMP, &mut recog.err_handler)?;
 
-                        recog.base.set_state(303);
-                        let tmp = recog.base.match_token(ID, &mut recog.err_handler)?;
-                        if let Jump_statementContextAll::JumpToNodeNameContext(ctx) =
-                            cast_mut::<_, Jump_statementContextAll>(&mut _localctx)
-                        {
+                        recog.base.set_state(419);
+                        let tmp = recog.base.match_token(YarnSpinnerParser_ID, &mut recog.err_handler)?;
+                        if let Jump_statementContextAll::JumpToNodeNameContext(ctx) = cast_mut::<_, Jump_statementContextAll>(&mut _localctx) {
                             ctx.destination = Some(tmp.clone());
                         } else {
                             unreachable!("cant cast");
                         }
 
-                        recog.base.set_state(304);
-                        recog
-                            .base
-                            .match_token(COMMAND_END, &mut recog.err_handler)?;
+                        recog.base.set_state(420);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
                     }
                 }
                 2 => {
                     let tmp = JumpToExpressionContextExt::new(&**_localctx);
-                    recog.base.enter_outer_alt(Some(tmp.clone()), 2);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 2)?;
                     _localctx = tmp;
                     {
-                        recog.base.set_state(305);
-                        recog
-                            .base
-                            .match_token(COMMAND_START, &mut recog.err_handler)?;
+                        recog.base.set_state(421);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
 
-                        recog.base.set_state(306);
-                        recog
-                            .base
-                            .match_token(COMMAND_JUMP, &mut recog.err_handler)?;
+                        recog.base.set_state(422);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_JUMP, &mut recog.err_handler)?;
 
-                        recog.base.set_state(307);
-                        recog
-                            .base
-                            .match_token(EXPRESSION_START, &mut recog.err_handler)?;
+                        recog.base.set_state(423);
+                        recog.base.match_token(YarnSpinnerParser_EXPRESSION_START, &mut recog.err_handler)?;
 
                         /*InvokeRule expression*/
-                        recog.base.set_state(308);
+                        recog.base.set_state(424);
                         recog.expression_rec(0)?;
 
-                        recog.base.set_state(309);
-                        recog
-                            .base
-                            .match_token(EXPRESSION_END, &mut recog.err_handler)?;
+                        recog.base.set_state(425);
+                        recog.base.match_token(YarnSpinnerParser_EXPRESSION_END, &mut recog.err_handler)?;
 
-                        recog.base.set_state(310);
-                        recog
-                            .base
-                            .match_token(COMMAND_END, &mut recog.err_handler)?;
+                        recog.base.set_state(426);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+                    }
+                }
+                3 => {
+                    let tmp = DetourToNodeNameContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 3)?;
+                    _localctx = tmp;
+                    {
+                        recog.base.set_state(428);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                        recog.base.set_state(429);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_DETOUR, &mut recog.err_handler)?;
+
+                        recog.base.set_state(430);
+                        let tmp = recog.base.match_token(YarnSpinnerParser_ID, &mut recog.err_handler)?;
+                        if let Jump_statementContextAll::DetourToNodeNameContext(ctx) = cast_mut::<_, Jump_statementContextAll>(&mut _localctx) {
+                            ctx.destination = Some(tmp.clone());
+                        } else {
+                            unreachable!("cant cast");
+                        }
+
+                        recog.base.set_state(431);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+                    }
+                }
+                4 => {
+                    let tmp = DetourToExpressionContextExt::new(&**_localctx);
+                    recog.base.enter_outer_alt(Some(tmp.clone()), 4)?;
+                    _localctx = tmp;
+                    {
+                        recog.base.set_state(432);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                        recog.base.set_state(433);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_DETOUR, &mut recog.err_handler)?;
+
+                        recog.base.set_state(434);
+                        recog.base.match_token(YarnSpinnerParser_EXPRESSION_START, &mut recog.err_handler)?;
+
+                        /*InvokeRule expression*/
+                        recog.base.set_state(435);
+                        recog.expression_rec(0)?;
+
+                        recog.base.set_state(436);
+                        recog.base.match_token(YarnSpinnerParser_EXPRESSION_END, &mut recog.err_handler)?;
+
+                        recog.base.set_state(437);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
                     }
                 }
 
@@ -7248,193 +8586,988 @@ where
                 recog.err_handler.recover(&mut recog.base, re)?;
             }
         }
-        recog.base.exit_rule();
+        recog.base.exit_rule()?;
 
         Ok(_localctx)
     }
 }
+//------------------- return_statement ----------------
+pub type Return_statementContextAll<'input> = Return_statementContext<'input>;
 
+pub type Return_statementContext<'input> = BaseParserRuleContext<'input, Return_statementContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Return_statementContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Return_statementContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Return_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_return_statement(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_return_statement(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Return_statementContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_return_statement(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Return_statementContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_return_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_return_statement }
+}
+antlr4rust::tid! {Return_statementContextExt<'a>}
+
+impl<'input> Return_statementContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Return_statementContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Return_statementContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Return_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Return_statementContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_RETURN
+    /// Returns `None` if there is no child corresponding to token COMMAND_RETURN
+    fn COMMAND_RETURN(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_RETURN, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+}
+
+impl<'input> Return_statementContextAttrs<'input> for Return_statementContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn return_statement(&mut self) -> Result<Rc<Return_statementContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Return_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 68, RULE_return_statement);
+        let mut _localctx: Rc<Return_statementContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(441);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(442);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_RETURN, &mut recog.err_handler)?;
+
+                recog.base.set_state(443);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- once_statement ----------------
+pub type Once_statementContextAll<'input> = Once_statementContext<'input>;
+
+pub type Once_statementContext<'input> = BaseParserRuleContext<'input, Once_statementContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Once_statementContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Once_statementContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Once_statementContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_once_statement(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_once_statement(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Once_statementContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_once_statement(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Once_statementContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_once_statement
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_once_statement }
+}
+antlr4rust::tid! {Once_statementContextExt<'a>}
+
+impl<'input> Once_statementContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Once_statementContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Once_statementContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Once_statementContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Once_statementContextExt<'input>> {
+    fn once_primary_clause(&self) -> Option<Rc<Once_primary_clauseContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ENDONCE
+    /// Returns `None` if there is no child corresponding to token COMMAND_ENDONCE
+    fn COMMAND_ENDONCE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ENDONCE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+    fn once_alternate_clause(&self) -> Option<Rc<Once_alternate_clauseContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+}
+
+impl<'input> Once_statementContextAttrs<'input> for Once_statementContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn once_statement(&mut self) -> Result<Rc<Once_statementContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Once_statementContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 70, RULE_once_statement);
+        let mut _localctx: Rc<Once_statementContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                /*InvokeRule once_primary_clause*/
+                recog.base.set_state(445);
+                recog.once_primary_clause()?;
+
+                recog.base.set_state(447);
+                recog.err_handler.sync(&mut recog.base)?;
+                match recog.interpreter.adaptive_predict(46, &mut recog.base)? {
+                    x if x == 1 => {
+                        {
+                            /*InvokeRule once_alternate_clause*/
+                            recog.base.set_state(446);
+                            recog.once_alternate_clause()?;
+                        }
+                    }
+
+                    _ => {}
+                }
+                recog.base.set_state(449);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(450);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ENDONCE, &mut recog.err_handler)?;
+
+                recog.base.set_state(451);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- once_primary_clause ----------------
+pub type Once_primary_clauseContextAll<'input> = Once_primary_clauseContext<'input>;
+
+pub type Once_primary_clauseContext<'input> = BaseParserRuleContext<'input, Once_primary_clauseContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Once_primary_clauseContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Once_primary_clauseContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Once_primary_clauseContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_once_primary_clause(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_once_primary_clause(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Once_primary_clauseContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_once_primary_clause(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Once_primary_clauseContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_once_primary_clause
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_once_primary_clause }
+}
+antlr4rust::tid! {Once_primary_clauseContextExt<'a>}
+
+impl<'input> Once_primary_clauseContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Once_primary_clauseContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Once_primary_clauseContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Once_primary_clauseContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Once_primary_clauseContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ONCE
+    /// Returns `None` if there is no child corresponding to token COMMAND_ONCE
+    fn COMMAND_ONCE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ONCE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_IF
+    /// Returns `None` if there is no child corresponding to token COMMAND_IF
+    fn COMMAND_IF(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_IF, 0)
+    }
+    fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn statement(&self, i: usize) -> Option<Rc<StatementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+}
+
+impl<'input> Once_primary_clauseContextAttrs<'input> for Once_primary_clauseContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn once_primary_clause(&mut self) -> Result<Rc<Once_primary_clauseContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Once_primary_clauseContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 72, RULE_once_primary_clause);
+        let mut _localctx: Rc<Once_primary_clauseContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(453);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(454);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ONCE, &mut recog.err_handler)?;
+
+                recog.base.set_state(457);
+                recog.err_handler.sync(&mut recog.base)?;
+                _la = recog.base.input.la(1);
+                if _la == YarnSpinnerParser_COMMAND_IF {
+                    {
+                        recog.base.set_state(455);
+                        recog.base.match_token(YarnSpinnerParser_COMMAND_IF, &mut recog.err_handler)?;
+
+                        /*InvokeRule expression*/
+                        recog.base.set_state(456);
+                        recog.expression_rec(0)?;
+                    }
+                }
+
+                recog.base.set_state(459);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+
+                recog.base.set_state(463);
+                recog.err_handler.sync(&mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(48, &mut recog.base)?;
+                while { _alt != 2 && _alt != INVALID_ALT } {
+                    if _alt == 1 {
+                        {
+                            {
+                                /*InvokeRule statement*/
+                                recog.base.set_state(460);
+                                recog.statement()?;
+                            }
+                        }
+                    }
+                    recog.base.set_state(465);
+                    recog.err_handler.sync(&mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(48, &mut recog.base)?;
+                }
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- once_alternate_clause ----------------
+pub type Once_alternate_clauseContextAll<'input> = Once_alternate_clauseContext<'input>;
+
+pub type Once_alternate_clauseContext<'input> = BaseParserRuleContext<'input, Once_alternate_clauseContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Once_alternate_clauseContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Once_alternate_clauseContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Once_alternate_clauseContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_once_alternate_clause(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_once_alternate_clause(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Once_alternate_clauseContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_once_alternate_clause(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Once_alternate_clauseContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_once_alternate_clause
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_once_alternate_clause }
+}
+antlr4rust::tid! {Once_alternate_clauseContextExt<'a>}
+
+impl<'input> Once_alternate_clauseContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Once_alternate_clauseContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Once_alternate_clauseContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Once_alternate_clauseContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Once_alternate_clauseContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token COMMAND_START
+    /// Returns `None` if there is no child corresponding to token COMMAND_START
+    fn COMMAND_START(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_START, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_ELSE
+    /// Returns `None` if there is no child corresponding to token COMMAND_ELSE
+    fn COMMAND_ELSE(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_ELSE, 0)
+    }
+    /// Retrieves first TerminalNode corresponding to token COMMAND_END
+    /// Returns `None` if there is no child corresponding to token COMMAND_END
+    fn COMMAND_END(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_COMMAND_END, 0)
+    }
+    fn statement_all(&self) -> Vec<Rc<StatementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn statement(&self, i: usize) -> Option<Rc<StatementContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+}
+
+impl<'input> Once_alternate_clauseContextAttrs<'input> for Once_alternate_clauseContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn once_alternate_clause(&mut self) -> Result<Rc<Once_alternate_clauseContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Once_alternate_clauseContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 74, RULE_once_alternate_clause);
+        let mut _localctx: Rc<Once_alternate_clauseContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            let mut _alt: i32;
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(466);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_START, &mut recog.err_handler)?;
+
+                recog.base.set_state(467);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_ELSE, &mut recog.err_handler)?;
+
+                recog.base.set_state(468);
+                recog.base.match_token(YarnSpinnerParser_COMMAND_END, &mut recog.err_handler)?;
+
+                recog.base.set_state(472);
+                recog.err_handler.sync(&mut recog.base)?;
+                _alt = recog.interpreter.adaptive_predict(49, &mut recog.base)?;
+                while { _alt != 2 && _alt != INVALID_ALT } {
+                    if _alt == 1 {
+                        {
+                            {
+                                /*InvokeRule statement*/
+                                recog.base.set_state(469);
+                                recog.statement()?;
+                            }
+                        }
+                    }
+                    recog.base.set_state(474);
+                    recog.err_handler.sync(&mut recog.base)?;
+                    _alt = recog.interpreter.adaptive_predict(49, &mut recog.base)?;
+                }
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- structured_command ----------------
+pub type Structured_commandContextAll<'input> = Structured_commandContext<'input>;
+
+pub type Structured_commandContext<'input> = BaseParserRuleContext<'input, Structured_commandContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Structured_commandContextExt<'input> {
+    pub command_id: Option<TokenType<'input>>,
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Structured_commandContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Structured_commandContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_structured_command(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_structured_command(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Structured_commandContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_structured_command(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Structured_commandContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_structured_command
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_structured_command }
+}
+antlr4rust::tid! {Structured_commandContextExt<'a>}
+
+impl<'input> Structured_commandContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Structured_commandContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Structured_commandContextExt {
+                command_id: None,
+
+                ph: PhantomData,
+            },
+        ))
+    }
+}
+
+pub trait Structured_commandContextAttrs<'input>: YarnSpinnerParserContext<'input> + BorrowMut<Structured_commandContextExt<'input>> {
+    /// Retrieves first TerminalNode corresponding to token FUNC_ID
+    /// Returns `None` if there is no child corresponding to token FUNC_ID
+    fn FUNC_ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_FUNC_ID, 0)
+    }
+    fn structured_command_value_all(&self) -> Vec<Rc<Structured_command_valueContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.children_of_type()
+    }
+    fn structured_command_value(&self, i: usize) -> Option<Rc<Structured_command_valueContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(i)
+    }
+}
+
+impl<'input> Structured_commandContextAttrs<'input> for Structured_commandContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn structured_command(&mut self) -> Result<Rc<Structured_commandContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Structured_commandContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 76, RULE_structured_command);
+        let mut _localctx: Rc<Structured_commandContextAll> = _localctx;
+        let mut _la: i32 = -1;
+        let result: Result<(), ANTLRError> = (|| {
+            //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+            recog.base.enter_outer_alt(None, 1)?;
+            {
+                recog.base.set_state(475);
+                let tmp = recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
+                cast_mut::<_, Structured_commandContext>(&mut _localctx).command_id = Some(tmp.clone());
+
+                recog.base.set_state(479);
+                recog.err_handler.sync(&mut recog.base)?;
+                _la = recog.base.input.la(1);
+                while (((_la - 33) & !0x3f) == 0 && ((1usize << (_la - 33)) & 1646280715) != 0)
+                    || _la == YarnSpinnerParser_VAR_ID
+                    || _la == YarnSpinnerParser_DOT
+                {
+                    {
+                        {
+                            /*InvokeRule structured_command_value*/
+                            recog.base.set_state(476);
+                            recog.structured_command_value()?;
+                        }
+                    }
+                    recog.base.set_state(481);
+                    recog.err_handler.sync(&mut recog.base)?;
+                    _la = recog.base.input.la(1);
+                }
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
+//------------------- structured_command_value ----------------
+pub type Structured_command_valueContextAll<'input> = Structured_command_valueContext<'input>;
+
+pub type Structured_command_valueContext<'input> = BaseParserRuleContext<'input, Structured_command_valueContextExt<'input>>;
+
+#[derive(Clone)]
+pub struct Structured_command_valueContextExt<'input> {
+    ph: PhantomData<&'input str>,
+}
+
+impl<'input> YarnSpinnerParserContext<'input> for Structured_command_valueContext<'input> {}
+
+impl<'input, 'a> Listenable<dyn YarnSpinnerParserListener<'input> + 'a> for Structured_command_valueContext<'input> {
+    fn enter(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.enter_every_rule(self)?;
+        listener.enter_structured_command_value(self);
+        Ok(())
+    }
+    fn exit(&self, listener: &mut (dyn YarnSpinnerParserListener<'input> + 'a)) -> Result<(), ANTLRError> {
+        listener.exit_structured_command_value(self);
+        listener.exit_every_rule(self)?;
+        Ok(())
+    }
+}
+
+impl<'input, 'a> Visitable<dyn YarnSpinnerParserVisitor<'input> + 'a> for Structured_command_valueContext<'input> {
+    fn accept(&self, visitor: &mut (dyn YarnSpinnerParserVisitor<'input> + 'a)) {
+        visitor.visit_structured_command_value(self);
+    }
+}
+
+impl<'input> CustomRuleContext<'input> for Structured_command_valueContextExt<'input> {
+    type TF = LocalTokenFactory<'input>;
+    type Ctx = YarnSpinnerParserContextType;
+    fn get_rule_index(&self) -> usize {
+        RULE_structured_command_value
+    }
+    //fn type_rule_index() -> usize where Self: Sized { RULE_structured_command_value }
+}
+antlr4rust::tid! {Structured_command_valueContextExt<'a>}
+
+impl<'input> Structured_command_valueContextExt<'input> {
+    fn new(parent: Option<Rc<dyn YarnSpinnerParserContext<'input> + 'input>>, invoking_state: i32) -> Rc<Structured_command_valueContextAll<'input>> {
+        Rc::new(BaseParserRuleContext::new_parser_ctx(
+            parent,
+            invoking_state,
+            Structured_command_valueContextExt { ph: PhantomData },
+        ))
+    }
+}
+
+pub trait Structured_command_valueContextAttrs<'input>:
+    YarnSpinnerParserContext<'input> + BorrowMut<Structured_command_valueContextExt<'input>>
+{
+    fn expression(&self) -> Option<Rc<ExpressionContextAll<'input>>>
+    where
+        Self: Sized,
+    {
+        self.child_of_type(0)
+    }
+    /// Retrieves first TerminalNode corresponding to token FUNC_ID
+    /// Returns `None` if there is no child corresponding to token FUNC_ID
+    fn FUNC_ID(&self) -> Option<Rc<TerminalNode<'input, YarnSpinnerParserContextType>>>
+    where
+        Self: Sized,
+    {
+        self.get_token(YarnSpinnerParser_FUNC_ID, 0)
+    }
+}
+
+impl<'input> Structured_command_valueContextAttrs<'input> for Structured_command_valueContext<'input> {}
+
+impl<'input, I> YarnSpinnerParser<'input, I>
+where
+    I: TokenStream<'input, TF = LocalTokenFactory<'input>> + TidAble<'input>,
+{
+    pub fn structured_command_value(&mut self) -> Result<Rc<Structured_command_valueContextAll<'input>>, ANTLRError> {
+        let mut recog = self;
+        let _parentctx = recog.ctx.take();
+        let mut _localctx = Structured_command_valueContextExt::new(_parentctx.clone(), recog.base.get_state());
+        recog.base.enter_rule(_localctx.clone(), 78, RULE_structured_command_value);
+        let mut _localctx: Rc<Structured_command_valueContextAll> = _localctx;
+        let result: Result<(), ANTLRError> = (|| {
+            recog.base.set_state(484);
+            recog.err_handler.sync(&mut recog.base)?;
+            match recog.interpreter.adaptive_predict(51, &mut recog.base)? {
+                1 => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+                    recog.base.enter_outer_alt(None, 1)?;
+                    {
+                        /*InvokeRule expression*/
+                        recog.base.set_state(482);
+                        recog.expression_rec(0)?;
+                    }
+                }
+                2 => {
+                    //recog.base.enter_outer_alt(_localctx.clone(), 2)?;
+                    recog.base.enter_outer_alt(None, 2)?;
+                    {
+                        recog.base.set_state(483);
+                        recog.base.match_token(YarnSpinnerParser_FUNC_ID, &mut recog.err_handler)?;
+                    }
+                }
+
+                _ => {}
+            }
+            Ok(())
+        })();
+        match result {
+            Ok(_) => {}
+            Err(e @ ANTLRError::FallThrough(_)) => return Err(e),
+            Err(ref re) => {
+                //_localctx.exception = re;
+                recog.err_handler.report_error(&mut recog.base, re);
+                recog.err_handler.recover(&mut recog.base, re)?;
+            }
+        }
+        recog.base.exit_rule()?;
+
+        Ok(_localctx)
+    }
+}
 lazy_static! {
-    static ref _ATN: Arc<ATN> =
-        Arc::new(ATNDeserializer::new(None).deserialize(_serializedATN.chars()));
-    static ref _decision_to_DFA: Arc<Vec<antlr_rust::RwLock<DFA>>> = {
+    static ref _ATN: Arc<ATN> = Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.iter()));
+    static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
         let mut dfa = Vec::new();
-        let size = _ATN.decision_to_state.len();
+        let size = _ATN.decision_to_state.len() as i32;
         for i in 0..size {
-            dfa.push(DFA::new(_ATN.clone(), _ATN.get_decision_state(i), i as isize).into())
+            dfa.push(DFA::new(_ATN.clone(), _ATN.get_decision_state(i), i).into())
         }
         Arc::new(dfa)
     };
+    static ref _serializedATN: Vec<i32> = vec![
+        4, 1, 94, 487, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7, 4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 2, 10,
+        7, 10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 14, 2, 15, 7, 15, 2, 16, 7, 16, 2, 17, 7, 17, 2, 18, 7, 18, 2, 19, 7, 19, 2, 20,
+        7, 20, 2, 21, 7, 21, 2, 22, 7, 22, 2, 23, 7, 23, 2, 24, 7, 24, 2, 25, 7, 25, 2, 26, 7, 26, 2, 27, 7, 27, 2, 28, 7, 28, 2, 29, 7, 29, 2, 30,
+        7, 30, 2, 31, 7, 31, 2, 32, 7, 32, 2, 33, 7, 33, 2, 34, 7, 34, 2, 35, 7, 35, 2, 36, 7, 36, 2, 37, 7, 37, 2, 38, 7, 38, 2, 39, 7, 39, 1, 0, 5,
+        0, 82, 8, 0, 10, 0, 12, 0, 85, 9, 0, 1, 0, 4, 0, 88, 8, 0, 11, 0, 12, 0, 89, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 4, 2, 98, 8, 2, 11, 2, 12,
+        2, 99, 1, 2, 1, 2, 1, 2, 1, 2, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 5, 1, 5, 1, 5, 3, 5, 119, 8, 5, 1, 6, 1, 6, 1,
+        6, 1, 6, 1, 6, 3, 6, 126, 8, 6, 3, 6, 128, 8, 6, 1, 7, 5, 7, 131, 8, 7, 10, 7, 12, 7, 134, 9, 7, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1,
+        8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 1, 8, 5, 8, 150, 8, 8, 10, 8, 12, 8, 153, 9, 8, 1, 8, 3, 8, 156, 8, 8, 1, 9, 1, 9, 3, 9, 160, 8, 9, 1, 9, 5,
+        9, 163, 8, 9, 10, 9, 12, 9, 166, 9, 9, 1, 9, 1, 9, 1, 10, 4, 10, 171, 8, 10, 11, 10, 12, 10, 172, 1, 10, 1, 10, 1, 10, 1, 10, 4, 10, 179, 8,
+        10, 11, 10, 12, 10, 180, 1, 11, 1, 11, 1, 11, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12, 1, 12, 3, 12, 195, 8, 12, 1, 12, 3, 12,
+        198, 8, 12, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 3, 13, 210, 8, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1,
+        13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 1, 13, 5, 13, 227, 8, 13, 10, 13, 12, 13, 230, 9, 13, 1, 14, 1, 14, 1, 14, 1, 14,
+        1, 14, 1, 14, 1, 14, 3, 14, 239, 8, 14, 1, 15, 1, 15, 1, 16, 1, 16, 1, 16, 3, 16, 246, 8, 16, 1, 16, 1, 16, 5, 16, 250, 8, 16, 10, 16, 12,
+        16, 253, 9, 16, 1, 16, 1, 16, 1, 17, 3, 17, 258, 8, 17, 1, 17, 1, 17, 1, 17, 1, 18, 1, 18, 5, 18, 265, 8, 18, 10, 18, 12, 18, 268, 9, 18, 1,
+        18, 3, 18, 271, 8, 18, 1, 18, 1, 18, 1, 18, 1, 18, 1, 19, 1, 19, 1, 19, 1, 19, 1, 19, 5, 19, 282, 8, 19, 10, 19, 12, 19, 285, 9, 19, 1, 20,
+        1, 20, 1, 20, 1, 20, 1, 20, 5, 20, 292, 8, 20, 10, 20, 12, 20, 295, 9, 20, 1, 21, 1, 21, 1, 21, 1, 21, 5, 21, 301, 8, 21, 10, 21, 12, 21,
+        304, 9, 21, 1, 22, 1, 22, 1, 22, 1, 22, 1, 22, 1, 22, 1, 22, 1, 23, 1, 23, 1, 23, 1, 23, 1, 23, 1, 24, 1, 24, 1, 24, 1, 24, 5, 24, 322, 8,
+        24, 10, 24, 12, 24, 325, 9, 24, 1, 25, 1, 25, 1, 25, 1, 25, 1, 25, 4, 25, 332, 8, 25, 11, 25, 12, 25, 333, 1, 26, 5, 26, 337, 8, 26, 10, 26,
+        12, 26, 340, 9, 26, 1, 26, 1, 26, 3, 26, 344, 8, 26, 1, 27, 1, 27, 1, 27, 1, 27, 5, 27, 350, 8, 27, 10, 27, 12, 27, 353, 9, 27, 1, 27, 3, 27,
+        356, 8, 27, 1, 28, 5, 28, 359, 8, 28, 10, 28, 12, 28, 362, 9, 28, 1, 28, 1, 28, 3, 28, 366, 8, 28, 1, 29, 1, 29, 1, 29, 1, 29, 5, 29, 372, 8,
+        29, 10, 29, 12, 29, 375, 9, 29, 1, 29, 3, 29, 378, 8, 29, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 3, 30, 387, 8, 30, 1, 30, 1, 30,
+        1, 31, 1, 31, 1, 31, 1, 31, 1, 31, 4, 31, 396, 8, 31, 11, 31, 12, 31, 397, 1, 31, 1, 31, 1, 31, 1, 31, 1, 32, 3, 32, 405, 8, 32, 1, 32, 1,
+        32, 1, 32, 1, 32, 1, 32, 3, 32, 412, 8, 32, 1, 32, 1, 32, 3, 32, 416, 8, 32, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33,
+        1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 1, 33, 3, 33, 440, 8, 33, 1, 34, 1, 34, 1, 34, 1, 34, 1,
+        35, 1, 35, 3, 35, 448, 8, 35, 1, 35, 1, 35, 1, 35, 1, 35, 1, 36, 1, 36, 1, 36, 1, 36, 3, 36, 458, 8, 36, 1, 36, 1, 36, 5, 36, 462, 8, 36, 10,
+        36, 12, 36, 465, 9, 36, 1, 37, 1, 37, 1, 37, 1, 37, 5, 37, 471, 8, 37, 10, 37, 12, 37, 474, 9, 37, 1, 38, 1, 38, 5, 38, 478, 8, 38, 10, 38,
+        12, 38, 481, 9, 38, 1, 39, 1, 39, 3, 39, 485, 8, 39, 1, 39, 0, 1, 26, 40, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34,
+        36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 0, 6, 1, 0, 55, 57, 1, 0, 53, 54, 2, 0, 38, 39, 41,
+        42, 2, 0, 40, 40, 43, 43, 1, 0, 44, 46, 2, 0, 37, 37, 48, 52, 523, 0, 83, 1, 0, 0, 0, 2, 91, 1, 0, 0, 0, 4, 97, 1, 0, 0, 0, 6, 105, 1, 0, 0,
+        0, 8, 110, 1, 0, 0, 0, 10, 115, 1, 0, 0, 0, 12, 127, 1, 0, 0, 0, 14, 132, 1, 0, 0, 0, 16, 155, 1, 0, 0, 0, 18, 157, 1, 0, 0, 0, 20, 178, 1,
+        0, 0, 0, 22, 182, 1, 0, 0, 0, 24, 197, 1, 0, 0, 0, 26, 209, 1, 0, 0, 0, 28, 238, 1, 0, 0, 0, 30, 240, 1, 0, 0, 0, 32, 242, 1, 0, 0, 0, 34,
+        257, 1, 0, 0, 0, 36, 262, 1, 0, 0, 0, 38, 276, 1, 0, 0, 0, 40, 286, 1, 0, 0, 0, 42, 296, 1, 0, 0, 0, 44, 305, 1, 0, 0, 0, 46, 312, 1, 0, 0,
+        0, 48, 317, 1, 0, 0, 0, 50, 331, 1, 0, 0, 0, 52, 338, 1, 0, 0, 0, 54, 345, 1, 0, 0, 0, 56, 360, 1, 0, 0, 0, 58, 367, 1, 0, 0, 0, 60, 379, 1,
+        0, 0, 0, 62, 390, 1, 0, 0, 0, 64, 404, 1, 0, 0, 0, 66, 439, 1, 0, 0, 0, 68, 441, 1, 0, 0, 0, 70, 445, 1, 0, 0, 0, 72, 453, 1, 0, 0, 0, 74,
+        466, 1, 0, 0, 0, 76, 475, 1, 0, 0, 0, 78, 484, 1, 0, 0, 0, 80, 82, 3, 2, 1, 0, 81, 80, 1, 0, 0, 0, 82, 85, 1, 0, 0, 0, 83, 81, 1, 0, 0, 0,
+        83, 84, 1, 0, 0, 0, 84, 87, 1, 0, 0, 0, 85, 83, 1, 0, 0, 0, 86, 88, 3, 4, 2, 0, 87, 86, 1, 0, 0, 0, 88, 89, 1, 0, 0, 0, 89, 87, 1, 0, 0, 0,
+        89, 90, 1, 0, 0, 0, 90, 1, 1, 0, 0, 0, 91, 92, 5, 12, 0, 0, 92, 93, 5, 30, 0, 0, 93, 3, 1, 0, 0, 0, 94, 98, 3, 10, 5, 0, 95, 98, 3, 8, 4, 0,
+        96, 98, 3, 6, 3, 0, 97, 94, 1, 0, 0, 0, 97, 95, 1, 0, 0, 0, 97, 96, 1, 0, 0, 0, 98, 99, 1, 0, 0, 0, 99, 97, 1, 0, 0, 0, 99, 100, 1, 0, 0, 0,
+        100, 101, 1, 0, 0, 0, 101, 102, 5, 10, 0, 0, 102, 103, 3, 14, 7, 0, 103, 104, 5, 16, 0, 0, 104, 5, 1, 0, 0, 0, 105, 106, 5, 8, 0, 0, 106,
+        107, 5, 11, 0, 0, 107, 108, 5, 9, 0, 0, 108, 109, 5, 6, 0, 0, 109, 7, 1, 0, 0, 0, 110, 111, 5, 7, 0, 0, 111, 112, 5, 11, 0, 0, 112, 113, 3,
+        12, 6, 0, 113, 114, 5, 6, 0, 0, 114, 9, 1, 0, 0, 0, 115, 116, 5, 9, 0, 0, 116, 118, 5, 11, 0, 0, 117, 119, 5, 14, 0, 0, 118, 117, 1, 0, 0, 0,
+        118, 119, 1, 0, 0, 0, 119, 11, 1, 0, 0, 0, 120, 128, 3, 26, 13, 0, 121, 128, 5, 32, 0, 0, 122, 125, 5, 82, 0, 0, 123, 124, 5, 69, 0, 0, 124,
+        126, 3, 26, 13, 0, 125, 123, 1, 0, 0, 0, 125, 126, 1, 0, 0, 0, 126, 128, 1, 0, 0, 0, 127, 120, 1, 0, 0, 0, 127, 121, 1, 0, 0, 0, 127, 122, 1,
+        0, 0, 0, 128, 13, 1, 0, 0, 0, 129, 131, 3, 16, 8, 0, 130, 129, 1, 0, 0, 0, 131, 134, 1, 0, 0, 0, 132, 130, 1, 0, 0, 0, 132, 133, 1, 0, 0, 0,
+        133, 15, 1, 0, 0, 0, 134, 132, 1, 0, 0, 0, 135, 156, 3, 18, 9, 0, 136, 156, 3, 36, 18, 0, 137, 156, 3, 44, 22, 0, 138, 156, 3, 52, 26, 0,
+        139, 156, 3, 46, 23, 0, 140, 156, 3, 48, 24, 0, 141, 156, 3, 60, 30, 0, 142, 156, 3, 62, 31, 0, 143, 156, 3, 66, 33, 0, 144, 156, 3, 68, 34,
+        0, 145, 156, 3, 56, 28, 0, 146, 156, 3, 70, 35, 0, 147, 151, 5, 1, 0, 0, 148, 150, 3, 16, 8, 0, 149, 148, 1, 0, 0, 0, 150, 153, 1, 0, 0, 0,
+        151, 149, 1, 0, 0, 0, 151, 152, 1, 0, 0, 0, 152, 154, 1, 0, 0, 0, 153, 151, 1, 0, 0, 0, 154, 156, 5, 2, 0, 0, 155, 135, 1, 0, 0, 0, 155, 136,
+        1, 0, 0, 0, 155, 137, 1, 0, 0, 0, 155, 138, 1, 0, 0, 0, 155, 139, 1, 0, 0, 0, 155, 140, 1, 0, 0, 0, 155, 141, 1, 0, 0, 0, 155, 142, 1, 0, 0,
+        0, 155, 143, 1, 0, 0, 0, 155, 144, 1, 0, 0, 0, 155, 145, 1, 0, 0, 0, 155, 146, 1, 0, 0, 0, 155, 147, 1, 0, 0, 0, 156, 17, 1, 0, 0, 0, 157,
+        159, 3, 20, 10, 0, 158, 160, 3, 24, 12, 0, 159, 158, 1, 0, 0, 0, 159, 160, 1, 0, 0, 0, 160, 164, 1, 0, 0, 0, 161, 163, 3, 22, 11, 0, 162,
+        161, 1, 0, 0, 0, 163, 166, 1, 0, 0, 0, 164, 162, 1, 0, 0, 0, 164, 165, 1, 0, 0, 0, 165, 167, 1, 0, 0, 0, 166, 164, 1, 0, 0, 0, 167, 168, 5,
+        6, 0, 0, 168, 19, 1, 0, 0, 0, 169, 171, 5, 24, 0, 0, 170, 169, 1, 0, 0, 0, 171, 172, 1, 0, 0, 0, 172, 170, 1, 0, 0, 0, 172, 173, 1, 0, 0, 0,
+        173, 179, 1, 0, 0, 0, 174, 175, 5, 20, 0, 0, 175, 176, 3, 26, 13, 0, 176, 177, 5, 64, 0, 0, 177, 179, 1, 0, 0, 0, 178, 170, 1, 0, 0, 0, 178,
+        174, 1, 0, 0, 0, 179, 180, 1, 0, 0, 0, 180, 178, 1, 0, 0, 0, 180, 181, 1, 0, 0, 0, 181, 21, 1, 0, 0, 0, 182, 183, 5, 12, 0, 0, 183, 184, 5,
+        30, 0, 0, 184, 23, 1, 0, 0, 0, 185, 186, 5, 19, 0, 0, 186, 187, 5, 69, 0, 0, 187, 188, 3, 26, 13, 0, 188, 189, 5, 85, 0, 0, 189, 198, 1, 0,
+        0, 0, 190, 191, 5, 19, 0, 0, 191, 194, 5, 82, 0, 0, 192, 193, 5, 69, 0, 0, 193, 195, 3, 26, 13, 0, 194, 192, 1, 0, 0, 0, 194, 195, 1, 0, 0,
+        0, 195, 196, 1, 0, 0, 0, 196, 198, 5, 85, 0, 0, 197, 185, 1, 0, 0, 0, 197, 190, 1, 0, 0, 0, 198, 25, 1, 0, 0, 0, 199, 200, 6, 13, -1, 0, 200,
+        201, 5, 58, 0, 0, 201, 202, 3, 26, 13, 0, 202, 203, 5, 59, 0, 0, 203, 210, 1, 0, 0, 0, 204, 205, 5, 54, 0, 0, 205, 210, 3, 26, 13, 8, 206,
+        207, 5, 47, 0, 0, 207, 210, 3, 26, 13, 7, 208, 210, 3, 28, 14, 0, 209, 199, 1, 0, 0, 0, 209, 204, 1, 0, 0, 0, 209, 206, 1, 0, 0, 0, 209, 208,
+        1, 0, 0, 0, 210, 228, 1, 0, 0, 0, 211, 212, 10, 6, 0, 0, 212, 213, 7, 0, 0, 0, 213, 227, 3, 26, 13, 7, 214, 215, 10, 5, 0, 0, 215, 216, 7, 1,
+        0, 0, 216, 227, 3, 26, 13, 6, 217, 218, 10, 4, 0, 0, 218, 219, 7, 2, 0, 0, 219, 227, 3, 26, 13, 5, 220, 221, 10, 3, 0, 0, 221, 222, 7, 3, 0,
+        0, 222, 227, 3, 26, 13, 4, 223, 224, 10, 2, 0, 0, 224, 225, 7, 4, 0, 0, 225, 227, 3, 26, 13, 3, 226, 211, 1, 0, 0, 0, 226, 214, 1, 0, 0, 0,
+        226, 217, 1, 0, 0, 0, 226, 220, 1, 0, 0, 0, 226, 223, 1, 0, 0, 0, 227, 230, 1, 0, 0, 0, 228, 226, 1, 0, 0, 0, 228, 229, 1, 0, 0, 0, 229, 27,
+        1, 0, 0, 0, 230, 228, 1, 0, 0, 0, 231, 239, 5, 36, 0, 0, 232, 239, 5, 33, 0, 0, 233, 239, 5, 34, 0, 0, 234, 239, 3, 30, 15, 0, 235, 239, 5,
+        62, 0, 0, 236, 239, 3, 32, 16, 0, 237, 239, 3, 34, 17, 0, 238, 231, 1, 0, 0, 0, 238, 232, 1, 0, 0, 0, 238, 233, 1, 0, 0, 0, 238, 234, 1, 0,
+        0, 0, 238, 235, 1, 0, 0, 0, 238, 236, 1, 0, 0, 0, 238, 237, 1, 0, 0, 0, 239, 29, 1, 0, 0, 0, 240, 241, 5, 65, 0, 0, 241, 31, 1, 0, 0, 0, 242,
+        243, 5, 63, 0, 0, 243, 245, 5, 58, 0, 0, 244, 246, 3, 26, 13, 0, 245, 244, 1, 0, 0, 0, 245, 246, 1, 0, 0, 0, 246, 251, 1, 0, 0, 0, 247, 248,
+        5, 60, 0, 0, 248, 250, 3, 26, 13, 0, 249, 247, 1, 0, 0, 0, 250, 253, 1, 0, 0, 0, 251, 249, 1, 0, 0, 0, 251, 252, 1, 0, 0, 0, 252, 254, 1, 0,
+        0, 0, 253, 251, 1, 0, 0, 0, 254, 255, 5, 59, 0, 0, 255, 33, 1, 0, 0, 0, 256, 258, 5, 63, 0, 0, 257, 256, 1, 0, 0, 0, 257, 258, 1, 0, 0, 0,
+        258, 259, 1, 0, 0, 0, 259, 260, 5, 66, 0, 0, 260, 261, 5, 63, 0, 0, 261, 35, 1, 0, 0, 0, 262, 266, 3, 38, 19, 0, 263, 265, 3, 40, 20, 0, 264,
+        263, 1, 0, 0, 0, 265, 268, 1, 0, 0, 0, 266, 264, 1, 0, 0, 0, 266, 267, 1, 0, 0, 0, 267, 270, 1, 0, 0, 0, 268, 266, 1, 0, 0, 0, 269, 271, 3,
+        42, 21, 0, 270, 269, 1, 0, 0, 0, 270, 271, 1, 0, 0, 0, 271, 272, 1, 0, 0, 0, 272, 273, 5, 19, 0, 0, 273, 274, 5, 73, 0, 0, 274, 275, 5, 85,
+        0, 0, 275, 37, 1, 0, 0, 0, 276, 277, 5, 19, 0, 0, 277, 278, 5, 69, 0, 0, 278, 279, 3, 26, 13, 0, 279, 283, 5, 85, 0, 0, 280, 282, 3, 16, 8,
+        0, 281, 280, 1, 0, 0, 0, 282, 285, 1, 0, 0, 0, 283, 281, 1, 0, 0, 0, 283, 284, 1, 0, 0, 0, 284, 39, 1, 0, 0, 0, 285, 283, 1, 0, 0, 0, 286,
+        287, 5, 19, 0, 0, 287, 288, 5, 70, 0, 0, 288, 289, 3, 26, 13, 0, 289, 293, 5, 85, 0, 0, 290, 292, 3, 16, 8, 0, 291, 290, 1, 0, 0, 0, 292,
+        295, 1, 0, 0, 0, 293, 291, 1, 0, 0, 0, 293, 294, 1, 0, 0, 0, 294, 41, 1, 0, 0, 0, 295, 293, 1, 0, 0, 0, 296, 297, 5, 19, 0, 0, 297, 298, 5,
+        71, 0, 0, 298, 302, 5, 85, 0, 0, 299, 301, 3, 16, 8, 0, 300, 299, 1, 0, 0, 0, 301, 304, 1, 0, 0, 0, 302, 300, 1, 0, 0, 0, 302, 303, 1, 0, 0,
+        0, 303, 43, 1, 0, 0, 0, 304, 302, 1, 0, 0, 0, 305, 306, 5, 19, 0, 0, 306, 307, 5, 72, 0, 0, 307, 308, 3, 30, 15, 0, 308, 309, 7, 5, 0, 0,
+        309, 310, 3, 26, 13, 0, 310, 311, 5, 85, 0, 0, 311, 45, 1, 0, 0, 0, 312, 313, 5, 19, 0, 0, 313, 314, 5, 74, 0, 0, 314, 315, 3, 32, 16, 0,
+        315, 316, 5, 85, 0, 0, 316, 47, 1, 0, 0, 0, 317, 318, 5, 19, 0, 0, 318, 319, 3, 50, 25, 0, 319, 323, 5, 85, 0, 0, 320, 322, 3, 22, 11, 0,
+        321, 320, 1, 0, 0, 0, 322, 325, 1, 0, 0, 0, 323, 321, 1, 0, 0, 0, 323, 324, 1, 0, 0, 0, 324, 49, 1, 0, 0, 0, 325, 323, 1, 0, 0, 0, 326, 332,
+        5, 87, 0, 0, 327, 328, 5, 20, 0, 0, 328, 329, 3, 26, 13, 0, 329, 330, 5, 64, 0, 0, 330, 332, 1, 0, 0, 0, 331, 326, 1, 0, 0, 0, 331, 327, 1,
+        0, 0, 0, 332, 333, 1, 0, 0, 0, 333, 331, 1, 0, 0, 0, 333, 334, 1, 0, 0, 0, 334, 51, 1, 0, 0, 0, 335, 337, 3, 54, 27, 0, 336, 335, 1, 0, 0, 0,
+        337, 340, 1, 0, 0, 0, 338, 336, 1, 0, 0, 0, 338, 339, 1, 0, 0, 0, 339, 341, 1, 0, 0, 0, 340, 338, 1, 0, 0, 0, 341, 343, 3, 54, 27, 0, 342,
+        344, 5, 3, 0, 0, 343, 342, 1, 0, 0, 0, 343, 344, 1, 0, 0, 0, 344, 53, 1, 0, 0, 0, 345, 346, 5, 17, 0, 0, 346, 355, 3, 18, 9, 0, 347, 351, 5,
+        1, 0, 0, 348, 350, 3, 16, 8, 0, 349, 348, 1, 0, 0, 0, 350, 353, 1, 0, 0, 0, 351, 349, 1, 0, 0, 0, 351, 352, 1, 0, 0, 0, 352, 354, 1, 0, 0, 0,
+        353, 351, 1, 0, 0, 0, 354, 356, 5, 2, 0, 0, 355, 347, 1, 0, 0, 0, 355, 356, 1, 0, 0, 0, 356, 55, 1, 0, 0, 0, 357, 359, 3, 58, 29, 0, 358,
+        357, 1, 0, 0, 0, 359, 362, 1, 0, 0, 0, 360, 358, 1, 0, 0, 0, 360, 361, 1, 0, 0, 0, 361, 363, 1, 0, 0, 0, 362, 360, 1, 0, 0, 0, 363, 365, 3,
+        58, 29, 0, 364, 366, 5, 3, 0, 0, 365, 364, 1, 0, 0, 0, 365, 366, 1, 0, 0, 0, 366, 57, 1, 0, 0, 0, 367, 368, 5, 18, 0, 0, 368, 377, 3, 18, 9,
+        0, 369, 373, 5, 1, 0, 0, 370, 372, 3, 16, 8, 0, 371, 370, 1, 0, 0, 0, 372, 375, 1, 0, 0, 0, 373, 371, 1, 0, 0, 0, 373, 374, 1, 0, 0, 0, 374,
+        376, 1, 0, 0, 0, 375, 373, 1, 0, 0, 0, 376, 378, 5, 2, 0, 0, 377, 369, 1, 0, 0, 0, 377, 378, 1, 0, 0, 0, 378, 59, 1, 0, 0, 0, 379, 380, 5,
+        19, 0, 0, 380, 381, 5, 75, 0, 0, 381, 382, 3, 30, 15, 0, 382, 383, 5, 37, 0, 0, 383, 386, 3, 26, 13, 0, 384, 385, 5, 61, 0, 0, 385, 387, 5,
+        63, 0, 0, 386, 384, 1, 0, 0, 0, 386, 387, 1, 0, 0, 0, 387, 388, 1, 0, 0, 0, 388, 389, 5, 85, 0, 0, 389, 61, 1, 0, 0, 0, 390, 391, 5, 19, 0,
+        0, 391, 392, 5, 79, 0, 0, 392, 393, 5, 9, 0, 0, 393, 395, 5, 85, 0, 0, 394, 396, 3, 64, 32, 0, 395, 394, 1, 0, 0, 0, 396, 397, 1, 0, 0, 0,
+        397, 395, 1, 0, 0, 0, 397, 398, 1, 0, 0, 0, 398, 399, 1, 0, 0, 0, 399, 400, 5, 19, 0, 0, 400, 401, 5, 81, 0, 0, 401, 402, 5, 85, 0, 0, 402,
+        63, 1, 0, 0, 0, 403, 405, 5, 1, 0, 0, 404, 403, 1, 0, 0, 0, 404, 405, 1, 0, 0, 0, 405, 406, 1, 0, 0, 0, 406, 407, 5, 19, 0, 0, 407, 408, 5,
+        80, 0, 0, 408, 411, 5, 63, 0, 0, 409, 410, 5, 37, 0, 0, 410, 412, 3, 28, 14, 0, 411, 409, 1, 0, 0, 0, 411, 412, 1, 0, 0, 0, 412, 413, 1, 0,
+        0, 0, 413, 415, 5, 85, 0, 0, 414, 416, 5, 2, 0, 0, 415, 414, 1, 0, 0, 0, 415, 416, 1, 0, 0, 0, 416, 65, 1, 0, 0, 0, 417, 418, 5, 19, 0, 0,
+        418, 419, 5, 76, 0, 0, 419, 420, 5, 9, 0, 0, 420, 440, 5, 85, 0, 0, 421, 422, 5, 19, 0, 0, 422, 423, 5, 76, 0, 0, 423, 424, 5, 20, 0, 0, 424,
+        425, 3, 26, 13, 0, 425, 426, 5, 64, 0, 0, 426, 427, 5, 85, 0, 0, 427, 440, 1, 0, 0, 0, 428, 429, 5, 19, 0, 0, 429, 430, 5, 77, 0, 0, 430,
+        431, 5, 9, 0, 0, 431, 440, 5, 85, 0, 0, 432, 433, 5, 19, 0, 0, 433, 434, 5, 77, 0, 0, 434, 435, 5, 20, 0, 0, 435, 436, 3, 26, 13, 0, 436,
+        437, 5, 64, 0, 0, 437, 438, 5, 85, 0, 0, 438, 440, 1, 0, 0, 0, 439, 417, 1, 0, 0, 0, 439, 421, 1, 0, 0, 0, 439, 428, 1, 0, 0, 0, 439, 432, 1,
+        0, 0, 0, 440, 67, 1, 0, 0, 0, 441, 442, 5, 19, 0, 0, 442, 443, 5, 78, 0, 0, 443, 444, 5, 85, 0, 0, 444, 69, 1, 0, 0, 0, 445, 447, 3, 72, 36,
+        0, 446, 448, 3, 74, 37, 0, 447, 446, 1, 0, 0, 0, 447, 448, 1, 0, 0, 0, 448, 449, 1, 0, 0, 0, 449, 450, 5, 19, 0, 0, 450, 451, 5, 83, 0, 0,
+        451, 452, 5, 85, 0, 0, 452, 71, 1, 0, 0, 0, 453, 454, 5, 19, 0, 0, 454, 457, 5, 82, 0, 0, 455, 456, 5, 69, 0, 0, 456, 458, 3, 26, 13, 0, 457,
+        455, 1, 0, 0, 0, 457, 458, 1, 0, 0, 0, 458, 459, 1, 0, 0, 0, 459, 463, 5, 85, 0, 0, 460, 462, 3, 16, 8, 0, 461, 460, 1, 0, 0, 0, 462, 465, 1,
+        0, 0, 0, 463, 461, 1, 0, 0, 0, 463, 464, 1, 0, 0, 0, 464, 73, 1, 0, 0, 0, 465, 463, 1, 0, 0, 0, 466, 467, 5, 19, 0, 0, 467, 468, 5, 71, 0, 0,
+        468, 472, 5, 85, 0, 0, 469, 471, 3, 16, 8, 0, 470, 469, 1, 0, 0, 0, 471, 474, 1, 0, 0, 0, 472, 470, 1, 0, 0, 0, 472, 473, 1, 0, 0, 0, 473,
+        75, 1, 0, 0, 0, 474, 472, 1, 0, 0, 0, 475, 479, 5, 63, 0, 0, 476, 478, 3, 78, 39, 0, 477, 476, 1, 0, 0, 0, 478, 481, 1, 0, 0, 0, 479, 477, 1,
+        0, 0, 0, 479, 480, 1, 0, 0, 0, 480, 77, 1, 0, 0, 0, 481, 479, 1, 0, 0, 0, 482, 485, 3, 26, 13, 0, 483, 485, 5, 63, 0, 0, 484, 482, 1, 0, 0,
+        0, 484, 483, 1, 0, 0, 0, 485, 79, 1, 0, 0, 0, 52, 83, 89, 97, 99, 118, 125, 127, 132, 151, 155, 159, 164, 172, 178, 180, 194, 197, 209, 226,
+        228, 238, 245, 251, 257, 266, 270, 283, 293, 302, 323, 331, 333, 338, 343, 351, 355, 360, 365, 373, 377, 386, 397, 404, 411, 415, 439, 447,
+        457, 463, 472, 479, 484
+    ];
 }
-
-const _serializedATN: &'static str = "\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417c}\u{3be7}\u{7786}\u{5964}\x03\
-	\x56\u{13d}\x04\x02\x09\x02\x04\x03\x09\x03\x04\x04\x09\x04\x04\x05\x09\
-	\x05\x04\x06\x09\x06\x04\x07\x09\x07\x04\x08\x09\x08\x04\x09\x09\x09\x04\
-	\x0a\x09\x0a\x04\x0b\x09\x0b\x04\x0c\x09\x0c\x04\x0d\x09\x0d\x04\x0e\x09\
-	\x0e\x04\x0f\x09\x0f\x04\x10\x09\x10\x04\x11\x09\x11\x04\x12\x09\x12\x04\
-	\x13\x09\x13\x04\x14\x09\x14\x04\x15\x09\x15\x04\x16\x09\x16\x04\x17\x09\
-	\x17\x04\x18\x09\x18\x04\x19\x09\x19\x04\x1a\x09\x1a\x04\x1b\x09\x1b\x03\
-	\x02\x07\x02\x38\x0a\x02\x0c\x02\x0e\x02\x3b\x0b\x02\x03\x02\x06\x02\x3e\
-	\x0a\x02\x0d\x02\x0e\x02\x3f\x03\x03\x03\x03\x03\x03\x03\x04\x06\x04\x46\
-	\x0a\x04\x0d\x04\x0e\x04\x47\x03\x04\x03\x04\x03\x04\x03\x04\x03\x05\x03\
-	\x05\x03\x05\x05\x05\x51\x0a\x05\x03\x06\x07\x06\x54\x0a\x06\x0c\x06\x0e\
-	\x06\x57\x0b\x06\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\x03\x07\
-	\x03\x07\x03\x07\x03\x07\x07\x07\x63\x0a\x07\x0c\x07\x0e\x07\x66\x0b\x07\
-	\x03\x07\x05\x07\x69\x0a\x07\x03\x08\x03\x08\x05\x08\x6d\x0a\x08\x03\x08\
-	\x07\x08\x70\x0a\x08\x0c\x08\x0e\x08\x73\x0b\x08\x03\x08\x03\x08\x03\x09\
-	\x06\x09\x78\x0a\x09\x0d\x09\x0e\x09\x79\x03\x09\x03\x09\x03\x09\x03\x09\
-	\x06\x09\u{80}\x0a\x09\x0d\x09\x0e\x09\u{81}\x03\x0a\x03\x0a\x03\x0a\x03\
-	\x0b\x03\x0b\x03\x0b\x03\x0b\x03\x0b\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\
-	\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x05\x0c\u{96}\x0a\x0c\x03\x0c\
-	\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\
-	\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x03\x0c\x07\x0c\u{a7}\x0a\x0c\x0c\x0c\x0e\
-	\x0c\u{aa}\x0b\x0c\x03\x0d\x03\x0d\x03\x0d\x03\x0d\x03\x0d\x03\x0d\x03\x0d\
-	\x05\x0d\u{b3}\x0a\x0d\x03\x0e\x03\x0e\x03\x0f\x03\x0f\x03\x0f\x05\x0f\u{ba}\
-	\x0a\x0f\x03\x0f\x03\x0f\x07\x0f\u{be}\x0a\x0f\x0c\x0f\x0e\x0f\u{c1}\x0b\
-	\x0f\x03\x0f\x03\x0f\x03\x10\x03\x10\x07\x10\u{c7}\x0a\x10\x0c\x10\x0e\x10\
-	\u{ca}\x0b\x10\x03\x10\x05\x10\u{cd}\x0a\x10\x03\x10\x03\x10\x03\x10\x03\
-	\x10\x03\x11\x03\x11\x03\x11\x03\x11\x03\x11\x07\x11\u{d8}\x0a\x11\x0c\x11\
-	\x0e\x11\u{db}\x0b\x11\x03\x12\x03\x12\x03\x12\x03\x12\x03\x12\x07\x12\u{e2}\
-	\x0a\x12\x0c\x12\x0e\x12\u{e5}\x0b\x12\x03\x13\x03\x13\x03\x13\x03\x13\x07\
-	\x13\u{eb}\x0a\x13\x0c\x13\x0e\x13\u{ee}\x0b\x13\x03\x14\x03\x14\x03\x14\
-	\x03\x14\x03\x14\x03\x14\x03\x14\x03\x15\x03\x15\x03\x15\x03\x15\x03\x15\
-	\x03\x16\x03\x16\x03\x16\x03\x16\x07\x16\u{100}\x0a\x16\x0c\x16\x0e\x16\
-	\u{103}\x0b\x16\x03\x17\x03\x17\x03\x17\x03\x17\x03\x17\x07\x17\u{10a}\x0a\
-	\x17\x0c\x17\x0e\x17\u{10d}\x0b\x17\x03\x18\x07\x18\u{110}\x0a\x18\x0c\x18\
-	\x0e\x18\u{113}\x0b\x18\x03\x18\x03\x18\x05\x18\u{117}\x0a\x18\x03\x19\x03\
-	\x19\x03\x19\x03\x19\x07\x19\u{11d}\x0a\x19\x0c\x19\x0e\x19\u{120}\x0b\x19\
-	\x03\x19\x05\x19\u{123}\x0a\x19\x03\x1a\x03\x1a\x03\x1a\x03\x1a\x03\x1a\
-	\x03\x1a\x03\x1a\x05\x1a\u{12c}\x0a\x1a\x03\x1a\x03\x1a\x03\x1b\x03\x1b\
-	\x03\x1b\x03\x1b\x03\x1b\x03\x1b\x03\x1b\x03\x1b\x03\x1b\x03\x1b\x03\x1b\
-	\x05\x1b\u{13b}\x0a\x1b\x03\x1b\x02\x03\x16\x1c\x02\x04\x06\x08\x0a\x0c\
-	\x0e\x10\x12\x14\x16\x18\x1a\x1c\x1e\x20\x22\x24\x26\x28\x2a\x2c\x2e\x30\
-	\x32\x34\x02\x08\x03\x02\x33\x35\x03\x02\x31\x32\x04\x02\x22\x23\x25\x26\
-	\x04\x02\x24\x24\x27\x27\x03\x02\x28\x2a\x04\x02\x21\x21\x2c\x30\x02\u{153}\
-	\x02\x39\x03\x02\x02\x02\x04\x41\x03\x02\x02\x02\x06\x45\x03\x02\x02\x02\
-	\x08\x4d\x03\x02\x02\x02\x0a\x55\x03\x02\x02\x02\x0c\x68\x03\x02\x02\x02\
-	\x0e\x6a\x03\x02\x02\x02\x10\x7f\x03\x02\x02\x02\x12\u{83}\x03\x02\x02\x02\
-	\x14\u{86}\x03\x02\x02\x02\x16\u{95}\x03\x02\x02\x02\x18\u{b2}\x03\x02\x02\
-	\x02\x1a\u{b4}\x03\x02\x02\x02\x1c\u{b6}\x03\x02\x02\x02\x1e\u{c4}\x03\x02\
-	\x02\x02\x20\u{d2}\x03\x02\x02\x02\x22\u{dc}\x03\x02\x02\x02\x24\u{e6}\x03\
-	\x02\x02\x02\x26\u{ef}\x03\x02\x02\x02\x28\u{f6}\x03\x02\x02\x02\x2a\u{fb}\
-	\x03\x02\x02\x02\x2c\u{10b}\x03\x02\x02\x02\x2e\u{111}\x03\x02\x02\x02\x30\
-	\u{118}\x03\x02\x02\x02\x32\u{124}\x03\x02\x02\x02\x34\u{13a}\x03\x02\x02\
-	\x02\x36\x38\x05\x04\x03\x02\x37\x36\x03\x02\x02\x02\x38\x3b\x03\x02\x02\
-	\x02\x39\x37\x03\x02\x02\x02\x39\x3a\x03\x02\x02\x02\x3a\x3d\x03\x02\x02\
-	\x02\x3b\x39\x03\x02\x02\x02\x3c\x3e\x05\x06\x04\x02\x3d\x3c\x03\x02\x02\
-	\x02\x3e\x3f\x03\x02\x02\x02\x3f\x3d\x03\x02\x02\x02\x3f\x40\x03\x02\x02\
-	\x02\x40\x03\x03\x02\x02\x02\x41\x42\x07\x0c\x02\x02\x42\x43\x07\x1c\x02\
-	\x02\x43\x05\x03\x02\x02\x02\x44\x46\x05\x08\x05\x02\x45\x44\x03\x02\x02\
-	\x02\x46\x47\x03\x02\x02\x02\x47\x45\x03\x02\x02\x02\x47\x48\x03\x02\x02\
-	\x02\x48\x49\x03\x02\x02\x02\x49\x4a\x07\x0a\x02\x02\x4a\x4b\x05\x0a\x06\
-	\x02\x4b\x4c\x07\x0f\x02\x02\x4c\x07\x03\x02\x02\x02\x4d\x4e\x07\x09\x02\
-	\x02\x4e\x50\x07\x0b\x02\x02\x4f\x51\x07\x0d\x02\x02\x50\x4f\x03\x02\x02\
-	\x02\x50\x51\x03\x02\x02\x02\x51\x09\x03\x02\x02\x02\x52\x54\x05\x0c\x07\
-	\x02\x53\x52\x03\x02\x02\x02\x54\x57\x03\x02\x02\x02\x55\x53\x03\x02\x02\
-	\x02\x55\x56\x03\x02\x02\x02\x56\x0b\x03\x02\x02\x02\x57\x55\x03\x02\x02\
-	\x02\x58\x69\x05\x0e\x08\x02\x59\x69\x05\x1e\x10\x02\x5a\x69\x05\x26\x14\
-	\x02\x5b\x69\x05\x2e\x18\x02\x5c\x69\x05\x28\x15\x02\x5d\x69\x05\x2a\x16\
-	\x02\x5e\x69\x05\x32\x1a\x02\x5f\x69\x05\x34\x1b\x02\x60\x64\x07\x03\x02\
-	\x02\x61\x63\x05\x0c\x07\x02\x62\x61\x03\x02\x02\x02\x63\x66\x03\x02\x02\
-	\x02\x64\x62\x03\x02\x02\x02\x64\x65\x03\x02\x02\x02\x65\x67\x03\x02\x02\
-	\x02\x66\x64\x03\x02\x02\x02\x67\x69\x07\x04\x02\x02\x68\x58\x03\x02\x02\
-	\x02\x68\x59\x03\x02\x02\x02\x68\x5a\x03\x02\x02\x02\x68\x5b\x03\x02\x02\
-	\x02\x68\x5c\x03\x02\x02\x02\x68\x5d\x03\x02\x02\x02\x68\x5e\x03\x02\x02\
-	\x02\x68\x5f\x03\x02\x02\x02\x68\x60\x03\x02\x02\x02\x69\x0d\x03\x02\x02\
-	\x02\x6a\x6c\x05\x10\x09\x02\x6b\x6d\x05\x14\x0b\x02\x6c\x6b\x03\x02\x02\
-	\x02\x6c\x6d\x03\x02\x02\x02\x6d\x71\x03\x02\x02\x02\x6e\x70\x05\x12\x0a\
-	\x02\x6f\x6e\x03\x02\x02\x02\x70\x73\x03\x02\x02\x02\x71\x6f\x03\x02\x02\
-	\x02\x71\x72\x03\x02\x02\x02\x72\x74\x03\x02\x02\x02\x73\x71\x03\x02\x02\
-	\x02\x74\x75\x07\x08\x02\x02\x75\x0f\x03\x02\x02\x02\x76\x78\x07\x16\x02\
-	\x02\x77\x76\x03\x02\x02\x02\x78\x79\x03\x02\x02\x02\x79\x77\x03\x02\x02\
-	\x02\x79\x7a\x03\x02\x02\x02\x7a\u{80}\x03\x02\x02\x02\x7b\x7c\x07\x12\x02\
-	\x02\x7c\x7d\x05\x16\x0c\x02\x7d\x7e\x07\x3c\x02\x02\x7e\u{80}\x03\x02\x02\
-	\x02\x7f\x77\x03\x02\x02\x02\x7f\x7b\x03\x02\x02\x02\u{80}\u{81}\x03\x02\
-	\x02\x02\u{81}\x7f\x03\x02\x02\x02\u{81}\u{82}\x03\x02\x02\x02\u{82}\x11\
-	\x03\x02\x02\x02\u{83}\u{84}\x07\x0c\x02\x02\u{84}\u{85}\x07\x1c\x02\x02\
-	\u{85}\x13\x03\x02\x02\x02\u{86}\u{87}\x07\x11\x02\x02\u{87}\u{88}\x07\x42\
-	\x02\x02\u{88}\u{89}\x05\x16\x0c\x02\u{89}\u{8a}\x07\x4e\x02\x02\u{8a}\x15\
-	\x03\x02\x02\x02\u{8b}\u{8c}\x08\x0c\x01\x02\u{8c}\u{8d}\x07\x36\x02\x02\
-	\u{8d}\u{8e}\x05\x16\x0c\x02\u{8e}\u{8f}\x07\x37\x02\x02\u{8f}\u{96}\x03\
-	\x02\x02\x02\u{90}\u{91}\x07\x32\x02\x02\u{91}\u{96}\x05\x16\x0c\x0a\u{92}\
-	\u{93}\x07\x2b\x02\x02\u{93}\u{96}\x05\x16\x0c\x09\u{94}\u{96}\x05\x18\x0d\
-	\x02\u{95}\u{8b}\x03\x02\x02\x02\u{95}\u{90}\x03\x02\x02\x02\u{95}\u{92}\
-	\x03\x02\x02\x02\u{95}\u{94}\x03\x02\x02\x02\u{96}\u{a8}\x03\x02\x02\x02\
-	\u{97}\u{98}\x0c\x08\x02\x02\u{98}\u{99}\x09\x02\x02\x02\u{99}\u{a7}\x05\
-	\x16\x0c\x09\u{9a}\u{9b}\x0c\x07\x02\x02\u{9b}\u{9c}\x09\x03\x02\x02\u{9c}\
-	\u{a7}\x05\x16\x0c\x08\u{9d}\u{9e}\x0c\x06\x02\x02\u{9e}\u{9f}\x09\x04\x02\
-	\x02\u{9f}\u{a7}\x05\x16\x0c\x07\u{a0}\u{a1}\x0c\x05\x02\x02\u{a1}\u{a2}\
-	\x09\x05\x02\x02\u{a2}\u{a7}\x05\x16\x0c\x06\u{a3}\u{a4}\x0c\x04\x02\x02\
-	\u{a4}\u{a5}\x09\x06\x02\x02\u{a5}\u{a7}\x05\x16\x0c\x05\u{a6}\u{97}\x03\
-	\x02\x02\x02\u{a6}\u{9a}\x03\x02\x02\x02\u{a6}\u{9d}\x03\x02\x02\x02\u{a6}\
-	\u{a0}\x03\x02\x02\x02\u{a6}\u{a3}\x03\x02\x02\x02\u{a7}\u{aa}\x03\x02\x02\
-	\x02\u{a8}\u{a6}\x03\x02\x02\x02\u{a8}\u{a9}\x03\x02\x02\x02\u{a9}\x17\x03\
-	\x02\x02\x02\u{aa}\u{a8}\x03\x02\x02\x02\u{ab}\u{b3}\x07\x3f\x02\x02\u{ac}\
-	\u{b3}\x07\x1e\x02\x02\u{ad}\u{b3}\x07\x1f\x02\x02\u{ae}\u{b3}\x05\x1a\x0e\
-	\x02\u{af}\u{b3}\x07\x3a\x02\x02\u{b0}\u{b3}\x07\x20\x02\x02\u{b1}\u{b3}\
-	\x05\x1c\x0f\x02\u{b2}\u{ab}\x03\x02\x02\x02\u{b2}\u{ac}\x03\x02\x02\x02\
-	\u{b2}\u{ad}\x03\x02\x02\x02\u{b2}\u{ae}\x03\x02\x02\x02\u{b2}\u{af}\x03\
-	\x02\x02\x02\u{b2}\u{b0}\x03\x02\x02\x02\u{b2}\u{b1}\x03\x02\x02\x02\u{b3}\
-	\x19\x03\x02\x02\x02\u{b4}\u{b5}\x07\x3d\x02\x02\u{b5}\x1b\x03\x02\x02\x02\
-	\u{b6}\u{b7}\x07\x3b\x02\x02\u{b7}\u{b9}\x07\x36\x02\x02\u{b8}\u{ba}\x05\
-	\x16\x0c\x02\u{b9}\u{b8}\x03\x02\x02\x02\u{b9}\u{ba}\x03\x02\x02\x02\u{ba}\
-	\u{bf}\x03\x02\x02\x02\u{bb}\u{bc}\x07\x38\x02\x02\u{bc}\u{be}\x05\x16\x0c\
-	\x02\u{bd}\u{bb}\x03\x02\x02\x02\u{be}\u{c1}\x03\x02\x02\x02\u{bf}\u{bd}\
-	\x03\x02\x02\x02\u{bf}\u{c0}\x03\x02\x02\x02\u{c0}\u{c2}\x03\x02\x02\x02\
-	\u{c1}\u{bf}\x03\x02\x02\x02\u{c2}\u{c3}\x07\x37\x02\x02\u{c3}\x1d\x03\x02\
-	\x02\x02\u{c4}\u{c8}\x05\x20\x11\x02\u{c5}\u{c7}\x05\x22\x12\x02\u{c6}\u{c5}\
-	\x03\x02\x02\x02\u{c7}\u{ca}\x03\x02\x02\x02\u{c8}\u{c6}\x03\x02\x02\x02\
-	\u{c8}\u{c9}\x03\x02\x02\x02\u{c9}\u{cc}\x03\x02\x02\x02\u{ca}\u{c8}\x03\
-	\x02\x02\x02\u{cb}\u{cd}\x05\x24\x13\x02\u{cc}\u{cb}\x03\x02\x02\x02\u{cc}\
-	\u{cd}\x03\x02\x02\x02\u{cd}\u{ce}\x03\x02\x02\x02\u{ce}\u{cf}\x07\x11\x02\
-	\x02\u{cf}\u{d0}\x07\x46\x02\x02\u{d0}\u{d1}\x07\x4e\x02\x02\u{d1}\x1f\x03\
-	\x02\x02\x02\u{d2}\u{d3}\x07\x11\x02\x02\u{d3}\u{d4}\x07\x42\x02\x02\u{d4}\
-	\u{d5}\x05\x16\x0c\x02\u{d5}\u{d9}\x07\x4e\x02\x02\u{d6}\u{d8}\x05\x0c\x07\
-	\x02\u{d7}\u{d6}\x03\x02\x02\x02\u{d8}\u{db}\x03\x02\x02\x02\u{d9}\u{d7}\
-	\x03\x02\x02\x02\u{d9}\u{da}\x03\x02\x02\x02\u{da}\x21\x03\x02\x02\x02\u{db}\
-	\u{d9}\x03\x02\x02\x02\u{dc}\u{dd}\x07\x11\x02\x02\u{dd}\u{de}\x07\x43\x02\
-	\x02\u{de}\u{df}\x05\x16\x0c\x02\u{df}\u{e3}\x07\x4e\x02\x02\u{e0}\u{e2}\
-	\x05\x0c\x07\x02\u{e1}\u{e0}\x03\x02\x02\x02\u{e2}\u{e5}\x03\x02\x02\x02\
-	\u{e3}\u{e1}\x03\x02\x02\x02\u{e3}\u{e4}\x03\x02\x02\x02\u{e4}\x23\x03\x02\
-	\x02\x02\u{e5}\u{e3}\x03\x02\x02\x02\u{e6}\u{e7}\x07\x11\x02\x02\u{e7}\u{e8}\
-	\x07\x44\x02\x02\u{e8}\u{ec}\x07\x4e\x02\x02\u{e9}\u{eb}\x05\x0c\x07\x02\
-	\u{ea}\u{e9}\x03\x02\x02\x02\u{eb}\u{ee}\x03\x02\x02\x02\u{ec}\u{ea}\x03\
-	\x02\x02\x02\u{ec}\u{ed}\x03\x02\x02\x02\u{ed}\x25\x03\x02\x02\x02\u{ee}\
-	\u{ec}\x03\x02\x02\x02\u{ef}\u{f0}\x07\x11\x02\x02\u{f0}\u{f1}\x07\x45\x02\
-	\x02\u{f1}\u{f2}\x05\x1a\x0e\x02\u{f2}\u{f3}\x09\x07\x02\x02\u{f3}\u{f4}\
-	\x05\x16\x0c\x02\u{f4}\u{f5}\x07\x4e\x02\x02\u{f5}\x27\x03\x02\x02\x02\u{f6}\
-	\u{f7}\x07\x11\x02\x02\u{f7}\u{f8}\x07\x47\x02\x02\u{f8}\u{f9}\x05\x1c\x0f\
-	\x02\u{f9}\u{fa}\x07\x4e\x02\x02\u{fa}\x29\x03\x02\x02\x02\u{fb}\u{fc}\x07\
-	\x11\x02\x02\u{fc}\u{fd}\x05\x2c\x17\x02\u{fd}\u{101}\x07\x50\x02\x02\u{fe}\
-	\u{100}\x05\x12\x0a\x02\u{ff}\u{fe}\x03\x02\x02\x02\u{100}\u{103}\x03\x02\
-	\x02\x02\u{101}\u{ff}\x03\x02\x02\x02\u{101}\u{102}\x03\x02\x02\x02\u{102}\
-	\x2b\x03\x02\x02\x02\u{103}\u{101}\x03\x02\x02\x02\u{104}\u{10a}\x07\x52\
-	\x02\x02\u{105}\u{106}\x07\x51\x02\x02\u{106}\u{107}\x05\x16\x0c\x02\u{107}\
-	\u{108}\x07\x3c\x02\x02\u{108}\u{10a}\x03\x02\x02\x02\u{109}\u{104}\x03\
-	\x02\x02\x02\u{109}\u{105}\x03\x02\x02\x02\u{10a}\u{10d}\x03\x02\x02\x02\
-	\u{10b}\u{109}\x03\x02\x02\x02\u{10b}\u{10c}\x03\x02\x02\x02\u{10c}\x2d\
-	\x03\x02\x02\x02\u{10d}\u{10b}\x03\x02\x02\x02\u{10e}\u{110}\x05\x30\x19\
-	\x02\u{10f}\u{10e}\x03\x02\x02\x02\u{110}\u{113}\x03\x02\x02\x02\u{111}\
-	\u{10f}\x03\x02\x02\x02\u{111}\u{112}\x03\x02\x02\x02\u{112}\u{114}\x03\
-	\x02\x02\x02\u{113}\u{111}\x03\x02\x02\x02\u{114}\u{116}\x05\x30\x19\x02\
-	\u{115}\u{117}\x07\x05\x02\x02\u{116}\u{115}\x03\x02\x02\x02\u{116}\u{117}\
-	\x03\x02\x02\x02\u{117}\x2f\x03\x02\x02\x02\u{118}\u{119}\x07\x10\x02\x02\
-	\u{119}\u{122}\x05\x0e\x08\x02\u{11a}\u{11e}\x07\x03\x02\x02\u{11b}\u{11d}\
-	\x05\x0c\x07\x02\u{11c}\u{11b}\x03\x02\x02\x02\u{11d}\u{120}\x03\x02\x02\
-	\x02\u{11e}\u{11c}\x03\x02\x02\x02\u{11e}\u{11f}\x03\x02\x02\x02\u{11f}\
-	\u{121}\x03\x02\x02\x02\u{120}\u{11e}\x03\x02\x02\x02\u{121}\u{123}\x07\
-	\x04\x02\x02\u{122}\u{11a}\x03\x02\x02\x02\u{122}\u{123}\x03\x02\x02\x02\
-	\u{123}\x31\x03\x02\x02\x02\u{124}\u{125}\x07\x11\x02\x02\u{125}\u{126}\
-	\x07\x48\x02\x02\u{126}\u{127}\x05\x1a\x0e\x02\u{127}\u{128}\x07\x21\x02\
-	\x02\u{128}\u{12b}\x05\x18\x0d\x02\u{129}\u{12a}\x07\x39\x02\x02\u{12a}\
-	\u{12c}\x07\x3b\x02\x02\u{12b}\u{129}\x03\x02\x02\x02\u{12b}\u{12c}\x03\
-	\x02\x02\x02\u{12c}\u{12d}\x03\x02\x02\x02\u{12d}\u{12e}\x07\x4e\x02\x02\
-	\u{12e}\x33\x03\x02\x02\x02\u{12f}\u{130}\x07\x11\x02\x02\u{130}\u{131}\
-	\x07\x49\x02\x02\u{131}\u{132}\x07\x09\x02\x02\u{132}\u{13b}\x07\x4e\x02\
-	\x02\u{133}\u{134}\x07\x11\x02\x02\u{134}\u{135}\x07\x49\x02\x02\u{135}\
-	\u{136}\x07\x12\x02\x02\u{136}\u{137}\x05\x16\x0c\x02\u{137}\u{138}\x07\
-	\x3c\x02\x02\u{138}\u{139}\x07\x4e\x02\x02\u{139}\u{13b}\x03\x02\x02\x02\
-	\u{13a}\u{12f}\x03\x02\x02\x02\u{13a}\u{133}\x03\x02\x02\x02\u{13b}\x35\
-	\x03\x02\x02\x02\x22\x39\x3f\x47\x50\x55\x64\x68\x6c\x71\x79\x7f\u{81}\u{95}\
-	\u{a6}\u{a8}\u{b2}\u{b9}\u{bf}\u{c8}\u{cc}\u{d9}\u{e3}\u{ec}\u{101}\u{109}\
-	\u{10b}\u{111}\u{116}\u{11e}\u{122}\u{12b}\u{13a}";

@@ -16,9 +16,7 @@ use ratatui::layout::{Constraint, Layout};
 use ratatui::style::{Color, Stylize};
 use yarnspinner::compiler::Compiler;
 use yarnspinner::core::{IntoYarnValueFromNonYarnValue, LineId, YarnFn, YarnValue};
-use yarnspinner::runtime::{
-    Dialogue, DialogueEvent, Line, MemoryVariableStorage, StringTableTextProvider,
-};
+use yarnspinner::runtime::{Dialogue, DialogueEvent, Line, MemoryVariableStorage, StringTableTextProvider};
 
 use self::terminal::Terminal;
 use self::widgets::{ContinueView, LineView, OptionsView, OptionsViewState};
@@ -41,10 +39,7 @@ pub struct TuiDialogueRunner {
 }
 
 impl TuiDialogueRunner {
-    pub fn new(
-        source_path: impl AsRef<Path>,
-        start_node: &str,
-    ) -> anyhow::Result<TuiDialogueRunner> {
+    pub fn new(source_path: impl AsRef<Path>, start_node: &str) -> anyhow::Result<TuiDialogueRunner> {
         // Before we can run our dialogue, we need to compile it.
         //
         // In a real game, you might want to consider doing this as part of your asset
@@ -190,11 +185,7 @@ impl TuiDialogueRunner {
                     DialogueEvent::Line(line) => {
                         // If this is the last line before displaying a list of options,
                         // we don't need to wait for the player to hit 'continue'.
-                        let last_line_before_options = self
-                            .metadata
-                            .get(&line.id)
-                            .map(|m| m.iter().any(|x| x == "lastline"))
-                            .unwrap_or(false);
+                        let last_line_before_options = self.metadata.get(&line.id).map(|m| m.iter().any(|x| x == "lastline")).unwrap_or(false);
 
                         if !last_line_before_options {
                             self.status = Status::WaitingForContinue;
@@ -226,10 +217,7 @@ impl TuiDialogueRunner {
                             }
 
                             _ => {
-                                return Err(anyhow!(
-                                    "invalid parameters: {:?}",
-                                    command.parameters
-                                ));
+                                return Err(anyhow!("invalid parameters: {:?}", command.parameters));
                             }
                         },
 
@@ -271,16 +259,9 @@ impl TuiDialogueRunner {
             }
 
             match &mut self.status {
-                Status::WaitingForContinue => f.render_widget(
-                    ContinueView::default().bg(self.background_color),
-                    options_area,
-                ),
+                Status::WaitingForContinue => f.render_widget(ContinueView::default().bg(self.background_color), options_area),
 
-                Status::WaitingForOptions(state) => f.render_stateful_widget(
-                    OptionsView::default().bg(self.background_color),
-                    options_area,
-                    state,
-                ),
+                Status::WaitingForOptions(state) => f.render_stateful_widget(OptionsView::default().bg(self.background_color), options_area, state),
 
                 _ => {}
             }
@@ -295,14 +276,8 @@ impl TuiDialogueRunner {
         Ok(value)
     }
 
-    pub fn set_variable(
-        &mut self,
-        name: impl Into<String>,
-        value: YarnValue,
-    ) -> anyhow::Result<()> {
-        self.dialogue
-            .variable_storage_mut()
-            .set(name.into(), value)?;
+    pub fn set_variable(&mut self, name: impl Into<String>, value: YarnValue) -> anyhow::Result<()> {
+        self.dialogue.variable_storage_mut().set(name.into(), value)?;
 
         Ok(())
     }

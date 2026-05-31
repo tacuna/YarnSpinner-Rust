@@ -1,0 +1,8 @@
+title: MarkupStart
+---
+Mae: [wave]Hello there![/wave]
+Greg: [shake]Watch out![/shake]
+Mae: This is [color value="red"]important[/color] information.
+Greg: And this is [uppercase]very loud[/uppercase] text!
+Mae: You can also do [reverse]backwards[/reverse] text!
+===

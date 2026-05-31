@@ -2,7 +2,8 @@
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-use std::{collections::VecDeque, fmt::Debug};
+use std::collections::VecDeque;
+use std::fmt::Debug;
 
 /// Represents a FIFO (First-In, First-Out) collection.
 ///

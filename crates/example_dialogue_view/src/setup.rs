@@ -140,21 +140,10 @@ fn fmt_name(name: &str) -> Name {
     Name::new(format!("Yarn Spinner example dialogue view node: {name}"))
 }
 
-pub(crate) fn create_dialog_text(
-    text: impl Into<String>,
-    invisible: impl Into<String>,
-) -> [(TextSpan, TextFont, TextColor); 2] {
+pub(crate) fn create_dialog_text(text: impl Into<String>, invisible: impl Into<String>) -> [(TextSpan, TextFont, TextColor); 2] {
     [
-        (
-            TextSpan(text.into()),
-            text_style::standard().0,
-            text_style::standard().1,
-        ),
-        (
-            TextSpan(invisible.into()),
-            text_style::standard().0,
-            TextColor(Color::NONE),
-        ),
+        (TextSpan(text.into()), text_style::standard().0, text_style::standard().1),
+        (TextSpan(invisible.into()), text_style::standard().0, TextColor(Color::NONE)),
     ]
 }
 
@@ -185,12 +174,8 @@ where
                             Label,
                         ))
                         .with_children(|parent| {
-                            parent
-                                .spawn((TextSpan(format!("{}: ", i + 1)), text_style::option_id()));
-                            parent.spawn((
-                                TextSpan(option.line.text.clone()),
-                                text_style::option_text(),
-                            ));
+                            parent.spawn((TextSpan(format!("{}: ", i + 1)), text_style::option_id()));
+                            parent.spawn((TextSpan(option.line.text.clone()), text_style::option_text()));
                         });
                 });
         }
